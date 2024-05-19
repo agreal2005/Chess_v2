@@ -23,8 +23,18 @@ class Board_FEN
     // Denotes the Move number
     string epSquare; // En Passant Square
     vector<vector<char>> board; // Board Matrix
+
     public:
     Board_FEN();
     Board_FEN(string fen_val);
+    void input_FEN(string fen_val);
     void default_FEN();
+    void display_board_FEN();
+    vector<vector<char>> return_board();
+
+    /*
+        Note: In future, need to make the Game Class
+        (and other req classes) to be a friend class,
+        to directly access the parameters.
+    */
 };

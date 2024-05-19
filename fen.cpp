@@ -6,19 +6,24 @@ Board_FEN::Board_FEN()
 }
 Board_FEN::Board_FEN(string fen_val)
 {
+    input_FEN(fen_val);
+}
+void Board_FEN::input_FEN(string fen_val)
+{
     fen_val += BLANC; // Need this for (seamless) fen validation
     int cursor = 0;
     vector<vector<char>> inp_board(8, vector<char> (8, '.'));
     for (int i=0; i<8; ++i)
     {
         int row = 0; // j value to move along the row
-        while (fen_val[cursor]!='/' || fen_val[cursor]!=' ')
+        while (fen_val[cursor]!='/' && fen_val[cursor]!=' ')
         {
             if (fen_val[cursor]-'0' >= 1 && fen_val[cursor]-'0' <= 8)
             {
                 int gap = fen_val[cursor] - '0';
                 row += gap;
                 cursor++;
+                continue;
             }
             if (row >= 8)
             {
@@ -39,15 +44,9 @@ Board_FEN::Board_FEN(string fen_val)
                 return;
             }
         }
+        cursor++;
     }
     board = inp_board;
-    if (fen_val[cursor]!=' ')
-    {
-        // Invalid FEN
-        default_FEN();
-        return;
-    }
-    cursor++;
     if (fen_val[cursor] == 'w')
     {
         turn = 0;
@@ -121,10 +120,10 @@ Board_FEN::Board_FEN(string fen_val)
     }
     else
     {
-        if (valid_file(fen_val[cursor]) && (fen_val[cursor] == '3' || fen_val[cursor+1] == '6'))
+        if (valid_file(fen_val[cursor]) && (fen_val[cursor+1] == '3' || fen_val[cursor+1] == '6'))
         {
             isEnPassant = true;
-            epSquare.push_back(fen_val[cursor]);
+            epSquare=fen_val[cursor];
             epSquare.push_back(fen_val[++cursor]);
         }
         else
@@ -191,4 +190,12 @@ void Board_FEN::default_FEN()
         }
         board.push_back(rank);
     }
+}
+vector<vector<char>> Board_FEN::return_board()
+{
+    return board;
+}
+void Board_FEN::display_board_FEN()
+{
+    display_board(board);
 }
