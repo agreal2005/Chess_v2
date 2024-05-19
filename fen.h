@@ -4,6 +4,7 @@
 #include <map>
 #pragma once
 using namespace std;
+const string BLANC = "                                                                    ";
 /*
     Board Representation: Converting FEN to Board Matrix and vice-versa
 */
