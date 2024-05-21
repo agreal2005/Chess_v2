@@ -10,9 +10,8 @@ Moves::Moves()
     {
         vector<int> initialize(8, 0);
         attackSquares.push_back(initialize);
-        attackedSquares=attackSquares;
     }
-    
+    attackedSquares=attackSquares;
     turn = 0;
 }
 Moves::Moves(vector<vector<char>> board, bool turn, bool isEnPassant, string epSquare)
@@ -28,7 +27,7 @@ void Moves::fetch_Moves(vector<vector<char>> board, bool turn, bool isEnPassant,
 }
 vector<vector<int>> Moves::return_attackSquares()
 {   
-    vector<vector<int>> attacksqa
+    
     return attackSquares;
 }
 vector<vector<int>> Moves::return_attackedSquares()
