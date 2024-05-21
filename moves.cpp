@@ -6,8 +6,13 @@ Moves::Moves()
         vector<char> initialize(8, '.');
         board.push_back(initialize);
     }
-    attackSquares = board;
-    attackedSquares = board;
+    for (int i=0; i<8; ++i)
+    {
+        vector<int> initialize(8, 0);
+        attackSquares.push_back(initialize);
+        attackedSquares=attackSquares;
+    }
+    
     turn = 0;
 }
 Moves::Moves(vector<vector<char>> board, bool turn, bool isEnPassant, string epSquare)
@@ -21,11 +26,12 @@ void Moves::fetch_Moves(vector<vector<char>> board, bool turn, bool isEnPassant,
     this->isEnPassant = isEnPassant;
     this->epSquare = epSquare;
 }
-vector<vector<char>> Moves::return_attackSquares()
-{
+vector<vector<int>> Moves::return_attackSquares()
+{   
+    vector<vector<int>> attacksqa
     return attackSquares;
 }
-vector<vector<char>> Moves::return_attackedSquares()
+vector<vector<int>> Moves::return_attackedSquares()
 {
     return attackedSquares;
 }
