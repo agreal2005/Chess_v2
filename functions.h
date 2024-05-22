@@ -13,3 +13,5 @@ bool valid_rank(char ch);
 bool valid_file(char ch);
 
 bool valid_piece_code(char ch);
+
+string ijs(int i, int j); // Convert (i,j) to square name
