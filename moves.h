@@ -1,18 +1,25 @@
 #include "functions.h"
+#include "pieces.h"
 class Moves
 {
     private:
+    pair<int,int> king_square;
+    bool wck, wcq, bck, bcq;
     vector<vector<char>> board;
-    vector<vector<vector<char>>> controlSquares;
-    vector<vector<vector<char>>> oppControlSquares;
+    vector<vector<vector<Piece>>> controlSquares;
+    vector<vector<vector<Piece>>> oppControlSquares;
     bool turn;
     bool isEnPassant; // If True, then store the EnPassant attack square in controlSquares
     string epSquare;
     public:
     Moves();
-    Moves(vector<vector<char>> board, bool turn, bool isEnPassant = false, string epSquare = "");
-    void fetch_Moves(vector<vector<char>> board, bool turn, bool isEnPassant = false, string epSquare = ""); // Fetch the board and the turn of the player
-    void compute_Squares(); // Compute attack and attacked Squares
-    vector<vector<vector<char>>> return_controlSquares();
-    vector<vector<vector<char>>> return_oppControlSquares();
+    Moves(vector<vector<char>> board, bool turn, bool isEnPassant = false, string epSquare = "", int castling = 0);
+    void fetch_Moves(vector<vector<char>> board, bool turn, bool isEnPassant = false, string epSquare = "", int castling = 0); // Fetch the board and the turn of the player
+    vector<string> valid_Moves(); // It is assumed that illegal positions + wrong player to move are not given
+    vector<vector<vector<Piece>>> return_controlSquares();
+    vector<vector<vector<Piece>>> return_oppControlSquares();
+    /*
+        Note: controlSquares and oppCS are computed in the
+        following order: Q, R, B, N, P, K
+    */
 };

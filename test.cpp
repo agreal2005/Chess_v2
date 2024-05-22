@@ -3,13 +3,29 @@
 #include "moves.h"
 int main()
 {
-    string fen = "r1bqkbnr/pppp1ppp/8/8/2PpP3/8/PP3PPP/RNBQKB1R b KQkq c3 0 5";
+    string fen = "3r4/1k6/7B/8/6K1/4n1b1/8/8 w - - 0 1";
     Board_FEN v(fen);
-    cout << fen << endl;
     v.display_board_FEN();
     Moves m(v.return_board(), 0);
-    cout << v.return_ep() << ' ' << v.return_eps() << ' ' << v.castle_options() << ' ' << v.return_halfmoveclk() << ' ' << v.return_fullmoves() << endl;
-    cout << v.get_FEN() << endl;
-    cout << (v.get_FEN() == fen) << endl;
+    vector<vector<vector<Piece>>> osq = m.return_oppControlSquares();
+    vector<string> vms = m.valid_Moves();
+    for (auto str : vms) cout << str << endl;
+    // cout << "TEST" << endl;
+    // getchar();
+    // for (int i=0; i<8; ++i)
+    // {
+    //     for (int j=0; j<8; ++j)
+    //     {
+    //         if (osq[i][j].size() > 0)
+    //         {
+    //             cout << ijs(i,j) << ": ";
+    //             for (auto piece : osq[i][j])
+    //             {
+    //                 cout << piece.type << " at " << ijs(piece.i, piece.j) << "; ";
+    //             }
+    //             cout << endl;
+    //         }
+    //     }
+    // }
     return 0;
 }
