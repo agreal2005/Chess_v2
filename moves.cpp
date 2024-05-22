@@ -16,6 +16,16 @@ Moves::Moves()
 }
 Moves::Moves(vector<vector<char>> board, bool turn, bool isEnPassant, string epSquare)
 {
+    for (int i=0; i<8; ++i)
+    {
+        vector<char> initialize(8, '.');
+        board.push_back(initialize);
+    }
+    for (int i=0; i<8; ++i)
+    {
+        vector<vector<char>> initialize(8);
+        controlSquares.push_back(initialize);
+    }
     fetch_Moves(board, turn, isEnPassant, epSquare);
 }
 void Moves::fetch_Moves(vector<vector<char>> board, bool turn, bool isEnPassant, string epSquare)
@@ -37,8 +47,8 @@ vector<vector<vector<char>>> Moves::return_controlSquares()
 
     for(int in_ver=0;in_ver<8;in_ver++){
        for(int in_hor=0;in_hor<8;in_hor++){
-
-           char temp=board[in_ver][in_hor]-offset;
+            if (board[in_ver][in_hor] == '.') continue;
+            char temp=board[in_ver][in_hor]-offset;
            
               if(temp=='Q'){
                     int temp_hor=in_hor-1;
@@ -195,6 +205,22 @@ vector<vector<vector<char>>> Moves::return_controlSquares()
                     if(in_hor<7)controlSquares[in_ver+1][in_hor+1].push_back('P'+offset);
                 }
               }
+      
+              if(temp=='K'){
+                if(in_ver>0){
+                    if(in_hor>0)controlSquares[in_ver-1][in_hor-1].push_back('K'+offset);
+                    if(in_hor<7)controlSquares[in_ver-1][in_hor+1].push_back('K'+offset);   
+                    controlSquares[in_ver-1][in_hor].push_back('K'+offset);  
+                }
+                if(in_ver<7){
+                    if(in_hor>0)controlSquares[in_ver+1][in_hor-1].push_back('K'+offset);
+                    if(in_hor<7)controlSquares[in_ver+1][in_hor+1].push_back('K'+offset);   
+                    controlSquares[in_ver+1][in_hor].push_back('K'+offset);  
+                }
+                if(in_hor>0)controlSquares[in_ver][in_hor-1].push_back('K'+offset);
+                if(in_hor<7)controlSquares[in_ver][in_hor+1].push_back('K'+offset);
+              }
+      
        }
     }
     return controlSquares;
@@ -211,8 +237,8 @@ vector<vector<vector<char>>> Moves::return_oppControlSquares()
 
     for(int in_ver=0;in_ver<8;in_ver++){
        for(int in_hor=0;in_hor<8;in_hor++){
-
-           char temp=board[in_ver][in_hor]-offset;
+            if (board[in_ver][in_hor] == '.') continue;
+            char temp=board[in_ver][in_hor]-offset;
            
               if(temp=='Q'){
                     int temp_hor=in_hor-1;
@@ -369,6 +395,21 @@ vector<vector<vector<char>>> Moves::return_oppControlSquares()
                     if(in_hor<7)oppControlSquares[in_ver+1][in_hor+1].push_back('P'+offset);
                 }
               }
+       
+              if(temp=='K'){
+                if(in_ver>0){
+                    if(in_hor>0)oppControlSquares[in_ver-1][in_hor-1].push_back('K'+offset);
+                    if(in_hor<7)oppControlSquares[in_ver-1][in_hor+1].push_back('K'+offset);   
+                    oppControlSquares[in_ver-1][in_hor].push_back('K'+offset);  
+                }
+                if(in_ver<7){
+                    if(in_hor>0)oppControlSquares[in_ver+1][in_hor-1].push_back('K'+offset);
+                    if(in_hor<7)oppControlSquares[in_ver+1][in_hor+1].push_back('K'+offset);   
+                    oppControlSquares[in_ver+1][in_hor].push_back('K'+offset);  
+                }
+                if(in_hor>0)oppControlSquares[in_ver][in_hor-1].push_back('K'+offset);
+                if(in_hor<7)oppControlSquares[in_ver][in_hor+1].push_back('K'+offset);
+              }     
        }
     }
     return oppControlSquares;
