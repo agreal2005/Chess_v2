@@ -3,21 +3,13 @@
 #include "moves.h"
 int main()
 {
-    Board_FEN v("r1bqkbnr/pppp1ppp/8/8/2PpP3/8/PP3PPP/RNBQKB1R b KQkq c3 0 5");
+    string fen = "r1bqkbnr/pppp1ppp/8/8/2PpP3/8/PP3PPP/RNBQKB1R b KQkq c3 0 5";
+    Board_FEN v(fen);
+    cout << fen << endl;
     v.display_board_FEN();
     Moves m(v.return_board(), 0);
-    vector<vector<vector<char>>> csq = m.return_controlSquares();
-    for (int i=0; i<8; ++i)
-    {
-        for (int j=0; j<8; ++j)
-        {
-            if (!csq[i][j].empty()) {
-                cout << ijs(i,j) << ": ";
-                for (auto piece : csq[i][j]) cout << piece << ' ';
-                cout << endl;
-                getchar();
-            }
-        }
-    }
+    cout << v.return_ep() << ' ' << v.return_eps() << ' ' << v.castle_options() << ' ' << v.return_halfmoveclk() << ' ' << v.return_fullmoves() << endl;
+    cout << v.get_FEN() << endl;
+    cout << (v.get_FEN() == fen) << endl;
     return 0;
 }
