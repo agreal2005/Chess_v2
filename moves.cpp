@@ -205,6 +205,22 @@ vector<vector<vector<char>>> Moves::return_controlSquares()
                     if(in_hor<7)controlSquares[in_ver+1][in_hor+1].push_back('P'+offset);
                 }
               }
+      
+              if(temp=='K'){
+                if(in_ver>0){
+                    if(in_hor>0)controlSquares[in_ver-1][in_hor-1].push_back('K'+offset);
+                    if(in_hor<7)controlSquares[in_ver-1][in_hor+1].push_back('K'+offset);   
+                    controlSquares[in_ver-1][in_hor].push_back('K'+offset);  
+                }
+                if(in_ver<7){
+                    if(in_hor>0)controlSquares[in_ver+1][in_hor-1].push_back('K'+offset);
+                    if(in_hor<7)controlSquares[in_ver+1][in_hor+1].push_back('K'+offset);   
+                    controlSquares[in_ver+1][in_hor].push_back('K'+offset);  
+                }
+                if(in_hor>0)controlSquares[in_ver][in_hor-1].push_back('K'+offset);
+                if(in_hor<7)controlSquares[in_ver][in_hor+1].push_back('K'+offset);
+              }
+      
        }
     }
     return controlSquares;
@@ -379,6 +395,21 @@ vector<vector<vector<char>>> Moves::return_oppControlSquares()
                     if(in_hor<7)oppControlSquares[in_ver+1][in_hor+1].push_back('P'+offset);
                 }
               }
+       
+              if(temp=='K'){
+                if(in_ver>0){
+                    if(in_hor>0)oppControlSquares[in_ver-1][in_hor-1].push_back('K'+offset);
+                    if(in_hor<7)oppControlSquares[in_ver-1][in_hor+1].push_back('K'+offset);   
+                    oppControlSquares[in_ver-1][in_hor].push_back('K'+offset);  
+                }
+                if(in_ver<7){
+                    if(in_hor>0)oppControlSquares[in_ver+1][in_hor-1].push_back('K'+offset);
+                    if(in_hor<7)oppControlSquares[in_ver+1][in_hor+1].push_back('K'+offset);   
+                    oppControlSquares[in_ver+1][in_hor].push_back('K'+offset);  
+                }
+                if(in_hor>0)oppControlSquares[in_ver][in_hor-1].push_back('K'+offset);
+                if(in_hor<7)oppControlSquares[in_ver][in_hor+1].push_back('K'+offset);
+              }     
        }
     }
     return oppControlSquares;
