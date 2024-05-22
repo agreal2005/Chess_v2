@@ -79,3 +79,15 @@ pair<int,int> sij(string s)
     int i = ('8' - s[1]);
     return {i,j};
 }
+
+int piece_type(char ch, bool turn)
+{
+    if (ch == '.') return 0;
+    if (turn == 0)
+    {
+        if (ch >= 'a' && ch <= 'z') return -1;
+        else return 1;
+    }
+    if (turn == 1 && ch>='a' && ch <= 'z') return 1;
+    return -1;
+}
