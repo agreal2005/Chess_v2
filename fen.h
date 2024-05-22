@@ -31,7 +31,6 @@ class Board_FEN
     void default_FEN();
     void display_board_FEN();
     vector<vector<char>> return_board();
-
     /*
         Note: In future, need to make the Game Class
         (and other req classes) to be a friend class,
