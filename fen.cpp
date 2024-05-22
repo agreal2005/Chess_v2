@@ -94,10 +94,10 @@ void Board_FEN::input_FEN(string fen_val)
                 white_castle_queenside = true;
                 break;
                 case 'k':
-                black_castle_kingside = false;
+                black_castle_kingside = true;
                 break;
                 case 'q':
-                black_castle_queenside = false;
+                black_castle_queenside = true;
                 break;
                 default:
                 // Invalid FEN
@@ -198,4 +198,137 @@ vector<vector<char>> Board_FEN::return_board()
 void Board_FEN::display_board_FEN()
 {
     display_board(board);
+}
+bool Board_FEN::return_ep()
+{
+    return isEnPassant;
+}
+string Board_FEN::return_eps()
+{
+    return epSquare;
+}
+int Board_FEN::castle_options()
+{
+    /*
+        ret has 4 bits
+        MSB to LSB represent if the following castling
+        options are true (possible) or not:
+        -> WCK, WCQ, BCK, BCQ
+    */
+    int ret = 0;
+    if (white_castle_kingside) ret |= 8;
+    if (white_castle_queenside) ret |= 4;
+    if (black_castle_kingside) ret |= 2;
+    if (black_castle_queenside) ret |= 1;
+    return ret;
+}
+int Board_FEN::return_halfmoveclk()
+{
+    return halfmove_clock;
+}
+int Board_FEN::return_fullmoves()
+{
+    return fullmoves;
+}
+string Board_FEN::get_FEN()
+{
+    string str = "";
+    for (int i=0; i<8; ++i)
+    {
+        int gap = 0;
+        for (int j=0; j<8; ++j)
+        {
+            if (board[i][j] == '.')
+            {
+                gap++;
+            }
+            else 
+            {
+                if (gap > 0)
+                {
+                    str.push_back('0' + gap);
+                    gap = 0;
+                }
+                str.push_back(board[i][j]);
+            }
+        }
+        if (gap > 0)
+        {
+            str.push_back('0' + gap);
+            gap = 0;
+        }
+        if (i < 7)
+        {
+            str.push_back('/');
+        }
+    }
+    str.push_back(' ');
+    if (turn == 0) str.push_back('w');
+    else str.push_back('b');
+    str.push_back(' ');
+    if (white_castle_kingside) str.push_back('K');
+    if (white_castle_queenside) str.push_back('Q');
+    if (black_castle_kingside) str.push_back('k');
+    if (black_castle_queenside) str.push_back('q');
+    if (!(white_castle_kingside || black_castle_kingside || white_castle_queenside || black_castle_queenside))
+        str.push_back('-');
+    str.push_back(' ');
+    if (!isEnPassant) str.push_back('-');
+    else str += epSquare;
+    str.push_back(' ');
+    str += to_string(halfmove_clock);
+    str.push_back(' ');
+    str += to_string(fullmoves);
+    return str;
+}
+string Board_FEN::get_FEN(vector<vector<char>> brd, bool t, bool wck, bool wcq, bool bck, bool bcq, bool isEnp, string epS, int hfc, int fms)
+{
+    string str = "";
+    for (int i=0; i<8; ++i)
+    {
+        int gap = 0;
+        for (int j=0; j<8; ++j)
+        {
+            if (brd[i][j] == '.')
+            {
+                gap++;
+            }
+            else 
+            {
+                if (gap > 0)
+                {
+                    str.push_back('0' + gap);
+                    gap = 0;
+                }
+                str.push_back(brd[i][j]);
+            }
+        }
+        if (gap > 0)
+        {
+            str.push_back('0' + gap);
+            gap = 0;
+        }
+        if (i < 7)
+        {
+            str.push_back('/');
+        }
+    }
+    str.push_back(' ');
+    if (t == 0) str.push_back('w');
+    else str.push_back('b');
+    str.push_back(' ');
+    if (wck) str.push_back('K');
+    if (wcq) str.push_back('Q');
+    if (bck) str.push_back('k');
+    if (bcq) str.push_back('q');
+    if (!(bcq || bck || wcq || wck))
+        str.push_back('-');
+    str.push_back(' ');
+    if (!isEnp) str.push_back('-');
+    else str += epS;
+    str.push_back(' ');
+    str += to_string(hfc);
+    str.push_back(' ');
+    str += to_string(fms);
+    return str;
 }

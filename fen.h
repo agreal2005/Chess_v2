@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <string>
 #include <set>
 #include <map>
 #pragma once
@@ -31,6 +32,13 @@ class Board_FEN
     void default_FEN();
     void display_board_FEN();
     vector<vector<char>> return_board();
+    bool return_ep();
+    string return_eps();
+    int castle_options();
+    int return_halfmoveclk();
+    int return_fullmoves();
+    string get_FEN();
+    string get_FEN(vector<vector<char>> brd, bool t, bool wck, bool wcq, bool bck, bool bcq, bool isEnp, string epS, int hfc, int fms);
     /*
         Note: In future, need to make the Game Class
         (and other req classes) to be a friend class,

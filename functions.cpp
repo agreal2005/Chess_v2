@@ -72,3 +72,10 @@ string ijs(int i, int j)
     };
     return squares[i][j];
 }
+
+pair<int,int> sij(string s)
+{
+    int j = s[0] - 'a';
+    int i = ('8' - s[1]);
+    return {i,j};
+}

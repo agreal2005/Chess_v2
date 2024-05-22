@@ -15,3 +15,5 @@ bool valid_file(char ch);
 bool valid_piece_code(char ch);
 
 string ijs(int i, int j); // Convert (i,j) to square name
+
+pair<int,int> sij(string s); // Convert square name to (i, j)
