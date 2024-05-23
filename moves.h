@@ -4,8 +4,11 @@ class Moves
 {
     private:
     pair<int,int> king_square;
+    pair<int,int> oppKing_square;
     bool wck, wcq, bck, bcq;
     vector<vector<char>> board;
+    vector<Piece> pieces; // own pieces
+    vector<Piece> oppPieces; // opp pieces
     vector<vector<vector<Piece>>> controlSquares;
     vector<vector<vector<Piece>>> oppControlSquares;
     bool turn;
@@ -18,6 +21,7 @@ class Moves
     vector<string> valid_Moves(); // It is assumed that illegal positions + wrong player to move are not given
     vector<vector<vector<Piece>>> return_controlSquares();
     vector<vector<vector<Piece>>> return_oppControlSquares();
+    void checkPinned();
     /*
         Note: controlSquares and oppCS are computed in the
         following order: Q, R, B, N, P, K
