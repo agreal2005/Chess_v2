@@ -3,8 +3,8 @@
 #define inf 20000
 
 double evaluate(vector<vector<char>> &board, vector<vector<vector<char>>> &attacked_squares, vector<vector<vector<char>>> &attack_squares, bool turn, string FEN);
-double evaluate_checkmate(vector<vector<char>> &board, vector<vector<vector<char>>> &attacked_squares, vector<vector<vector<char>>> &attack_squares, bool turn, string FEN);
-double evaluate_material(vector<vector<char>> &board, vector<vector<vector<char>>> &attacked_squares, vector<vector<vector<char>>> &attack_squares, bool turn, string FEN);
+double evaluate_checkmate(vector<vector<char>> &board, vector<vector<vector<char>>> &attacked_squares, vector<vector<vector<char>>> &legal_moves, bool turn, string FEN);
+double evaluate_material(vector<vector<char>> &board);
 double evaluate_pawn_structure(vector<vector<char>> &board, vector<vector<vector<char>>> &attacked_squares, vector<vector<vector<char>>> &attack_squares, bool turn, string FEN);
 double evaluate_pieces_eval(vector<vector<char>> &board, vector<vector<vector<char>>> &attacked_squares, vector<vector<vector<char>>> &attack_squares, bool turn, string FEN);
 double evaluate_outposts(vector<vector<char>> &board, vector<vector<vector<char>>> &attacked_squares, vector<vector<vector<char>>> &attack_squares, bool turn, string FEN);
