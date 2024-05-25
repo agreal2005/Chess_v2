@@ -44,4 +44,6 @@ class Board_FEN
         (and other req classes) to be a friend class,
         to directly access the parameters.
     */
+
+   friend class Moves;
 };

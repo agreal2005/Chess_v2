@@ -1,7 +1,7 @@
 #include <iostream>
 using namespace std;
-#pragma once
 
+#pragma once
 class Piece
 {
     public:

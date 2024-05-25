@@ -1,5 +1,6 @@
 #include "functions.h"
 #include "pieces.h"
+#pragma once
 class Moves
 {
     private:

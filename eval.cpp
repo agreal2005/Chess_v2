@@ -5,7 +5,7 @@
 #define rook_score 5
 #define queen_score 9
 
-double evaluate_checkmate(vector<vector<char>> &board, vector<vector<vector<char>>> &attacked_squares, vector<vector<vector<char>>> &legal_moves, bool turn, string FEN)
+double evaluate_checkmate(const vector<vector<char>> &board, const vector<vector<vector<Piece>>> &oppcontrol_squares, const vector<string> &legal_moves, bool turn, string FEN)
 {
     if(turn == 0)
     {
@@ -25,7 +25,7 @@ double evaluate_checkmate(vector<vector<char>> &board, vector<vector<vector<char
                 }
             }
 
-            if(attacked_squares[xking][yking].size() == 0)
+            if(oppcontrol_squares[xking][yking].size() == 0)
             {
                 return 0.00;
             }
@@ -33,6 +33,10 @@ double evaluate_checkmate(vector<vector<char>> &board, vector<vector<vector<char
             {
                 return -inf;
             }
+        }
+        else
+        {
+            return 0.00;
         }
     }
     else
@@ -52,7 +56,7 @@ double evaluate_checkmate(vector<vector<char>> &board, vector<vector<vector<char
                 }
             }
 
-            if(attacked_squares[xking][yking].size() == 0)
+            if(oppcontrol_squares[xking][yking].size() == 0)
             {
                 return 0.00;
             }
@@ -61,10 +65,14 @@ double evaluate_checkmate(vector<vector<char>> &board, vector<vector<vector<char
                 return inf;
             }
         }
+        else
+        {
+            return 0.00;
+        }
     }
 }
 
-double evaluate_material(vector<vector<char>> &board)
+double evaluate_material(const vector<vector<char>> &board)
 {
     double white_score = 0;
     double black_score = 0;
@@ -94,16 +102,16 @@ double evaluate_material(vector<vector<char>> &board)
                 black_score += pawn_score;
                 break;
             case 'n':
-                black_score += pawn_score;
+                black_score += knight_score;
                 break;
             case 'r':
-                black_score += pawn_score;
+                black_score += rook_score;
                 break;
             case 'b':
-                black_score += pawn_score;
+                black_score += bishop_score;
                 break;
             case 'q':
-                black_score += pawn_score;
+                black_score += queen_score;
                 break;
             
             default:

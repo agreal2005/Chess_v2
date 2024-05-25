@@ -16,6 +16,7 @@ Moves::Moves()
     wck = wcq = bck = bcq = false;
     king_square = sij("e1");
 }
+
 Moves::Moves(vector<vector<char>> board, bool turn, bool isEnPassant, string epSquare, int castling)
 {
     for (int i=0; i<8; ++i)
@@ -34,6 +35,7 @@ Moves::Moves(vector<vector<char>> board, bool turn, bool isEnPassant, string epS
     return_controlSquares();
     return_oppControlSquares();
 }
+
 void Moves::fetch_Moves(vector<vector<char>> board, bool turn, bool isEnPassant, string epSquare, int castling)
 {
     this->board = board;
