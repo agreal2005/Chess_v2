@@ -764,7 +764,8 @@ vector<string> Moves::valid_Moves()
                     validMoves.push_back(king+ijs(king_square.first, king_square.second)+"x"+ijs(in_ver,in_hor+1));
         }
         // Illegal King Moves to be checked
-        auto it = validMoves.begin();
+        if(validMoves.size() != 0)
+       { auto it = validMoves.begin();
         while (it != validMoves.end())
         {
             string mv = *it;
@@ -781,8 +782,8 @@ vector<string> Moves::valid_Moves()
                     break;
                 }
             }
-            if (validMoves.empty()) break;
         }
+    }
         return validMoves;
     }
 

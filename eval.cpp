@@ -124,8 +124,8 @@ double evaluate_material(const vector<vector<char>> &board)
 }
 
 // This checks whether there is a pawn in the given column after or behind a given row for both white and black depending on dir
-// dir 1 means going forward whichever side you are playing
-bool checkPawn(int col, int row, bool turn, vector<vector<char>> &board, bool dir)
+// dir 1 means ahead or equal to the row of whichever side you are playing
+bool checkPawn(int col, int row, bool turn, const vector<vector<char>> &board, bool dir)
 {
     if(col < 0 || col > 7)
     {
@@ -184,7 +184,7 @@ bool checkPawn(int col, int row, bool turn, vector<vector<char>> &board, bool di
     }
 }
 
-bool CheckPasser(vector<vector<char>> &board, int row, int col, int turn)
+bool CheckPasser(const vector<vector<char>> &board, int row, int col, int turn)
 {
     if(turn == 0)
     {
@@ -198,7 +198,7 @@ bool CheckPasser(vector<vector<char>> &board, int row, int col, int turn)
     }
 }
 
-bool CheckDoublePawn(vector<vector<char>> &board, int row, int col, int turn)
+bool CheckDoublePawn(const vector<vector<char>> &board, int row, int col, int turn)
 {
     if(turn == 0)
     {
@@ -224,25 +224,19 @@ bool CheckDoublePawn(vector<vector<char>> &board, int row, int col, int turn)
     }
 }
 
-double evaluate_pawn_structure(vector<vector<char>> &board, vector<vector<vector<char>>> &attacked_squares, vector<vector<vector<char>>> &attack_squares, bool turn, string FEN)
-{
+double evaluate_pawn_structure(const vector<vector<char>> &board, const vector<vector<vector<Piece>>> &control_squares, const vector<vector<vector<Piece>>> &oppcontrol_squares, bool turn, string FEN){
     // doubled pawn penalty is made half of what it should be because it will be double counted, tripled pawn will be interpreted as a double doubled pawn
-    double doubled_pawn_penalty = 0.15;
-    double isolated_pawn_penalty = 0.2;
-    double pawn_chain_bonus = 0.2;
-    double pawn_passer_bonus = 0.3;
+    double doubled_pawn_penalty = 0.3; // checked 0.3
+    double isolated_pawn_penalty = 0.3; //checked 0.3
+    double pawn_chain_bonus = 0.2; // checked 0.2
+    double pawn_passer_bonus = 0.15; // checked 0.15
 
     double white_score = 0;
     double black_score = 0;
 
     // while computing this it is calculated from white's POV
-    if(turn == 1)
-    {
-        auto temp = attack_squares;
-        attack_squares = attacked_squares;
-        attacked_squares = temp;
-    }
 
+if(turn == 0){
     for(int i=0; i<8; i++)
     {
         for(int j=0; j<8; j++)
@@ -250,9 +244,72 @@ double evaluate_pawn_structure(vector<vector<char>> &board, vector<vector<vector
             if(board[i][j] == 'P')
             {
                 // accounting for pawn chains
-                for(auto i : attack_squares[i][j])
+                for(auto piece : control_squares[7-i][j])
                 {
-                    if(i == 'P')
+                 //   cout << piece.type << ' ';
+                    if(piece.type == 'P')
+                    {
+                        white_score += pawn_chain_bonus;
+                    }
+                }
+
+                if((checkPawn(j-1, 0, 0, board, 1) | checkPawn(j+1, 0, 0, board, 1)) == false)
+                {
+                    white_score -= isolated_pawn_penalty;
+                }
+
+                if(CheckPasser(board, i, j, 0) == true)
+                {
+                    white_score += pawn_passer_bonus*(i);
+                }
+
+                if(CheckDoublePawn(board, i, j, 0) == true)
+                {
+                    white_score -= doubled_pawn_penalty;
+                }
+            }
+
+            else if(board[i][j] == 'p')
+            {
+                for(auto piece : oppcontrol_squares[7-i][j])
+                {
+                    if(piece.type == 'p')
+                    {
+                        black_score += pawn_chain_bonus;
+                    }
+                }
+
+                if((checkPawn(j-1, 0, 1, board, 0) | checkPawn(j+1, 0, 1, board, 0)) == false)
+                {
+                    black_score -= isolated_pawn_penalty;
+                }
+
+                if(CheckPasser(board, i, j, 1) == true)
+                {
+                    black_score += pawn_passer_bonus*(7-i);
+                }
+
+                if(CheckDoublePawn(board, i, j, 1) == true)
+                {
+                    black_score -= doubled_pawn_penalty;
+                }
+                
+            }
+        }
+    }
+}
+else
+{
+    for(int i=0; i<8; i++)
+    {
+        for(int j=0; j<8; j++)
+        {
+            if(board[i][j] == 'P')
+            {
+                // accounting for pawn chains
+                for(auto i : oppcontrol_squares[7-i][j])
+                {
+                    if(i.type == 'P')
                     {
                         white_score += pawn_chain_bonus;
                     }
@@ -276,9 +333,9 @@ double evaluate_pawn_structure(vector<vector<char>> &board, vector<vector<vector
 
             else if(board[i][j] == 'p')
             {
-                for(auto i : attacked_squares[i][j])
+                for(auto i : control_squares[7-i][j])
                 {
-                    if(i == 'p')
+                    if(i.type == 'p')
                     {
                         black_score += pawn_chain_bonus;
                     }
@@ -302,14 +359,144 @@ double evaluate_pawn_structure(vector<vector<char>> &board, vector<vector<vector
             }
         }
     }
+}
 
-   // restoring the swap
-    if(turn == 1)
-    {
-        auto temp = attack_squares;
-        attack_squares = attacked_squares;
-        attacked_squares = temp;
-    }
-    
+    cout << white_score << ' ' << black_score << ' ';
     return white_score-black_score;
 }
+
+double evaluate_outposts(const vector<vector<char>> &board, const vector<vector<vector<Piece>>> &control_squares, const vector<vector<vector<Piece>>> &oppcontrol_squares, bool turn)
+{
+    double white_score = 0;
+    double black_score = 0;
+
+    double knight_on_outpost = 0.3;
+    double bishop_on_outpost = 0.2;
+
+    for(int i=0; i<8; i++)
+    {
+        for(int j=0; j<8; j++)
+        {
+            if(board[i][j] == 'N')
+            {  
+                double outpost_score = 0;
+                // evaluating for white outposts
+                auto ptr = control_squares[7-i][j];
+                if(turn == 1)
+                {
+                    ptr = oppcontrol_squares[7-i][j];
+                }
+                    for(auto piece : ptr)
+                  {
+                    if(piece.type == 'P')
+                    {
+                        outpost_score += knight_on_outpost;
+                    }
+                  }
+
+                  if(checkPawn(j+1, i+1, 1, board, 0) == true)
+                  {
+                    outpost_score -= knight_on_outpost;
+                  }
+
+                  if(checkPawn(j-1, i+1, 1, board, 0) == true)
+                  {
+                    outpost_score -= knight_on_outpost;
+                  }
+
+                  white_score += max(0.0, outpost_score);
+                }
+            
+            else if(board[i][j] == 'B')
+            {
+                double outpost_score = 0;
+                auto ptr = control_squares[7-i][j];
+                if(turn == 1)
+                {
+                    ptr = oppcontrol_squares[7-i][j];
+                }
+                // evaluating for white outposts
+                    for(auto piece : ptr)
+                  {
+                    if(piece.type == 'P')
+                    {
+                        outpost_score += bishop_on_outpost;
+                    }
+                  }
+                    
+                  if(checkPawn(j+1, i+1, 1, board, 0) == true)
+                  {
+                    outpost_score -= bishop_on_outpost;
+                  }
+
+                  if(checkPawn(j-1, i+1, 1, board, 0) == true)
+                  {
+                    outpost_score -= bishop_on_outpost;
+                  }
+
+                  white_score += max(0.0 , outpost_score);
+               }
+            
+                else if(board[i][j] == 'n')
+                {
+                    double outpost_score = 0;
+                    auto ptr = oppcontrol_squares[7-i][j];
+                    if(turn == 1)
+                    {
+                        ptr = control_squares[7-i][j];
+                    }
+                    for(auto piece : ptr)
+                    {
+                        if(piece.type == 'p')
+                        {
+                            outpost_score += knight_on_outpost;
+                        }
+                    }
+
+                    if(checkPawn(j+1, i-1, 0, board, 0) == true)
+                    {
+                        outpost_score -= knight_on_outpost;
+                    }
+
+                    if(checkPawn(j-1, i-1, 0, board, 0) == true)
+                    {
+                        outpost_score -= knight_on_outpost;
+                    }
+
+                    black_score += max(0.0, outpost_score);   
+                }
+
+                else if(board[i][j] == 'b')
+                {
+                    double outpost_score = 0;
+                    auto ptr = oppcontrol_squares[7-i][j];
+                    if(turn == 1)
+                    {
+                        ptr = control_squares[7-i][j];
+                    }
+                    for(auto piece : ptr)
+                    {
+                        if(piece.type == 'p')
+                        {
+                            outpost_score += bishop_on_outpost;
+                        }
+                    }
+
+                    if(checkPawn(j+1, i-1, 0, board, 0) == true)
+                    {
+                        outpost_score -= bishop_on_outpost;
+                    }
+
+                    if(checkPawn(j-1, i-1, 0, board, 0) == true)
+                    {
+                        outpost_score -= bishop_on_outpost;
+                    }
+
+                    black_score += max(0.0, outpost_score);  
+                }
+            }
+        }
+            return white_score-black_score;
+}
+ 
+
