@@ -19,3 +19,5 @@ string ijs(int i, int j); // Convert (i,j) to square name
 pair<int,int> sij(string s); // Convert square name to (i, j)
 
 int piece_type(char ch, bool turn);
+
+vector<vector<char>> reverseBoard(const vector<vector<char>> &board);

@@ -91,3 +91,16 @@ int piece_type(char ch, bool turn)
     if (turn == 1 && ch>='a' && ch <= 'z') return 1;
     return -1;
 }
+
+vector<vector<char>> reverseBoard(const vector<vector<char>> &board)
+{
+    vector<vector<char>> rev(8, vector<char>(8));
+    for(int i=0; i<8; i++)
+    {
+        for(int j=0; j<8; j++)
+        {
+            rev[i][j] = board[7-i][7-j];
+        }
+    }
+    return rev;
+}

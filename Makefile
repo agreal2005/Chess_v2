@@ -15,4 +15,4 @@ test.o: test.cpp
 	$(CC) $(CFLAGS) -c -o $@ $<
 
 clean:
-	rm -rf *.o test
+	del *.o Test.exe
