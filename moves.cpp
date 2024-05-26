@@ -782,7 +782,6 @@ vector<string> Moves::valid_Moves()
                     break;
                 }
             }
-            if (validMoves.empty()) break;
         }
     }
         return validMoves;

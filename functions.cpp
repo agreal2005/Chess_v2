@@ -99,7 +99,7 @@ vector<vector<char>> reverseBoard(const vector<vector<char>> &board)
     {
         for(int j=0; j<8; j++)
         {
-            rev[i][j] = board[7-i][7-j];
+            rev[i][j] = board[7-i][j];
         }
     }
     return rev;

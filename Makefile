@@ -1,6 +1,6 @@
 CC = g++
 CFLAGS = -O3 -std=c++17
-TARG = test
+TARG = Test
 
 # My testing file is test.cpp, you can change it accordingly
 DEPS = fen.o functions.o moves.o test.o eval.o 

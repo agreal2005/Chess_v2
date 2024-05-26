@@ -226,10 +226,10 @@ bool CheckDoublePawn(const vector<vector<char>> &board, int row, int col, int tu
 
 double evaluate_pawn_structure(const vector<vector<char>> &board, const vector<vector<vector<Piece>>> &control_squares, const vector<vector<vector<Piece>>> &oppcontrol_squares, bool turn, string FEN){
     // doubled pawn penalty is made half of what it should be because it will be double counted, tripled pawn will be interpreted as a double doubled pawn
-    double doubled_pawn_penalty = 0.3; // checked
-    double isolated_pawn_penalty = 0.3; //checked
-    double pawn_chain_bonus = 0.2; // checked
-    double pawn_passer_bonus = 0.15; // checked
+    double doubled_pawn_penalty = 0.3; // checked 0.3
+    double isolated_pawn_penalty = 0.3; //checked 0.3
+    double pawn_chain_bonus = 0.2; // checked 0.2
+    double pawn_passer_bonus = 0.15; // checked 0.15
 
     double white_score = 0;
     double black_score = 0;
@@ -244,9 +244,10 @@ if(turn == 0){
             if(board[i][j] == 'P')
             {
                 // accounting for pawn chains
-                for(auto i : control_squares[i][j])
+                for(auto piece : control_squares[7-i][j])
                 {
-                    if(i.type == 'P')
+                 //   cout << piece.type << ' ';
+                    if(piece.type == 'P')
                     {
                         white_score += pawn_chain_bonus;
                     }
@@ -270,9 +271,9 @@ if(turn == 0){
 
             else if(board[i][j] == 'p')
             {
-                for(auto i : oppcontrol_squares[i][j])
+                for(auto piece : oppcontrol_squares[7-i][j])
                 {
-                    if(i.type == 'p')
+                    if(piece.type == 'p')
                     {
                         black_score += pawn_chain_bonus;
                     }
@@ -306,7 +307,7 @@ else
             if(board[i][j] == 'P')
             {
                 // accounting for pawn chains
-                for(auto i : oppcontrol_squares[i][j])
+                for(auto i : oppcontrol_squares[7-i][j])
                 {
                     if(i.type == 'P')
                     {
@@ -332,7 +333,7 @@ else
 
             else if(board[i][j] == 'p')
             {
-                for(auto i : control_squares[i][j])
+                for(auto i : control_squares[7-i][j])
                 {
                     if(i.type == 'p')
                     {
@@ -360,6 +361,142 @@ else
     }
 }
 
-//    cout << white_score << ' ' << black_score << ' ';
+    cout << white_score << ' ' << black_score << ' ';
     return white_score-black_score;
 }
+
+double evaluate_outposts(const vector<vector<char>> &board, const vector<vector<vector<Piece>>> &control_squares, const vector<vector<vector<Piece>>> &oppcontrol_squares, bool turn)
+{
+    double white_score = 0;
+    double black_score = 0;
+
+    double knight_on_outpost = 0.3;
+    double bishop_on_outpost = 0.2;
+
+    for(int i=0; i<8; i++)
+    {
+        for(int j=0; j<8; j++)
+        {
+            if(board[i][j] == 'N')
+            {  
+                double outpost_score = 0;
+                // evaluating for white outposts
+                auto ptr = control_squares[7-i][j];
+                if(turn == 1)
+                {
+                    ptr = oppcontrol_squares[7-i][j];
+                }
+                    for(auto piece : ptr)
+                  {
+                    if(piece.type == 'P')
+                    {
+                        outpost_score += knight_on_outpost;
+                    }
+                  }
+
+                  if(checkPawn(j+1, i+1, 1, board, 0) == true)
+                  {
+                    outpost_score -= knight_on_outpost;
+                  }
+
+                  if(checkPawn(j-1, i+1, 1, board, 0) == true)
+                  {
+                    outpost_score -= knight_on_outpost;
+                  }
+
+                  white_score += max(0.0, outpost_score);
+                }
+            
+            else if(board[i][j] == 'B')
+            {
+                double outpost_score = 0;
+                auto ptr = control_squares[7-i][j];
+                if(turn == 1)
+                {
+                    ptr = oppcontrol_squares[7-i][j];
+                }
+                // evaluating for white outposts
+                    for(auto piece : ptr)
+                  {
+                    if(piece.type == 'P')
+                    {
+                        outpost_score += bishop_on_outpost;
+                    }
+                  }
+                    
+                  if(checkPawn(j+1, i+1, 1, board, 0) == true)
+                  {
+                    outpost_score -= bishop_on_outpost;
+                  }
+
+                  if(checkPawn(j-1, i+1, 1, board, 0) == true)
+                  {
+                    outpost_score -= bishop_on_outpost;
+                  }
+
+                  white_score += max(0.0 , outpost_score);
+               }
+            
+                else if(board[i][j] == 'n')
+                {
+                    double outpost_score = 0;
+                    auto ptr = oppcontrol_squares[7-i][j];
+                    if(turn == 1)
+                    {
+                        ptr = control_squares[7-i][j];
+                    }
+                    for(auto piece : ptr)
+                    {
+                        if(piece.type == 'p')
+                        {
+                            outpost_score += knight_on_outpost;
+                        }
+                    }
+
+                    if(checkPawn(j+1, i-1, 0, board, 0) == true)
+                    {
+                        outpost_score -= knight_on_outpost;
+                    }
+
+                    if(checkPawn(j-1, i-1, 0, board, 0) == true)
+                    {
+                        outpost_score -= knight_on_outpost;
+                    }
+
+                    black_score += max(0.0, outpost_score);   
+                }
+
+                else if(board[i][j] == 'b')
+                {
+                    double outpost_score = 0;
+                    auto ptr = oppcontrol_squares[7-i][j];
+                    if(turn == 1)
+                    {
+                        ptr = control_squares[7-i][j];
+                    }
+                    for(auto piece : ptr)
+                    {
+                        if(piece.type == 'p')
+                        {
+                            outpost_score += bishop_on_outpost;
+                        }
+                    }
+
+                    if(checkPawn(j+1, i-1, 0, board, 0) == true)
+                    {
+                        outpost_score -= bishop_on_outpost;
+                    }
+
+                    if(checkPawn(j-1, i-1, 0, board, 0) == true)
+                    {
+                        outpost_score -= bishop_on_outpost;
+                    }
+
+                    black_score += max(0.0, outpost_score);  
+                }
+            }
+        }
+            return white_score-black_score;
+}
+ 
+
