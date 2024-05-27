@@ -3,6 +3,7 @@
 #include <string>
 #include <set>
 #include <map>
+#include <algorithm>
 #pragma once
 using namespace std;
 const string BLANC = "                                                                    ";
