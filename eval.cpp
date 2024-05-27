@@ -499,4 +499,135 @@ double evaluate_outposts(const vector<vector<char>> &board, const vector<vector<
             return white_score-black_score;
 }
  
+double hanging_piece_penalty(const vector<vector<char>> &board, const vector<vector<vector<Piece>>> &control_squares, const vector<vector<vector<Piece>>> &oppcontrol_squares, bool turn){
+   double total_penalty=0.0;
+   vector<double> white_penalty;
+   vector<double> black_penalty;
+   
+   
+   for(int in_ver=0; in_ver<8; in_ver++){
+    for(int in_hor=0; in_hor<8; in_hor++){
+        if(board[in_ver][in_hor] >= 'A' &&  board[in_ver][in_hor] <= 'Z' ){
+                if( (turn ^ control_squares[in_ver][in_hor].empty())  &&  !(turn ^ oppcontrol_squares[in_ver][in_hor].empty() ) ){
+                    switch(board[in_ver][in_hor]){
+                        case 'P': white_penalty.push_back(0.8); break;
+                        case 'B': white_penalty.push_back(2.4); break;
+                        case 'N': white_penalty.push_back(2.4); break;
+                        case 'R': white_penalty.push_back(4.0); break;
+                        case 'Q': white_penalty.push_back(7.2); break;
+                        default: break;
+                    }
+                }
+        }
+        if(board[in_ver][in_hor] >= 'a' &&  board[in_ver][in_hor] <= 'z' ){
+                if( !(turn ^ control_squares[in_ver][in_hor].empty())  &&  (turn ^ oppcontrol_squares[in_ver][in_hor].empty() ) ){
+                    switch(board[in_ver][in_hor]){
+                        case 'p': black_penalty.push_back(0.8); break;
+                        case 'b': black_penalty.push_back(2.4); break;
+                        case 'n': black_penalty.push_back(2.4); break;
+                        case 'r': black_penalty.push_back(4.0); break;
+                        case 'q': black_penalty.push_back(7.2); break;
+                        default: break;
+                    }
+                }
+        }
+    }
+   }
+   sort( white_penalty.begin() , white_penalty.end() , greater<double>() );
+   sort( black_penalty.begin() , black_penalty.end() , greater<double>() );
+   if(turn){
+    for( int i=0 ; i<white_penalty.size() ; i+=2 ) total_penalty += white_penalty[i];
+    for( int i=1 ; i<black_penalty.size() ; i+=2 ) total_penalty -= black_penalty[i];
+   }
+   else{
+    for( int i=1 ; i<white_penalty.size() ; i+=2 ) total_penalty += white_penalty[i];
+    for( int i=0 ; i<black_penalty.size() ; i+=2 ) total_penalty -= black_penalty[i];
+   }
 
+   return total_penalty;
+}
+
+
+double weaker_attacked_penalty(const vector<vector<char>> &board, const vector<vector<vector<Piece>>> &control_squares, const vector<vector<vector<Piece>>> &oppcontrol_squares, bool turn){
+   double total_penalty=0.0;
+   vector<double> white_penalty;
+   vector<double> black_penalty;
+
+    for(int in_ver=0; in_ver<8; in_ver++){
+     for(int in_hor=0; in_hor<8; in_hor++){
+          if(board[in_ver][in_hor] >='A' && board[in_ver][in_hor] <= 'Z'){
+
+            int this_piece_val=0;
+
+            switch( board[in_ver][in_hor]){
+                case 'P' : this_piece_val = 1; break;
+                case 'B' : this_piece_val = 3; break;
+                case 'N' : this_piece_val = 3; break;
+                case 'R' : this_piece_val = 5; break;
+                case 'Q' : this_piece_val = 9; break;
+                default: break;
+            }
+
+            int opp_piece_val = 9;
+            vector<Piece> vec_of_opp_pieces;
+            if(turn) vec_of_opp_pieces = control_squares[in_ver][in_ver];
+            else  vec_of_opp_pieces = oppcontrol_squares[in_ver][in_hor];
+            
+                for(auto it : vec_of_opp_pieces ){
+                    switch(it.type){
+                        case 'p' : opp_piece_val = min(opp_piece_val,1); break;
+                        case 'b' : opp_piece_val = min(opp_piece_val,3); break;
+                        case 'n' : opp_piece_val = min(opp_piece_val,3); break;
+                        case 'r' : opp_piece_val = min(opp_piece_val,5); break;
+                        default: break;
+                    }
+                }
+             white_penalty.push_back (0.9*(this_piece_val-opp_piece_val));
+          }
+
+          if(board[in_ver][in_hor] >='a' && board[in_ver][in_hor] <= 'z'){
+
+            int this_piece_val=0;
+
+            switch( board[in_ver][in_hor]){
+                case 'p' : this_piece_val =1; break;
+                case 'b' : this_piece_val =3; break;
+                case 'n' : this_piece_val =3; break;
+                case 'r' : this_piece_val =5; break;
+                case 'q' : this_piece_val =9; break;
+                default: break;
+            }
+
+            int opp_piece_val = 9;
+            vector<Piece> vec_of_opp_pieces;
+            if(!turn) vec_of_opp_pieces = control_squares[in_ver][in_ver];
+            else   vec_of_opp_pieces = oppcontrol_squares[in_ver][in_hor];
+            
+                for(auto it : vec_of_opp_pieces ){
+                    switch(it.type){
+                        case 'P' : opp_piece_val = min(opp_piece_val,1); break;
+                        case 'B' : opp_piece_val = min(opp_piece_val,3); break;
+                        case 'N' : opp_piece_val = min(opp_piece_val,3); break;
+                        case 'R' : opp_piece_val = min(opp_piece_val,5); break;
+                        default: break;
+                    }
+                }
+             black_penalty.push_back (0.9*(this_piece_val-opp_piece_val));
+          }
+     }
+    }
+
+   sort( white_penalty.begin() , white_penalty.end() , greater<double>() );
+   sort( black_penalty.begin() , black_penalty.end() , greater<double>() );
+
+   if(turn){
+    for( int i=0 ; i<white_penalty.size() ; i+=2 ) total_penalty += white_penalty[i];
+    for( int i=1 ; i<black_penalty.size() ; i+=2 ) total_penalty -= black_penalty[i];
+   }
+   else{
+    for( int i=1 ; i<white_penalty.size() ; i+=2 ) total_penalty += white_penalty[i];
+    for( int i=0 ; i<black_penalty.size() ; i+=2 ) total_penalty -= black_penalty[i];
+   }
+
+   return total_penalty;
+}
