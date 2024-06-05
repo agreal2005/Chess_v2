@@ -15,11 +15,10 @@ double evaluate_pawn_structure(const vector<vector<char>> &board, const vector<v
 
 bool checkPawn(int col, int row, bool turn, const vector<vector<char>> &board, bool dir);
 
-double evaluate_outposts(const vector<vector<char>> &board, const vector<vector<vector<Piece>>> &control_squares,
-                         const vector<vector<vector<Piece>>> &oppcontrol_squares, bool turn);
 
-double hanging_piece_penalty(const vector<vector<char>> &board, const vector<vector<vector<Piece>>> &control_squares,
-                             const vector<vector<vector<Piece>>> &oppcontrol_squares, bool turn);
+double evaluate_outposts(const vector<vector<char>> &board, const vector<vector<vector<Piece>>> &control_squares, const vector<vector<vector<Piece>>> &oppcontrol_squares, bool turn);
+double hanging_piece_penalty(const vector<vector<char>> &board, const vector<vector<vector<Piece>>> &control_squares, const vector<vector<vector<Piece>>> &oppcontrol_squares, bool turn);
+double weaker_attacked_penalty(const vector<vector<char>> &board, const vector<vector<vector<Piece>>> &control_squares, const vector<vector<vector<Piece>>> &oppcontrol_squares, bool turn);
 
-double weaker_attacked_penalty(const vector<vector<char>> &board, const vector<vector<vector<Piece>>> &control_squares,
-                               const vector<vector<vector<Piece>>> &oppcontrol_squares, bool turn);
+short getStage(int material_count);
+
