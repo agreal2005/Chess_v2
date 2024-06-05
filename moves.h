@@ -22,6 +22,7 @@ class Moves
     vector<string> valid_Moves(); // It is assumed that illegal positions + wrong player to move are not given
     vector<vector<vector<Piece>>> return_controlSquares();
     vector<vector<vector<Piece>>> return_oppControlSquares();
+    void checkOppPinned();
     void checkPinned();
     /*
         Note: controlSquares and oppCS are computed in the
