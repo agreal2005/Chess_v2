@@ -735,3 +735,58 @@ double weaker_attacked_penalty(const vector<vector<char>> &board, const vector<v
 
     return total_penalty;
 }
+
+double pieces_eval(const vector<vector<char>> &board, const vector<Piece> pieces, const vector<Piece> oppPieces, bool turn)
+{
+    double score = 0;
+    for (auto piece: pieces)
+    {
+        if (piece.type == 'R' || piece.type == 'r')
+        {
+            double sq = 0;
+            for (int j = piece.i-1; j>=0; --j)
+            {
+                if (piece_type(board[j][piece.j], turn) == 0)
+                {
+                    sq += 1;
+                }
+                else break;
+            }
+            for (int j = piece.i+1; j<8; ++j)
+            {
+                if (piece_type(board[j][piece.j], turn) == 0)
+                {
+                    sq += 1;
+                }
+                else break;
+            }
+            score += 0.0625*sq;
+        }
+    }
+    for (auto piece: oppPieces)
+    {
+        if (piece.type == 'R' || piece.type == 'r')
+        {
+            double sq = 0;
+            for (int j = piece.i-1; j>=0; --j)
+            {
+                if (piece_type(board[j][piece.j], !turn) == 0)
+                {
+                    sq += 1;
+                }
+                else break;
+            }
+            for (int j = piece.i+1; j<8; ++j)
+            {
+                if (piece_type(board[j][piece.j], !turn) == 0)
+                {
+                    sq += 1;
+                }
+                else break;
+            }
+            score -= 0.05*sq;
+        }
+    }
+    if (turn) return -score;
+    return score;
+}

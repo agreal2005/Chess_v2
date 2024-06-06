@@ -24,6 +24,8 @@ class Moves
     vector<vector<vector<Piece>>> return_oppControlSquares();
     void checkOppPinned();
     void checkPinned();
+    vector<Piece> return_pieces() { return pieces;}
+    vector<Piece> return_oppPieces() { return oppPieces;}
     /*
         Note: controlSquares and oppCS are computed in the
         following order: Q, R, B, N, P, K
