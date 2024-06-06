@@ -736,6 +736,7 @@ double weaker_attacked_penalty(const vector<vector<char>> &board, const vector<v
     return total_penalty;
 }
 
+
 double pieces_eval(const vector<vector<char>> &board, const vector<Piece> pieces, const vector<Piece> oppPieces, bool turn)
 {
     double score = 0;
@@ -790,6 +791,7 @@ double pieces_eval(const vector<vector<char>> &board, const vector<Piece> pieces
     if (turn) return -score;
     return score;
 }
+
 double mobility(const vector<vector<char>> &board, const vector<vector<vector<Piece>>> &control_squares, const vector<vector<vector<Piece>>> &oppcontrol_squares, bool turn, bool enpassant,string epsquare,int castling){
     double total_mobility=0.0;
     double white_mobility=0.0;
