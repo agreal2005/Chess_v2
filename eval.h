@@ -1,6 +1,7 @@
 #include "moves.h"
 #include "fen.h"
 #include "pieces.h"
+#include "sq_tables_eval.h"
 #define inf 20000
 
 #pragma once
@@ -20,5 +21,5 @@ double evaluate_outposts(const vector<vector<char>> &board, const vector<vector<
 double hanging_piece_penalty(const vector<vector<char>> &board, const vector<vector<vector<Piece>>> &control_squares, const vector<vector<vector<Piece>>> &oppcontrol_squares, bool turn);
 double weaker_attacked_penalty(const vector<vector<char>> &board, const vector<vector<vector<Piece>>> &control_squares, const vector<vector<vector<Piece>>> &oppcontrol_squares, bool turn);
 
-short getStage(int material_count);
+// short getStage(int material_count);
 
