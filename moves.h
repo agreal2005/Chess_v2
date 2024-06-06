@@ -26,6 +26,8 @@ class Moves
     void checkPinned();
     vector<Piece> return_pieces() { return pieces;}
     vector<Piece> return_oppPieces() { return oppPieces;}
+    vector<Piece> return_trappedPieces(vector<vector<char>> &board, bool turn);
+    vector<Piece> return_trappedOppPieces(vector<vector<char>> &board, bool turn);
     /*
         Note: controlSquares and oppCS are computed in the
         following order: Q, R, B, N, P, K
