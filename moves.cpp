@@ -15,6 +15,7 @@ Moves::Moves()
     turn = 0;
     wck = wcq = bck = bcq = false;
     king_square = sij("e1");
+    oppKing_square = sij("e8");
 }
 
 Moves::Moves(vector<vector<char>> board, bool turn, bool isEnPassant, string epSquare, int castling)
@@ -32,6 +33,7 @@ Moves::Moves(vector<vector<char>> board, bool turn, bool isEnPassant, string epS
     oppControlSquares=controlSquares;
     fetch_Moves(board, turn, isEnPassant, epSquare, castling);
     checkPinned();
+    checkOppPinned();
     return_controlSquares();
     return_oppControlSquares();
 }
@@ -337,7 +339,51 @@ vector<vector<vector<Piece>>> Moves::return_oppControlSquares()
             if (board[in_ver][in_hor] == '.') continue;
             char temp=board[in_ver][in_hor]-offset;
             Piece piece(board[in_ver][in_hor], in_ver, in_hor);
-
+            for (auto p : oppPieces)
+            {
+                if (piece.i == p.i && piece.j == p.j)
+                {
+                    piece = p;
+                    break;
+                }
+            }
+            if (piece.pinned)
+            {
+                if (piece.pini == -1)
+                {
+                    int pinx = piece.resi, piny = piece.resj; // pinning piece's coords
+                    int i_inc = 0, j_inc = 0;
+                    if (pinx > king_square.first)
+                        i_inc = -1;
+                    else if (pinx < king_square.first)
+                        i_inc = 1;
+                    if (piny > king_square.second)
+                        j_inc = -1;
+                    else if (piny < king_square.second)
+                        j_inc = 1;
+                    if (piece.type == 'P' || piece.type == 'p')
+                    {
+                        if (j_inc != 0)
+                        {
+                            oppControlSquares[pinx][piny].push_back(piece);
+                        }
+                    }
+                    else
+                    {
+                        int x = pinx, y = piny;
+                        while (x != king_square.first && y != king_square.second)
+                        {
+                            if (x != piece.i || y!=piece.j)
+                            {
+                                oppControlSquares[x][y].push_back(piece);
+                            }
+                            x+=i_inc;
+                            y+=j_inc;
+                        }
+                    }
+                }
+                continue;
+            }
               if(temp=='Q'){
                     int temp_hor=in_hor-1;
                     while(in_hor>=0&&board[in_ver][temp_hor]=='.'){
@@ -619,6 +665,123 @@ void Moves::checkPinned()
                 if (resx != -1)
                 {
                     for (auto &ownpiece: pieces)
+                    {
+                        if (ownpiece.i == resx && ownpiece.j == resy)
+                        {
+                            ownpiece.setRes(piece.i, piece.j);
+                        }
+                    }
+                }
+            }
+        }  
+}
+
+void Moves::checkOppPinned()
+{
+    for (auto &piece : pieces)
+        {
+            // Cycle over all opponent pieces that are in line of sight of the king
+            if (piece.type == 'Q' || piece.type == 'q' || piece.type == 'B' || piece.type == 'b' || piece.type == 'R' || piece.type == 'r' || piece.type == 'P' || piece.type == 'p')
+            {
+                // Find if any of our piece(s) are on the straight line
+                if (!(piece.i - piece.j == oppKing_square.first - oppKing_square.second || piece.i + piece.j == oppKing_square.first + oppKing_square.second || piece.i == oppKing_square.first || piece.j == oppKing_square.second))
+                {
+                    continue;
+                }
+                int i_inc = 0, j_inc = 0;
+                if (piece.i > oppKing_square.first)
+                    i_inc = -1;
+                else if (piece.i < oppKing_square.first)
+                    i_inc = 1;
+                if (piece.j > oppKing_square.second)
+                    j_inc = -1;
+                else if (piece.j < oppKing_square.second)
+                    j_inc = 1;
+                int x = piece.i + i_inc, y = piece.j + j_inc;
+                int pinx = -1, piny = -1, resx = -1, resy = -1;
+                while (x!=oppKing_square.first || y!=oppKing_square.second)
+                {
+                    int sd = piece_type(board[x][y], turn);
+                    if (sd == -1)
+                    {
+                        pinx = -1, piny = -1;
+                        break;
+                    }
+                    if (sd == 1)
+                    {
+                        if (pinx!=-1)
+                        {
+                            pinx = -1; piny = -1;
+                            break;
+                        }
+                        else
+                        {
+                            if (j_inc == 0)
+                            {
+                                if (board[x][y] == 'b' || board[x][y] == 'B' || board[x][y] == 'p' || board[x][y] == 'P' || board[x][y] == 'n' || board[x][y] == 'N')
+                                {
+                                    pinx = x, piny = y;
+                                }
+                                else
+                                {
+                                    resx = x, resy = y;
+                                    break;
+                                }
+                            }
+                            else if (i_inc == 0)
+                            {
+                                if (board[x][y] == 'b' || board[x][y] == 'B' || board[x][y] == 'n' || board[x][y] == 'N')
+                                {
+                                    pinx = x, piny = y;
+                                }
+                                else
+                                {
+                                    resx = x, resy = y;
+                                    break;
+                                }
+                            }
+                            else
+                            {
+                                if (board[x][y] == 'r' || board[x][y] == 'R' || board[x][y] == 'n' || board[x][y] == 'N')
+                                {
+                                   pinx = x, piny = y; 
+                                }
+                                else if (board[x][y] == 'P' || board[x][y] == 'p')
+                                {
+                                    if (x == piece.i+i_inc && y == piece.j + j_inc)
+                                    {
+                                        resx = x, resy = y;
+                                        break;
+                                    }
+                                    else
+                                    {
+                                        pinx = x, piny = y;
+                                    }
+                                }
+                                else
+                                {
+                                    resx = x, resy = y;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    x+=i_inc;
+                    y+=j_inc;
+                }
+                if (pinx != -1)
+                {
+                    for (auto &ownpiece: oppPieces)
+                    {
+                        if (ownpiece.i == pinx && ownpiece.j == piny)
+                        {
+                            ownpiece.setPin(piece.i, piece.j);
+                        }
+                    }
+                }
+                if (resx != -1)
+                {
+                    for (auto &ownpiece: oppPieces)
                     {
                         if (ownpiece.i == resx && ownpiece.j == resy)
                         {
