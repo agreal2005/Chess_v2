@@ -735,3 +735,97 @@ double weaker_attacked_penalty(const vector<vector<char>> &board, const vector<v
 
     return total_penalty;
 }
+
+double mobility(const vector<vector<char>> &board, const vector<vector<vector<Piece>>> &control_squares, const vector<vector<vector<Piece>>> &oppcontrol_squares, bool turn, bool enpassant,string epsquare,int castling){
+    double total_mobility=0.0;
+    double white_mobility=0.0;
+    double black_mobility=0.0;
+    Moves temp(board,turn,enpassant,epsquare,castling);
+    
+    vector<string> all_moves= temp.valid_Moves();
+    vector<vector<vector<Piece>>> white_control_squares;
+    vector<vector<vector<Piece>>> black_control_squares;
+
+    if(turn){
+        black_control_squares=control_squares;
+        white_control_squares=oppcontrol_squares;
+    }
+    else{
+        black_control_squares=oppcontrol_squares;
+        white_control_squares=control_squares;
+    }
+
+    for(auto itr:all_moves){
+        if(isupper(itr[0])&& itr[0]!='K'){
+            string pos_in_char;
+            pos_in_char.push_back(itr[itr.size()-2]);
+            pos_in_char.push_back(itr[itr.size()-1]);
+            pair<int,int> pos_in_num = sij(pos_in_char);
+            bool res_in_hang = false , res_in_weak_att = false;
+            if(white_control_squares[pos_in_num.first][pos_in_num.second].empty()&&black_control_squares[pos_in_num.first][pos_in_num.second].size()){
+                res_in_hang=true;
+            }
+
+            int this_piece_val=0;
+
+            switch( itr[0]){
+                case 'P' : this_piece_val = 1; break;
+                case 'B' : this_piece_val = 3; break;
+                case 'N' : this_piece_val = 3; break;
+                case 'R' : this_piece_val = 5; break;
+                case 'Q' : this_piece_val = 9; break;
+                default: break;
+            }
+
+            int min_val_attack=10;
+            for(auto it: black_control_squares[pos_in_num.first][pos_in_num.second]){
+                switch(it.type){
+                        case 'p' : min_val_attack = min(min_val_attack,1); break;
+                        case 'b' : min_val_attack = min(min_val_attack,3); break;
+                        case 'n' : min_val_attack = min(min_val_attack,3); break;
+                        case 'r' : min_val_attack = min(min_val_attack,5); break;
+                        default: break;
+                }
+            }
+            if(min_val_attack < this_piece_val ) res_in_weak_att=true;
+            if(!res_in_hang && !res_in_weak_att)white_mobility++;
+        }
+        else if(islower(itr[0] && itr[0]!='k' )){
+            string pos_in_char;
+            pos_in_char.push_back(itr[itr.size()-2]);
+            pos_in_char.push_back(itr[itr.size()-1]);
+            pair<int,int> pos_in_num = sij(pos_in_char);
+            bool res_in_hang = false , res_in_weak_att = false;
+            if(white_control_squares[pos_in_num.first][pos_in_num.second].size()&&black_control_squares[pos_in_num.first][pos_in_num.second].empty()){
+                res_in_hang=true;
+            }
+
+            int this_piece_val=0;
+
+            switch( itr[0]){
+                case 'p' : this_piece_val =1; break;
+                case 'b' : this_piece_val =3; break;
+                case 'n' : this_piece_val =3; break;
+                case 'r' : this_piece_val =5; break;
+                case 'q' : this_piece_val =9; break;
+                default: break;
+            }
+
+            int min_val_attack=10;
+            for(auto it: white_control_squares[pos_in_num.first][pos_in_num.second]){
+                switch(it.type){
+                        case 'P' : min_val_attack = min(min_val_attack,1); break;
+                        case 'B' : min_val_attack = min(min_val_attack,3); break;
+                        case 'N' : min_val_attack = min(min_val_attack,3); break;
+                        case 'R' : min_val_attack = min(min_val_attack,5); break;
+                        default: break;
+                }
+            }
+            if(min_val_attack < this_piece_val ) res_in_weak_att=true;
+            if(!res_in_hang && !res_in_weak_att)black_mobility++;
+        }
+    }
+    total_mobility=white_mobility-black_mobility;
+    total_mobility/=8.0;
+    return total_mobility;
+}
