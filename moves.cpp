@@ -1158,3 +1158,49 @@ vector<string> Moves::valid_Moves()
     }
     return validMoves;
 }
+
+vector<Piece> Moves::return_trappedPieces(vector<vector<char>> &board, bool turn)
+{
+    /*
+        piece_type(char, turn) 
+        Three return values:
+        --> 1 : same type piece
+        --> -1 : opp type piece
+        --> 0 : empty square
+        
+        (turn == 0 means white and 1 means black)
+        
+        so now basically use the vector in the Moves class called "pieces" of type "Piece"
+        iterate over all pieces
+        for a piece
+        check if all its moves are controlled by the opponent
+        basically oppControlSquares[i][j].size() > 0 or not (where (i,j) are coordinates of the square to which you want to move your piece)
+        if yes
+        then push_back into the trappedPieces vector (which you have to create)
+
+        after doing for all pieces, return trappedPieces
+    */
+}
+
+vector<Piece> Moves::return_trappedOppPieces(vector<vector<char>> &board, bool turn)
+{
+    /*
+        piece_type(char, turn) 
+        Three return values:
+        --> 1 : same type piece
+        --> -1 : opp type piece
+        --> 0 : empty square
+        
+        (turn == 0 means white and 1 means black)
+        
+        so now basically use the vector in the Moves class called "oppPieces" of type "Piece"
+        iterate over all Opponent's pieces
+        for a piece
+        check if all its moves are controlled by YOU
+        basically ControlSquares[i][j].size() > 0 or not
+        if yes
+        then push_back into the trappedOppPieces vector (which you have to create)
+
+        after doing for all pieces of the Opponent, return trappedOppPieces
+    */
+}
