@@ -2,13 +2,27 @@
 #include "moves.h"
 #include "eval.h"
 #include "functions.h"
+using namespace std;
+int gamePhase;
+psTables pst;
 
 int main()
 {
-    string fen = "3r4/2k1p3/8/8/2K5/8/P7/1R6 w - - 0 1";
+    string fen;
+    getline(cin, fen);
     Board_FEN v(fen);
     v.display_board_FEN();
     Moves m;
+    bool turn = v.return_turn();
     m.fetch_Moves(v.return_board(), 0);
-    cout << pieces_eval(v.return_board(), m.return_pieces(), m.return_oppPieces(), 0);
+    cout << setw(60) << left << "Evaluate Checkmate: " << evaluate_checkmate(v.return_board(), m.return_oppControlSquares(), m.valid_Moves(), turn, fen) << endl;
+    cout << setw(60) << left << "Evalute Material: " << evaluate_material(v.return_board()) << endl;
+    cout << setw(60) << left << "Pawn Structure: " << evaluate_pawn_structure(v.return_board(), m.return_controlSquares(), m.return_oppControlSquares(), turn, fen) << endl;
+    cout << setw(60) << left << "Evaluate Outposts: " << evaluate_outposts(v.return_board(), m.return_controlSquares(), m.return_oppControlSquares(), turn) << endl;
+    cout << setw(60) << left << "Hanging Piece Penalty: " << hanging_piece_penalty(v.return_board(), m.return_controlSquares(), m.return_oppControlSquares(), turn) << endl;
+    cout << setw(60) << left << "Weaker Attacked Penalty: " << weaker_attacked_penalty(v.return_board(), m.return_controlSquares(), m.return_oppControlSquares(), turn) << endl;
+    cout << setw(60) << left << "Mobility: " << mobility(v.return_board(), m.return_controlSquares(), m.return_oppControlSquares(), turn, v.return_ep(), v.return_eps(), v.castle_options()) << endl;
+    cout << setw(60) << left << "Piece Square Evaluation: " << pst.eval_sq_tables(v.return_board()) << endl;
+    cout << setw(60) << left << "(Special) Pieces eval: " << pieces_eval(v.return_board(), m.return_pieces(), m.return_oppPieces(), turn) << endl;
+
 }
