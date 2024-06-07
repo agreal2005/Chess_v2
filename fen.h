@@ -38,6 +38,7 @@ class Board_FEN
     int castle_options();
     int return_halfmoveclk();
     int return_fullmoves();
+    bool return_turn();
     string get_FEN();
     string get_FEN(vector<vector<char>> brd, bool t, bool wck, bool wcq, bool bck, bool bcq, bool isEnp, string epS, int hfc, int fms);
     /*

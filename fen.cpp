@@ -120,6 +120,7 @@ void Board_FEN::input_FEN(string fen_val)
     if (fen_val[cursor] == '-')
     {
         isEnPassant = false;
+        epSquare = "";
     }
     else
     {
@@ -174,6 +175,7 @@ void Board_FEN::default_FEN()
     black_castle_kingside = true;
     black_castle_queenside = true;
     turn = 0;
+    epSquare = "";
     halfmove_clock = 0;
     fullmoves = 1;
     // lowercase letters for black pieces
@@ -198,6 +200,10 @@ void Board_FEN::default_FEN()
 vector<vector<char>> Board_FEN::return_board()
 {
     return board;
+}
+bool Board_FEN::return_turn()
+{
+    return turn;
 }
 void Board_FEN::display_board_FEN()
 {

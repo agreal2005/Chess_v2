@@ -369,7 +369,7 @@ double evaluate_pawn_structure(const vector<vector<char>> &board, const vector<v
         }
     }
 
-    cout << white_score << ' ' << black_score << ' ';
+    // cout << white_score << ' ' << black_score << ' ';
     return white_score - black_score;
 }
 
