@@ -16,6 +16,11 @@ void Board_FEN::input_FEN(string fen_val)
     fen_val += BLANC; // Need this for (seamless) fen validation
     int cursor = 0;
     vector<vector<char>> inp_board(8, vector<char>(8, '.'));
+    for (auto ch:fen_val)
+    {
+        if (ch == ' ') break;
+        pos.push_back(ch);
+    }
     for (int i = 0; i < 8; ++i)
     {
         int row = 0; // j value to move along the row
@@ -181,6 +186,7 @@ void Board_FEN::default_FEN()
     // lowercase letters for black pieces
     // uppercase for white pieces
     fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+    pos = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
     board.clear();
     for (int i = 0; i < 8; ++i)
     {
@@ -243,6 +249,10 @@ int Board_FEN::return_halfmoveclk()
 int Board_FEN::return_fullmoves()
 {
     return fullmoves;
+}
+string Board_FEN::getPos()
+{
+    return pos;
 }
 string Board_FEN::get_FEN()
 {

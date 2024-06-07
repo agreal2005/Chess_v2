@@ -14,6 +14,7 @@ class Board_FEN
 {
     private:
     string fen;
+    string pos; // Board encoded in string
     bool isEnPassant;
     bool white_castle_queenside, black_castle_queenside;
     bool white_castle_kingside, black_castle_kingside;
@@ -39,6 +40,7 @@ class Board_FEN
     int return_halfmoveclk();
     int return_fullmoves();
     bool return_turn();
+    string getPos();
     string get_FEN();
     string get_FEN(vector<vector<char>> brd, bool t, bool wck, bool wcq, bool bck, bool bcq, bool isEnp, string epS, int hfc, int fms);
     /*
@@ -48,4 +50,5 @@ class Board_FEN
     */
 
    friend class Moves;
+   friend class EvalBar;
 };
