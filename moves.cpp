@@ -20,6 +20,11 @@ Moves::Moves()
 
 Moves::Moves(vector<vector<char>> board, bool turn, bool isEnPassant, string epSquare, int castling)
 {
+    fetch_Moves(board, turn, isEnPassant, epSquare, castling);
+}
+
+void Moves::fetch_Moves(vector<vector<char>> board, bool turn, bool isEnPassant, string epSquare, int castling)
+{
     for (int i=0; i<8; ++i)
     {
         vector<char> initialize(8, '.');
@@ -31,15 +36,6 @@ Moves::Moves(vector<vector<char>> board, bool turn, bool isEnPassant, string epS
         controlSquares.push_back(initialize);
     }
     oppControlSquares=controlSquares;
-    fetch_Moves(board, turn, isEnPassant, epSquare, castling);
-    checkPinned();
-    checkOppPinned();
-    return_controlSquares();
-    return_oppControlSquares();
-}
-
-void Moves::fetch_Moves(vector<vector<char>> board, bool turn, bool isEnPassant, string epSquare, int castling)
-{
     this->board = board;
     this->turn = turn;
     this->isEnPassant = isEnPassant;
@@ -72,6 +68,10 @@ void Moves::fetch_Moves(vector<vector<char>> board, bool turn, bool isEnPassant,
             }
         }
     }
+    checkPinned();
+    checkOppPinned();
+    return_controlSquares();
+    return_oppControlSquares();
 }
 
 vector<vector<vector<Piece>>> Moves::return_controlSquares()
@@ -1082,7 +1082,7 @@ vector<string> Moves::valid_Moves()
                     {
                         if (turn == 0)
                         {
-                            if (piece.i == 1)
+                            if (piece.i == 1 && board[0][piece.j] == '.')
                             {
                                 validMoves.push_back("P"+ijs(1,piece.j)+"pp"); // pp = pawn promotion
                             }
@@ -1095,7 +1095,7 @@ vector<string> Moves::valid_Moves()
                             }
                             if (piece.i == 6)
                             {
-                                if (board[piece.i-2][piece.j] == '.')
+                                if (board[piece.i-2][piece.j] == '.' && board[piece.i-1][piece.j] == '.')
                                 {
                                     validMoves.push_back("P"+ijs(piece.i,piece.j)+ijs(piece.i-2, piece.j));
                                 }
@@ -1107,7 +1107,7 @@ vector<string> Moves::valid_Moves()
                         }
                         if (turn == 1)
                         {
-                            if (piece.i == 6)
+                            if (piece.i == 6 && board[7][piece.j] == '.')
                             {
                                 validMoves.push_back("p"+ijs(6,piece.j)+"pp"); // pp = pawn promotion
                             }
@@ -1120,7 +1120,7 @@ vector<string> Moves::valid_Moves()
                             }
                             if (piece.i == 1)
                             {
-                                if (board[piece.i+2][piece.j] == '.')
+                                if (board[piece.i+2][piece.j] == '.' && board[piece.i+1][piece.j] == '.')
                                 {
                                     validMoves.push_back("p"+ijs(piece.i,piece.j)+ijs(piece.i+2, piece.j));
                                 }
@@ -1136,7 +1136,7 @@ vector<string> Moves::valid_Moves()
                     str+=ijs(piece.i, piece.j);
                     if (sd == -1) str += "x" + ijs(i,j);
                     else str += ijs(i,j);
-                    validMoves.push_back(str);
+                    if (!((sd != -1) && (piece.type == 'P' || piece.type == 'p'))) validMoves.push_back(str);
                 }
             }
         }
@@ -1153,6 +1153,357 @@ vector<string> Moves::valid_Moves()
             else if (piece.type == 'p')
             {
                 validMoves.push_back("p" + ijs(piece.i, piece.j) + epSquare);
+            }
+        }
+    }
+    return validMoves;
+}
+
+vector<string> Moves::valid_oppMoves()
+{
+    vector<string> validMoves;
+    // First writing function assuming pov of white
+
+    // First check if the King is in Check
+    // If yes, then see if anyone can defend the king
+    // If no one can defend the king, see if the king has to move
+    
+    if (controlSquares[oppKing_square.first][oppKing_square.second].size() > 0)
+    {
+        // King is in Check
+        // First we'll see if any piece can protect it
+        vector<string> illegalSquares;
+        for (auto piece : controlSquares[oppKing_square.first][oppKing_square.second])
+        {
+            // Cycle over all opponent pieces that are putting king in check
+            if (piece.type == 'Q' || piece.type == 'q' || piece.type == 'B' || piece.type == 'b' || piece.type == 'R' || piece.type == 'r' || piece.type == 'P' || piece.type == 'p')
+            {
+                // Find if any of our piece(s) can come on the straight line
+                // from the K to Q including Q's square
+                int i_inc = 0, j_inc = 0;
+                if (piece.i > oppKing_square.first)
+                    i_inc = -1;
+                else if (piece.i < oppKing_square.first)
+                    i_inc = 1;
+                if (piece.j > oppKing_square.second)
+                    j_inc = -1;
+                else if (piece.j < oppKing_square.second)
+                    j_inc = 1;
+                int x = piece.i, y = piece.j;
+                while (x!=oppKing_square.first || y!=oppKing_square.second)
+                {
+                    int sd = piece_type(board[x][y], !turn);
+                    if (sd <= 0)
+                    {
+                        for (auto p : oppControlSquares[x][y])
+                        {
+                            if (p.pinned || p.type == 'K' || p.type == 'k' || p.pinned) continue;
+                            string str;
+                            str.push_back(p.type);
+                            str+=ijs(piece.i, piece.j);
+                            if (sd == 0) str += ijs(x,y);
+                            else str += "x" + ijs(x,y);
+                            validMoves.push_back(str);
+                        }
+                    }
+                    x+=i_inc;
+                    y+=j_inc;
+                }
+                if (x + i_inc >= 0 && x + i_inc <=7 && y + j_inc >= 0 && y + j_inc <= 7)
+                {
+                    illegalSquares.push_back(ijs(x+i_inc, y+j_inc));
+                }
+            }
+            else if (piece.type == 'H' || piece.type == 'h') // Horsey
+            {
+                int x = piece.i, y = piece.j;
+                for (auto p : oppControlSquares[x][y])
+                {
+                    if (p.type == 'K' || p.type == 'k' || p.pinned) continue;
+                    string str;
+                    str.push_back(p.type);
+                    str+=ijs(piece.i, piece.j);
+                    str += "x" + ijs(x,y);
+                    validMoves.push_back(str);
+                }
+            }
+        }
+        // Now we'll see if the King can move
+        int in_ver = oppKing_square.first, in_hor = oppKing_square.second;
+        string king = "k";
+        if (turn) king = "K";
+        if(in_ver>0){
+            if(in_hor>0 && controlSquares[in_ver-1][in_hor-1].size() == 0)
+            {
+                if (piece_type(board[in_ver-1][in_hor-1], !turn) == 0)
+                    validMoves.push_back(king+ijs(oppKing_square.first, oppKing_square.second)+ijs(in_ver-1,in_hor-1));
+                else if (piece_type(board[in_ver-1][in_hor-1], !turn) == -1)
+                    validMoves.push_back(king+ijs(oppKing_square.first, oppKing_square.second)+"x"+ijs(in_ver-1,in_hor-1));
+            }
+            if(in_hor<7 && controlSquares[in_ver-1][in_hor+1].size() == 0)
+            {
+                if (piece_type(board[in_ver-1][in_hor+1], !turn) == 0)
+                    validMoves.push_back(king+ijs(oppKing_square.first, oppKing_square.second)+ijs(in_ver-1,in_hor+1));
+                else if (piece_type(board[in_ver-1][in_hor+1], !turn) == -1)
+                    validMoves.push_back(king+ijs(oppKing_square.first, oppKing_square.second)+"x"+ijs(in_ver-1,in_hor+1));
+            }
+            if (controlSquares[in_ver-1][in_hor].size() == 0)
+            {
+                if (piece_type(board[in_ver-1][in_hor], !turn) == 0)
+                    validMoves.push_back(king+ijs(oppKing_square.first, oppKing_square.second)+ijs(in_ver-1,in_hor));
+                else if (piece_type(board[in_ver-1][in_hor], !turn) == -1)
+                    validMoves.push_back(king+ijs(oppKing_square.first, oppKing_square.second)+"x"+ijs(in_ver-1,in_hor));
+            }
+        }
+        if(in_ver<7){
+            if(in_hor>0 && controlSquares[in_ver+1][in_hor-1].size() == 0)
+            {
+                if (piece_type(board[in_ver+1][in_hor-1], !turn) == 0)
+                    validMoves.push_back(king+ijs(oppKing_square.first, oppKing_square.second)+ijs(in_ver+1,in_hor-1));
+                else if (piece_type(board[in_ver+1][in_hor-1], !turn) == -1)
+                    validMoves.push_back(king+ijs(oppKing_square.first, oppKing_square.second)+"x"+ijs(in_ver+1,in_hor-1));
+            }
+            if(in_hor<7 && controlSquares[in_ver+1][in_hor+1].size() == 0)
+            {
+                if (piece_type(board[in_ver+1][in_hor+1], !turn) == 0)
+                    validMoves.push_back(king+ijs(oppKing_square.first, oppKing_square.second)+ijs(in_ver+1,in_hor+1));
+                else if (piece_type(board[in_ver+1][in_hor+1], !turn) == -1)
+                    validMoves.push_back(king+ijs(oppKing_square.first, oppKing_square.second)+"x"+ijs(in_ver+1,in_hor+1));
+            }  
+            if (controlSquares[in_ver+1][in_hor].size() == 0)
+            {
+                if (piece_type(board[in_ver+1][in_hor], !turn) == 0)
+                    validMoves.push_back(king+ijs(oppKing_square.first, oppKing_square.second)+ijs(in_ver+1,in_hor));
+                else if (piece_type(board[in_ver+1][in_hor], !turn) == -1)
+                    validMoves.push_back(king+ijs(oppKing_square.first, oppKing_square.second)+"x"+ijs(in_ver+1,in_hor));
+            }
+        }
+        if(in_hor>0 && controlSquares[in_ver][in_hor-1].size() == 0)
+        {
+            if (piece_type(board[in_ver][in_hor-1], !turn) == 0)
+                    validMoves.push_back(king+ijs(oppKing_square.first, oppKing_square.second)+ijs(in_ver,in_hor-1));
+                else if (piece_type(board[in_ver][in_hor-1], !turn) == -1)
+                    validMoves.push_back(king+ijs(oppKing_square.first, oppKing_square.second)+"x"+ijs(in_ver,in_hor-1));
+        }
+        if(in_hor<7 && controlSquares[in_ver][in_hor+1].size() == 0)
+        {
+            if (piece_type(board[in_ver][in_hor+1], !turn) == 0)
+                    validMoves.push_back(king+ijs(oppKing_square.first, oppKing_square.second)+ijs(in_ver,in_hor+1));
+                else if (piece_type(board[in_ver][in_hor+1], !turn) == -1)
+                    validMoves.push_back(king+ijs(oppKing_square.first, oppKing_square.second)+"x"+ijs(in_ver,in_hor+1));
+        }
+        // Illegal King Moves to be checked
+        if(validMoves.size() != 0)
+       { auto it = validMoves.begin();
+        while (it != validMoves.end())
+        {
+            string mv = *it;
+            int index = it - validMoves.begin();
+            it++;
+            string square;
+            square.push_back(mv[mv.length()-2]);
+            square.push_back(mv[mv.length()-1]);
+            for (auto sq : illegalSquares)
+            {
+                if (sq == square)
+                {
+                    validMoves.erase(validMoves.begin() + index);
+                    break;
+                }
+            }
+        }
+    }
+        return validMoves;
+    }
+
+    // If no check, then compute valid moves of King that could include Castling (see for checks)
+    // King Moves
+    int in_ver = oppKing_square.first, in_hor = oppKing_square.second;
+    string king = "k";
+    if (turn) king = "K";
+    if(in_ver>0){
+        if(in_hor>0 && controlSquares[in_ver-1][in_hor-1].size() == 0)
+        {
+            if (piece_type(board[in_ver-1][in_hor-1], !turn) == 0)
+                validMoves.push_back(king+ijs(oppKing_square.first, oppKing_square.second)+ijs(in_ver-1,in_hor-1));
+            else if (piece_type(board[in_ver-1][in_hor-1], !turn) == -1)
+                validMoves.push_back(king+ijs(oppKing_square.first, oppKing_square.second)+"x"+ijs(in_ver-1,in_hor-1));
+        }
+        if(in_hor<7 && controlSquares[in_ver-1][in_hor+1].size() == 0)
+        {
+            if (piece_type(board[in_ver-1][in_hor+1], !turn) == 0)
+                validMoves.push_back(king+ijs(oppKing_square.first, oppKing_square.second)+ijs(in_ver-1,in_hor+1));
+            else if (piece_type(board[in_ver-1][in_hor+1], !turn) == -1)
+                validMoves.push_back(king+ijs(oppKing_square.first, oppKing_square.second)+"x"+ijs(in_ver-1,in_hor+1));
+        }
+        if (controlSquares[in_ver-1][in_hor].size() == 0)
+        {
+            if (piece_type(board[in_ver-1][in_hor], !turn) == 0)
+                validMoves.push_back(king+ijs(oppKing_square.first, oppKing_square.second)+ijs(in_ver-1,in_hor));
+            else if (piece_type(board[in_ver-1][in_hor], !turn) == -1)
+                validMoves.push_back(king+ijs(oppKing_square.first, oppKing_square.second)+"x"+ijs(in_ver-1,in_hor));
+        }
+    }
+    if(in_ver<7){
+        if(in_hor>0 && controlSquares[in_ver+1][in_hor-1].size() == 0)
+        {
+            if (piece_type(board[in_ver+1][in_hor-1], !turn) == 0)
+                validMoves.push_back(king+ijs(oppKing_square.first, oppKing_square.second)+ijs(in_ver+1,in_hor-1));
+            else if (piece_type(board[in_ver+1][in_hor-1], !turn) == -1)
+                validMoves.push_back(king+ijs(oppKing_square.first, oppKing_square.second)+"x"+ijs(in_ver+1,in_hor-1));
+        }
+        if(in_hor<7 && controlSquares[in_ver+1][in_hor+1].size() == 0)
+        {
+            if (piece_type(board[in_ver+1][in_hor+1], !turn) == 0)
+                validMoves.push_back(king+ijs(oppKing_square.first, oppKing_square.second)+ijs(in_ver+1,in_hor+1));
+            else if (piece_type(board[in_ver+1][in_hor+1], !turn) == -1)
+                validMoves.push_back(king+ijs(oppKing_square.first, oppKing_square.second)+"x"+ijs(in_ver+1,in_hor+1));
+        }  
+        if (controlSquares[in_ver+1][in_hor].size() == 0)
+        {
+            if (piece_type(board[in_ver+1][in_hor], !turn) == 0)
+                validMoves.push_back(king+ijs(oppKing_square.first, oppKing_square.second)+ijs(in_ver+1,in_hor));
+            else if (piece_type(board[in_ver+1][in_hor], !turn) == -1)
+                validMoves.push_back(king+ijs(oppKing_square.first, oppKing_square.second)+"x"+ijs(in_ver+1,in_hor));
+        }
+    }
+    if(in_hor>0 && controlSquares[in_ver][in_hor-1].size() == 0)
+    {
+        if (piece_type(board[in_ver][in_hor-1], !turn) == 0)
+                validMoves.push_back(king+ijs(oppKing_square.first, oppKing_square.second)+ijs(in_ver,in_hor-1));
+            else if (piece_type(board[in_ver][in_hor-1], !turn) == -1)
+                validMoves.push_back(king+ijs(oppKing_square.first, oppKing_square.second)+"x"+ijs(in_ver,in_hor-1));
+    }
+    if(in_hor<7 && controlSquares[in_ver][in_hor+1].size() == 0)
+    {
+        if (piece_type(board[in_ver][in_hor+1], !turn) == 0)
+                validMoves.push_back(king+ijs(oppKing_square.first, oppKing_square.second)+ijs(in_ver,in_hor+1));
+            else if (piece_type(board[in_ver][in_hor+1], !turn) == -1)
+                validMoves.push_back(king+ijs(oppKing_square.first, oppKing_square.second)+"x"+ijs(in_ver,in_hor+1));
+    }
+    if (!turn)
+    {
+        if (bck)
+        {
+            if (board[0][5] == '.' && board[0][6] == '.' && board[0][4] == 'k' && board[0][7] == 'r')
+            {
+                if (controlSquares[0][5].size() == 0 && controlSquares[0][6].size() == 0)
+                {
+                    validMoves.push_back("O-O");
+                }
+            }
+        }
+        else if (bcq)
+        {
+            if (board[0][2] == '.' && board[0][3] == '.' && board[0][1] == '.' && board[0][4] == 'k' && board[0][0] == 'r')
+            {
+                if (controlSquares[0][1].size() == 0 && controlSquares[0][2].size() == 0 && controlSquares[0][3].size() == 0)
+                {
+                    validMoves.push_back("O-O-O");
+                }
+            }
+        }
+    }
+    else
+    {
+        if (wck)
+        {
+            if (board[7][5] == '.' && board[7][6] == '.' && board[7][4] == 'k' && board[7][7] == 'r')
+            {
+                if (controlSquares[7][5].size() == 0 && controlSquares[7][6].size() == 0)
+                {
+                    validMoves.push_back("O-O");
+                }
+            }
+        }
+        else if (wcq)
+        {
+            if (board[7][2] == '.' && board[7][3] == '.' && board[7][1] == '.' && board[7][4] == 'k' && board[7][0] == 'r')
+            {
+                if (controlSquares[7][1].size() == 0 && controlSquares[7][2].size() == 0 && controlSquares[7][3].size() == 0)
+                {
+                    validMoves.push_back("O-O-O");
+                }
+            }
+        }
+    }
+    // For all pieces, attack Squares except the squares in which own piece is there
+    // ^^ except the King
+    // Make sure the piece is not pinned
+    for (int i=0; i<8; ++i)
+    {
+        for (int j=0; j<8; ++j)
+        {
+            int sd = piece_type(board[i][j],!turn);
+            if (sd == 1) continue;
+            if (oppControlSquares[i][j].size() > 0)
+            {
+                for (auto piece : oppControlSquares[i][j])
+                {
+                    if (piece.type == 'K' || piece.type == 'k')
+                    {
+                        continue;
+                    }
+                    else if (piece.type == 'P' || piece.type == 'p')
+                    {
+                        if (turn == 1) // !turn
+                        {
+                            if (piece.i == 1 && board[0][piece.j] == '.')
+                            {
+                                validMoves.push_back("P"+ijs(1,piece.j)+"pp"); // pp = pawn promotion
+                            }
+                            else if (piece.i > 1)
+                            {
+                                if (board[piece.i-1][piece.j] == '.')
+                                {
+                                    validMoves.push_back("P"+ijs(piece.i,piece.j)+ijs(piece.i-1, piece.j));
+                                }
+                            }
+                            if (piece.i == 6)
+                            {
+                                if (board[piece.i-2][piece.j] == '.' && board[piece.i-1][piece.j] == '.')
+                                {
+                                    validMoves.push_back("P"+ijs(piece.i,piece.j)+ijs(piece.i-2, piece.j));
+                                }
+                            }
+                            if (sd == -1)
+                            {
+                                validMoves.push_back("P" + ijs(piece.i,piece.j)+"x" + ijs(i,j));
+                            }
+                        }
+                        if (turn == 0) // !turn
+                        {
+                            if (piece.i == 6 && board[7][piece.j] == '.')
+                            {
+                                validMoves.push_back("p"+ijs(6,piece.j)+"pp"); // pp = pawn promotion
+                            }
+                            else if (piece.i < 6)
+                            {
+                                if (board[piece.i+1][piece.j] == '.')
+                                {
+                                    validMoves.push_back("p"+ijs(piece.i,piece.j)+ijs(piece.i+1, piece.j));
+                                }
+                            }
+                            if (piece.i == 1)
+                            {
+                                if (board[piece.i+2][piece.j] == '.' && board[piece.i+1][piece.j] == '.')
+                                {
+                                    validMoves.push_back("p"+ijs(piece.i,piece.j)+ijs(piece.i+2, piece.j));
+                                }
+                            }
+                            if (sd == -1)
+                            {
+                                validMoves.push_back("p" + ijs(piece.i,piece.j)+"x" + ijs(i,j));
+                            }
+                        }
+                    }
+                    string str;
+                    str.push_back(piece.type);
+                    str+=ijs(piece.i, piece.j);
+                    if (sd == -1) str += "x" + ijs(i,j);
+                    else str += ijs(i,j);
+                    !((sd != -1) && (piece.type == 'P' || piece.type == 'p'));
+                }
             }
         }
     }

@@ -24,5 +24,8 @@ int main()
     cout << setw(60) << left << "Mobility: " << mobility(v.return_board(), m.return_controlSquares(), m.return_oppControlSquares(), turn, v.return_ep(), v.return_eps(), v.castle_options()) << endl;
     cout << setw(60) << left << "Piece Square Evaluation: " << pst.eval_sq_tables(v.return_board()) << endl;
     cout << setw(60) << left << "(Special) Pieces eval: " << pieces_eval(v.return_board(), m.return_pieces(), m.return_oppPieces(), turn) << endl;
-
+    cout << "----> Valid Moves of Player: " << endl;
+    for (auto str : m.valid_Moves()) cout << str << endl;
+    cout << "----> Valid Moves of Opponent: " << endl;
+    for (auto str : m.valid_oppMoves()) cout << str << endl;
 }
