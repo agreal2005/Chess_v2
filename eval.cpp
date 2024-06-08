@@ -798,7 +798,12 @@ double mobility(const vector<vector<char>> &board, const vector<vector<vector<Pi
     double black_mobility=0.0;
     Moves temp(board,turn,enpassant,epsquare,castling);
     
-    vector<string> all_moves= temp.valid_Moves();
+    vector<string> my_moves= temp.valid_Moves();
+    vector<string> opp_moves=temp.valid_oppMoves();
+    vector<string> all_moves;
+    all_moves.reserve(my_moves.size()+opp_moves.size());
+    all_moves.insert(all_moves.end(),my_moves.begin(),my_moves.end());
+    all_moves.insert(all_moves.end(),opp_moves.begin(),opp_moves.end());
     vector<vector<vector<Piece>>> white_control_squares;
     vector<vector<vector<Piece>>> black_control_squares;
 
@@ -846,7 +851,7 @@ double mobility(const vector<vector<char>> &board, const vector<vector<vector<Pi
             if(min_val_attack < this_piece_val ) res_in_weak_att=true;
             if(!res_in_hang && !res_in_weak_att)white_mobility++;
         }
-        else if(islower(itr[0] && itr[0]!='k' )){
+        else if(islower(itr[0]) && itr[0]!='k' ){
             string pos_in_char;
             pos_in_char.push_back(itr[itr.size()-2]);
             pos_in_char.push_back(itr[itr.size()-1]);
