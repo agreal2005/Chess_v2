@@ -654,7 +654,7 @@ double weaker_attacked_penalty(const vector<vector<char>> &board, const vector<v
                         break;
                     }
                 }
-                white_penalty.push_back(0.9 * (this_piece_val - opp_piece_val));
+                 if(this_piece_val>opp_piece_val)white_penalty.push_back(0.9 * (this_piece_val - opp_piece_val));
             }
 
             if (board[in_ver][in_hor] >= 'a' && board[in_ver][in_hor] <= 'z')
@@ -710,7 +710,7 @@ double weaker_attacked_penalty(const vector<vector<char>> &board, const vector<v
                         break;
                     }
                 }
-                black_penalty.push_back(0.9 * (this_piece_val - opp_piece_val));
+                if(this_piece_val>opp_piece_val)black_penalty.push_back(0.9 * (this_piece_val - opp_piece_val));
             }
         }
     }
