@@ -27,11 +27,6 @@ void Moves::fetch_Moves(vector<vector<char>> board, bool turn, bool isEnPassant,
 {
     for (int i=0; i<8; ++i)
     {
-        vector<char> initialize(8, '.');
-        board.push_back(initialize);
-    }
-    for (int i=0; i<8; ++i)
-    {
         vector<vector<Piece>> initialize(8);
         controlSquares.push_back(initialize);
     }
@@ -1078,7 +1073,23 @@ vector<string> Moves::valid_Moves()
                     {
                         continue;
                     }
-                    else if (piece.type == 'P' || piece.type == 'p')
+                    string str;
+                    str.push_back(piece.type);
+                    str+=ijs(piece.i, piece.j);
+                    if (sd == -1) str += "x" + ijs(i,j);
+                    else {
+                        if (piece.type == 'P' || piece.type == 'p') continue;
+                        str += ijs(i,j);
+                    }
+                    validMoves.push_back(str);
+                }
+            }
+        }
+    }
+    // Pawn Moves
+    for (auto piece: pieces)
+    {
+        if (piece.type == 'P' || piece.type == 'p')
                     {
                         if (turn == 0)
                         {
@@ -1099,10 +1110,6 @@ vector<string> Moves::valid_Moves()
                                 {
                                     validMoves.push_back("P"+ijs(piece.i,piece.j)+ijs(piece.i-2, piece.j));
                                 }
-                            }
-                            if (sd == -1)
-                            {
-                                validMoves.push_back("P" + ijs(piece.i,piece.j)+"x" + ijs(i,j));
                             }
                         }
                         if (turn == 1)
@@ -1125,21 +1132,8 @@ vector<string> Moves::valid_Moves()
                                     validMoves.push_back("p"+ijs(piece.i,piece.j)+ijs(piece.i+2, piece.j));
                                 }
                             }
-                            if (sd == -1)
-                            {
-                                validMoves.push_back("p" + ijs(piece.i,piece.j)+"x" + ijs(i,j));
-                            }
                         }
                     }
-                    string str;
-                    str.push_back(piece.type);
-                    str+=ijs(piece.i, piece.j);
-                    if (sd == -1) str += "x" + ijs(i,j);
-                    else str += ijs(i,j);
-                    if (!((sd != -1) && (piece.type == 'P' || piece.type == 'p'))) validMoves.push_back(str);
-                }
-            }
-        }
     }
     // If EnPassant is possible then include that
     if (isEnPassant)
@@ -1444,68 +1438,67 @@ vector<string> Moves::valid_oppMoves()
                     {
                         continue;
                     }
-                    else if (piece.type == 'P' || piece.type == 'p')
-                    {
-                        if (turn == 1) // !turn
-                        {
-                            if (piece.i == 1 && board[0][piece.j] == '.')
-                            {
-                                validMoves.push_back("P"+ijs(1,piece.j)+"pp"); // pp = pawn promotion
-                            }
-                            else if (piece.i > 1)
-                            {
-                                if (board[piece.i-1][piece.j] == '.')
-                                {
-                                    validMoves.push_back("P"+ijs(piece.i,piece.j)+ijs(piece.i-1, piece.j));
-                                }
-                            }
-                            if (piece.i == 6)
-                            {
-                                if (board[piece.i-2][piece.j] == '.' && board[piece.i-1][piece.j] == '.')
-                                {
-                                    validMoves.push_back("P"+ijs(piece.i,piece.j)+ijs(piece.i-2, piece.j));
-                                }
-                            }
-                            if (sd == -1)
-                            {
-                                validMoves.push_back("P" + ijs(piece.i,piece.j)+"x" + ijs(i,j));
-                            }
-                        }
-                        if (turn == 0) // !turn
-                        {
-                            if (piece.i == 6 && board[7][piece.j] == '.')
-                            {
-                                validMoves.push_back("p"+ijs(6,piece.j)+"pp"); // pp = pawn promotion
-                            }
-                            else if (piece.i < 6)
-                            {
-                                if (board[piece.i+1][piece.j] == '.')
-                                {
-                                    validMoves.push_back("p"+ijs(piece.i,piece.j)+ijs(piece.i+1, piece.j));
-                                }
-                            }
-                            if (piece.i == 1)
-                            {
-                                if (board[piece.i+2][piece.j] == '.' && board[piece.i+1][piece.j] == '.')
-                                {
-                                    validMoves.push_back("p"+ijs(piece.i,piece.j)+ijs(piece.i+2, piece.j));
-                                }
-                            }
-                            if (sd == -1)
-                            {
-                                validMoves.push_back("p" + ijs(piece.i,piece.j)+"x" + ijs(i,j));
-                            }
-                        }
-                    }
                     string str;
                     str.push_back(piece.type);
                     str+=ijs(piece.i, piece.j);
                     if (sd == -1) str += "x" + ijs(i,j);
-                    else str += ijs(i,j);
-                    !((sd != -1) && (piece.type == 'P' || piece.type == 'p'));
+                    else {
+                        if (piece.type == 'P' || piece.type == 'p') continue;
+                        str += ijs(i,j);
+                    }
+                    validMoves.push_back(str);
                 }
             }
         }
+    }
+    // Pawn Moves
+    for (auto piece:oppPieces)
+    {
+        if (piece.type == 'P' || piece.type == 'p')
+                {
+                    if (turn == 1) // !turn
+                    {
+                        if (piece.i == 1 && board[0][piece.j] == '.')
+                        {
+                            validMoves.push_back("P"+ijs(1,piece.j)+"pp"); // pp = pawn promotion
+                        }
+                        else if (piece.i > 1)
+                        {
+                            if (board[piece.i-1][piece.j] == '.')
+                            {
+                                validMoves.push_back("P"+ijs(piece.i,piece.j)+ijs(piece.i-1, piece.j));
+                            }
+                        }
+                        if (piece.i == 6)
+                        {
+                            if (board[piece.i-2][piece.j] == '.' && board[piece.i-1][piece.j] == '.')
+                            {
+                                validMoves.push_back("P"+ijs(piece.i,piece.j)+ijs(piece.i-2, piece.j));
+                            }
+                        }
+                    }
+                    if (turn == 0) // !turn
+                    {
+                        if (piece.i == 6 && board[7][piece.j] == '.')
+                        {
+                            validMoves.push_back("p"+ijs(6,piece.j)+"pp"); // pp = pawn promotion
+                        }
+                        else if (piece.i < 6)
+                        {
+                            if (board[piece.i+1][piece.j] == '.')
+                            {
+                                validMoves.push_back("p"+ijs(piece.i,piece.j)+ijs(piece.i+1, piece.j));
+                            }
+                        }
+                        if (piece.i == 1)
+                        {
+                            if (board[piece.i+2][piece.j] == '.' && board[piece.i+1][piece.j] == '.')
+                            {
+                                validMoves.push_back("p"+ijs(piece.i,piece.j)+ijs(piece.i+2, piece.j));
+                            }
+                        }
+                    }
+                }
     }
     return validMoves;
 }
