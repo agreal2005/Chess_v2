@@ -1503,13 +1503,12 @@ vector<string> Moves::valid_oppMoves()
     return validMoves;
 }
 
-vector<Piece> Moves::return_trappedPieces(vector<vector<char>> &board, bool turn)
+vector<Piece> Moves::return_trappedPieces()
 {
-    Moves current(board, turn);
     vector<Piece> trappedPieces;
 
     map<string, vector<pair<int,int>>> piece_moves_mp;
-    vector<string> all_moves = current.valid_Moves();
+    vector<string> all_moves = valid_Moves();
 
     for(string move: all_moves)
     {
@@ -1541,16 +1540,16 @@ vector<Piece> Moves::return_trappedPieces(vector<vector<char>> &board, bool turn
             }
         }
     }
-    return trappedPieces;
+    if (turn) return black_trapped_pieces = trappedPieces;
+    return white_trapped_pieces = trappedPieces;
 }
 
-vector<Piece> Moves::return_trappedOppPieces(vector<vector<char>> &board, bool turn)
+vector<Piece> Moves::return_trappedOppPieces()
 {
-    Moves current(board, turn);
     vector<Piece> oppTrappedPieces;
 
     map<string, vector<pair<int,int>>> piece_moves_mp;
-    vector<string> all_moves = current.valid_Moves();
+    vector<string> all_moves = valid_oppMoves();
 
     for(string move: all_moves)
     {
@@ -1582,5 +1581,6 @@ vector<Piece> Moves::return_trappedOppPieces(vector<vector<char>> &board, bool t
             }
         }
     }
-    return oppTrappedPieces;
+    if (!turn) return black_trapped_pieces = oppTrappedPieces;
+    return white_trapped_pieces = oppTrappedPieces;
 }

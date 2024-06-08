@@ -28,4 +28,8 @@ int main()
     for (auto str : m.valid_Moves()) cout << str << endl;
     cout << "----> Valid Moves of Opponent: " << endl;
     for (auto str : m.valid_oppMoves()) cout << str << endl;
+    cout << "-----> Trapped pieces (if any):" << endl;
+    for (auto str : m.return_trappedPieces()) cout << str.type << endl;
+    cout << "-----> For opponent too, if any:" << endl;
+    for (auto str : m.return_trappedOppPieces()) cout << str.type << endl;
 }
