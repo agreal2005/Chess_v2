@@ -1,5 +1,7 @@
 #include "functions.h"
 #include "pieces.h"
+#include <map>
+
 #pragma once
 class Moves
 {
@@ -27,8 +29,11 @@ class Moves
     void checkPinned();
     vector<Piece> return_pieces() { return pieces;}
     vector<Piece> return_oppPieces() { return oppPieces;}
-    vector<Piece> return_trappedPieces(vector<vector<char>> &board, bool turn);
-    vector<Piece> return_trappedOppPieces(vector<vector<char>> &board, bool turn);
+    // bool checkTrapped(string pc, vector<pair<int,int>> pc_moves, bool turn);
+    vector<Piece> black_trapped_pieces;
+    vector<Piece> white_trapped_pieces;
+    vector<Piece> return_trappedPieces();
+    vector<Piece> return_trappedOppPieces();
     friend class EvalBar;
     /*
         Note: controlSquares and oppCS are computed in the

@@ -1503,48 +1503,84 @@ vector<string> Moves::valid_oppMoves()
     return validMoves;
 }
 
-vector<Piece> Moves::return_trappedPieces(vector<vector<char>> &board, bool turn)
+vector<Piece> Moves::return_trappedPieces()
 {
-    /*
-        piece_type(char, turn) 
-        Three return values:
-        --> 1 : same type piece
-        --> -1 : opp type piece
-        --> 0 : empty square
-        
-        (turn == 0 means white and 1 means black)
-        
-        so now basically use the vector in the Moves class called "pieces" of type "Piece"
-        iterate over all pieces
-        for a piece
-        check if all its moves are controlled by the opponent
-        basically oppControlSquares[i][j].size() > 0 or not (where (i,j) are coordinates of the square to which you want to move your piece)
-        if yes
-        then push_back into the trappedPieces vector (which you have to create)
+    vector<Piece> trappedPieces;
 
-        after doing for all pieces, return trappedPieces
-    */
+    map<string, vector<pair<int,int>>> piece_moves_mp;
+    vector<string> all_moves = valid_Moves();
+
+    for(string move: all_moves)
+    {
+        string pc = move.substr(0, 3);
+        pair<int,int> ij = sij(move.substr(move.length()-2, 2));
+        piece_moves_mp[pc].push_back(ij);
+    }
+    for(auto piece_moves: piece_moves_mp)
+    {
+        char pc = piece_moves.first[0];
+        if(piece_type(pc, turn)==1)
+        {
+            bool flag = true;
+            for(int k=0;k<piece_moves.second.size();k++)
+            {
+                int i = piece_moves.second[k].first;
+                int j = piece_moves.second[k].second;
+                if(oppControlSquares[i][j].size()==0)
+                {
+                    flag = false;
+                    break;
+                }
+            }
+            if(flag)
+            {
+                pair<int,int> ij = sij(piece_moves.first.substr(1,2));
+                Piece trapped_piece(pc, ij.first, ij.second);
+                trappedPieces.push_back(trapped_piece);
+            }
+        }
+    }
+    if (turn) return black_trapped_pieces = trappedPieces;
+    return white_trapped_pieces = trappedPieces;
 }
 
-vector<Piece> Moves::return_trappedOppPieces(vector<vector<char>> &board, bool turn)
+vector<Piece> Moves::return_trappedOppPieces()
 {
-    /*
-        piece_type(char, turn) 
-        Three return values:
-        --> 1 : same type piece
-        --> -1 : opp type piece
-        --> 0 : empty square
-        
-        (turn == 0 means white and 1 means black)
-        
-        so now basically use the vector in the Moves class called "oppPieces" of type "Piece"
-        iterate over all Opponent's pieces
-        for a piece
-        check if all its moves are controlled by YOU
-        basically ControlSquares[i][j].size() > 0 or not
-        if yes
-        then push_back into the trappedOppPieces vector (which you have to create)
+    vector<Piece> oppTrappedPieces;
 
-        after doing for all pieces of the Opponent, return trappedOppPieces
-    */
+    map<string, vector<pair<int,int>>> piece_moves_mp;
+    vector<string> all_moves = valid_oppMoves();
+
+    for(string move: all_moves)
+    {
+        string pc = move.substr(0, 3);
+        pair<int,int> ij = sij(move.substr(move.length()-2, 2));
+        piece_moves_mp[pc].push_back(ij);
+    }
+    for(auto piece_moves: piece_moves_mp)
+    {
+        char pc = piece_moves.first[0];
+        if(piece_type(pc, turn)==-1)
+        {
+            bool flag = true;
+            for(int k=0;k<piece_moves.second.size();k++)
+            {
+                int i = piece_moves.second[k].first;
+                int j = piece_moves.second[k].second;
+                if(controlSquares[i][j].size()==0)
+                {
+                    flag = false;
+                    break;
+                }
+            }
+            if(flag)
+            {
+                pair<int,int> ij = sij(piece_moves.first.substr(1,2));
+                Piece trapped_piece(pc, ij.first, ij.second);
+                oppTrappedPieces.push_back(trapped_piece);
+            }
+        }
+    }
+    if (!turn) return black_trapped_pieces = oppTrappedPieces;
+    return white_trapped_pieces = oppTrappedPieces;
 }
