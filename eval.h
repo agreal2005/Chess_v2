@@ -24,6 +24,7 @@ double weaker_attacked_penalty(const vector<vector<char>> &board, const vector<v
 // short getStage(int material_count);
 double mobility(const vector<vector<char>> &board, const vector<vector<vector<Piece>>> &control_squares, const vector<vector<vector<Piece>>> &oppcontrol_squares, bool turn = 0, bool enpassant = 0,string epsquare = "",int castling = 15);
 double pieces_eval(const vector<vector<char>> &board, const vector<Piece> pieces, const vector<Piece> oppPieces, bool turn = 0);
+double eval_kingsafety(const vector<vector<char>> &board, const vector<vector<vector<Piece>>> &control_squares, const vector<vector<vector<Piece>>> &oppcontrol_squares, bool turn);
 
 extern int gamePhase;
 extern psTables pst;

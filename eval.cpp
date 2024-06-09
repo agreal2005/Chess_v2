@@ -120,16 +120,16 @@ double evaluate_material(const vector<vector<char>> &board)
             }
         }
     }
-    // getStage(white_score + black_score);
+    gamePhase = getStage(white_score + black_score);
     return white_score - black_score;
 }
 
-// short getStage(int total_material)
-// {
-//     if (total_material >= 68) return 2; // opening
-//     else if (total_material <= 26) return 0; // endgame
-//     else return 1; // middlegame
-// }
+ int getStage(int total_material)
+ {
+     if (total_material >= 68) return 2; // opening
+     else if (total_material <= 26) return 0; // endgame
+     else return 1; // middlegame
+ }
 
 // This checks whether there is a pawn in the given column after or behind a given row for both white and black depending on dir
 // dir 1 means ahead or equal to the row of whichever side you are playing
@@ -889,4 +889,131 @@ double mobility(const vector<vector<char>> &board, const vector<vector<vector<Pi
     total_mobility=white_mobility-black_mobility;
     total_mobility/=8.0;
     return total_mobility;
+}
+
+double eval_kingsafety(const vector<vector<char>> &board, const vector<vector<vector<Piece>>> &control_squares, const vector<vector<vector<Piece>>> &oppcontrol_squares, bool turn)
+{
+    double white_attack = 0;
+    double black_attack = 0;
+
+    double white_missing_pawn = 0;
+    double black_missing_pawn = 0;
+
+    double pawn_attack = 0.4;
+    double bishop_attack = 0.3;
+    double knight_attack = 0.3;
+    double queen_attack = 0.6;
+    double rook_attack = 0.5;
+    double pawn_missing_ahead_penalty = 0.4;
+    double side_pawn_missing_penalty = 0.3;
+
+    vector<pair<int, int>> white_king_area;
+    vector<pair<int, int>> black_king_area;
+
+    int white_king_hor, white_king_ver;
+    int black_king_hor, black_king_ver;
+
+    for(int i=0; i<8; i++)
+    {
+        for(int j=0; j<8; j++)
+        {
+            if(board[i][j] == 'K')
+            {
+                white_king_ver = i;
+                white_king_hor = j;
+            }
+            if(board[i][j] == 'k')
+            {
+                black_king_ver = i;
+                black_king_hor = j;
+            }
+        }
+    }
+
+    for(int i=0; i<8; i++)
+    {
+        for(int j=0; j<8; j++)
+        {
+            if(abs(i-white_king_ver) + abs(j-white_king_hor) <= 3)
+            {
+                white_king_area.push_back({i,j});
+            }
+            if(abs(i-black_king_ver) + abs(j-black_king_hor) <= 3)
+            {
+                black_king_area.push_back({i,j});
+            }
+        }
+    }
+
+    for(auto square : white_king_area)
+    {
+        auto pieces = oppcontrol_squares[square.first][square.second];
+        if(turn == 1)
+        pieces = control_squares[square.first][square.second];
+
+        for(auto piece : pieces)
+        {
+            switch(piece.type)
+            {
+            case 'p' : black_attack += pawn_attack; break;
+            case 'b' : black_attack += bishop_attack; break;
+            case 'n' : black_attack += knight_attack; break;
+            case 'q' : black_attack += queen_attack; break;
+            case 'r' : black_attack += rook_attack; break;
+
+            default : break;
+            }
+        }
+    }
+
+    for(auto square : black_king_area)
+    {
+        auto pieces = control_squares[square.first][square.second];
+        if(turn == 1)
+        pieces = oppcontrol_squares[square.first][square.second];
+
+        for(auto piece : pieces)
+        {
+            switch(piece.type)
+            {
+                case 'P' : white_attack += pawn_attack; break;
+                case 'K' : white_attack += knight_attack; break;
+                case 'B' : white_attack += bishop_attack; break;
+                case 'Q' : white_attack += queen_attack; break;
+                case 'R' : white_attack += rook_attack; break;
+
+                default : break;
+            }
+        }
+    }
+
+    if((white_king_ver-1 >= 0 && board[white_king_ver-1][white_king_hor] != 'P') && (white_king_ver-2>=0 && board[white_king_ver-2][white_king_hor] != 'P'))
+    {
+        white_missing_pawn += pawn_missing_ahead_penalty;
+    }
+    if(white_king_ver-1 >= 0 && white_king_hor-1 >= 0 && board[white_king_ver-1][white_king_hor-1] != 'P')
+    {
+        white_missing_pawn += side_pawn_missing_penalty;
+    }
+    if(white_king_ver-1 >= 0 && white_king_hor+1 < 8 && board[white_king_ver-1][white_king_hor+1] != 'P')
+    {
+        white_missing_pawn += side_pawn_missing_penalty;
+    }
+
+    if((black_king_ver+1 < 8 && board[black_king_ver+1][black_king_hor] != 'p') && (black_king_ver+2) < 8 && board[black_king_ver+2][black_king_hor] != 'p')
+    {
+        black_missing_pawn += pawn_missing_ahead_penalty;
+    }
+
+    if(black_king_ver+1 < 8 && black_king_hor+1 < 8 && board[black_king_ver+1][black_king_hor+1] != 'p')
+    {
+        black_missing_pawn += side_pawn_missing_penalty;
+    }
+
+    if(black_king_ver+1 < 8 && black_king_hor-1 >= 0 && board[black_king_ver+1][black_king_hor-1] != 'p')
+    {
+        black_missing_pawn += side_pawn_missing_penalty;
+    }
+
+    return white_attack-black_attack-white_missing_pawn+black_missing_pawn;
 }
