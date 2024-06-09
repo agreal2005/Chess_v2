@@ -1037,7 +1037,7 @@ vector<string> Moves::valid_Moves()
     {
         if (wck)
         {
-            if (board[7][5] == '.' && board[7][6] == '.' && board[7][4] == 'k' && board[7][7] == 'r')
+            if (board[7][5] == '.' && board[7][6] == '.' && board[7][4] == 'K' && board[7][7] == 'R')
             {
                 if (oppControlSquares[7][5].size() == 0 && oppControlSquares[7][6].size() == 0)
                 {
@@ -1047,7 +1047,7 @@ vector<string> Moves::valid_Moves()
         }
         else if (wcq)
         {
-            if (board[7][2] == '.' && board[7][3] == '.' && board[7][1] == '.' && board[7][4] == 'k' && board[7][0] == 'r')
+            if (board[7][2] == '.' && board[7][3] == '.' && board[7][1] == '.' && board[7][4] == 'K' && board[7][0] == 'R')
             {
                 if (oppControlSquares[7][1].size() == 0 && oppControlSquares[7][2].size() == 0 && oppControlSquares[7][3].size() == 0)
                 {
