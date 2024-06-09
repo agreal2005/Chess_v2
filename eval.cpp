@@ -120,7 +120,6 @@ double evaluate_material(const vector<vector<char>> &board)
             }
         }
     }
-    gamePhase = getStage(white_score + black_score);
     return white_score - black_score;
 }
 
