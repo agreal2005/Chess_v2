@@ -91,3 +91,16 @@ string EvalBar::playOneMove(string move, vector<vector<char>> brd, bool t, bool 
     Board_FEN temp;
     return temp.get_FEN(brd, t, wck, wcq, bck, bcq, isEnp, epS, hfc, fms);
 }
+
+double complete_eval(EvalParams pr, bool isOpp = false)
+{
+    double eval = evaluate_material(pr.board) + evaluate_pawn_structure(reverseBoard(pr.board), pr.controlSquares, pr.oppControlSquares, pr.turn, pr.f) + evaluate_outposts(pr.board, pr.controlSquares, pr.oppControlSquares, pr.turn)+
+           hanging_piece_penalty(pr.board, pr.controlSquares, pr.oppControlSquares, pr.turn)+weaker_attacked_penalty(pr.board, pr.controlSquares, pr.oppControlSquares, pr.turn) + mobility(pr.board, pr.controlSquares, pr.oppControlSquares, pr.turn);
+    double king_score = eval_kingsafety(pr.board, pr.controlSquares, pr.oppControlSquares, pr.turn);
+    
+    if(gamePhase != 0)
+    {
+        eval += king_score;
+    }
+    return eval;
+}

@@ -120,16 +120,16 @@ double evaluate_material(const vector<vector<char>> &board)
             }
         }
     }
-    // getStage(white_score + black_score);
+    gamePhase = getStage(white_score + black_score);
     return white_score - black_score;
 }
 
-// short getStage(int total_material)
-// {
-//     if (total_material >= 68) return 2; // opening
-//     else if (total_material <= 26) return 0; // endgame
-//     else return 1; // middlegame
-// }
+ int getStage(int total_material)
+ {
+     if (total_material >= 68) return 2; // opening
+     else if (total_material <= 26) return 0; // endgame
+     else return 1; // middlegame
+ }
 
 // This checks whether there is a pawn in the given column after or behind a given row for both white and black depending on dir
 // dir 1 means ahead or equal to the row of whichever side you are playing
