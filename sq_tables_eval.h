@@ -13,13 +13,8 @@ using namespace std;
 #define WHITE 0
 #define BLACK 1
 
-// #define PCOLOR(p) ((p)&1)
-
 #define FLIP(sq) ((sq) ^ 56)    
 #define OTHER(side) ((side) ^ 1)
-
-// int board[64];
-// int gamePhase;
 
 extern int gamePhase;
 
@@ -186,8 +181,6 @@ struct psTables
     int eg_table_black[6][64];
     int mg_table_white[6][64];
     int eg_table_white[6][64];
-
-    // int side2move;
 
     void init_tables();
     int eval_sq_tables(const vector<vector<char>> &board);

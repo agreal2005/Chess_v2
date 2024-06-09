@@ -29,6 +29,7 @@ class EvalBar
     EvalBar(string f = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
     string playOneMove(string move, vector<vector<char>> brd, bool t, bool wck, bool wcq, bool bck, bool bcq, bool isEnp, string epS, int hfc, int fms); // Return FEN
     /*
+        Assuming string move is always a valid legal move
         Update all the boolean params
         if valid Move is enPassant, then capture that pawn also
         and see if after Valid move, there is en passant
