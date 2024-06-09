@@ -98,7 +98,7 @@ double complete_eval(EvalParams pr, bool isOpp = false)
            hanging_piece_penalty(pr.board, pr.controlSquares, pr.oppControlSquares, pr.turn)+weaker_attacked_penalty(pr.board, pr.controlSquares, pr.oppControlSquares, pr.turn) + mobility(pr.board, pr.controlSquares, pr.oppControlSquares, pr.turn);
     double king_score = eval_kingsafety(pr.board, pr.controlSquares, pr.oppControlSquares, pr.turn);
     
-    if(gamePhase != 0)
+    if(gamePhase > 24)
     {
         eval += king_score;
     }
