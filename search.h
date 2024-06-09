@@ -1,6 +1,23 @@
 #include "eval.h"
 #pragma once
 
+struct EvalParams
+{
+    string f; // fen
+    vector<vector<char>> board; // from fen.h
+    vector<Piece> pieces; // from moves.h
+    vector<Piece> oppPieces; // from moves.h
+    vector<vector<vector<Piece>>> controlSquares; // from moves.h
+    vector<vector<vector<Piece>>> oppControlSquares; // from moves.h
+    bool turn, isEnPassant; // from fen.h
+    int castling; // from fen.h
+    string epSquare; // from fen.h
+    vector<Piece> trappedPieces; // from moves.h
+    vector<Piece> trappedOppPieces; // from moves.h
+    vector<string> validMoves; // from moves.h
+    vector<string> validOppMoves; // from moves.h
+};
+
 class EvalBar
 {
     private:
@@ -18,7 +35,12 @@ class EvalBar
         Castling also has to be updated
         Turn also has to be updated
     */
-    pair<string, double> evalTree(string f, int d, bool isOpp = false); // First take the fen 'f' and send it to Dev
-    double complete_eval(); // To be called when eval reaches its depth
+    pair<string, double> evalTree(string f, int d, bool isOpp = false);  // d = depth, f = fen, isOpp = is it Opponent's turn or not
+    // First take the fen 'f' and send it to playOneMove
+    // Retrieve the parameters in the function
+    // Make the vectors for pieces, oppPieces, controlSquares, oppControlSquares, validMoves, validOppMoves
+    // See fen.h & moves.h for reference
+    // pass everything to complete_eval including isOpp
+    double complete_eval(EvalParams pr, bool isOpp = false); // To be called when eval reaches its depth
     
 };
