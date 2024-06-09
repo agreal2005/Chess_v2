@@ -69,10 +69,10 @@ void Board_FEN::input_FEN(string fen_val)
         default_FEN();
         return;
     }
-    white_castle_kingside = true;
-    white_castle_queenside = true;
-    black_castle_kingside = true;
-    black_castle_queenside = true;
+    white_castle_kingside = false;
+    white_castle_queenside = false;
+    black_castle_kingside = false;
+    black_castle_queenside = false;
     cursor++;
     if (fen_val[cursor] != ' ')
     {
