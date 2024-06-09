@@ -2,20 +2,21 @@
 #include "moves.h"
 #include "eval.h"
 #include "functions.h"
+#include "search.h"
 using namespace std;
 int gamePhase;
 psTables pst;
 
 int main()
 {
-    string fen;
-    getline(cin, fen);
+    string fen = "8/2p2p2/7p/3PPK1p/5P1k/8/8/8 b - - 0 1";
+    // getline(cin, fen);
     Board_FEN v(fen);
     v.display_board_FEN();
     Moves m;
     bool turn = v.return_turn();
     pst.init_tables();
-    m.fetch_Moves(v.return_board(), 0);
+    m.fetch_Moves(v.return_board(), turn, v.return_ep(), v.return_eps(), v.castle_options());
     cout << setw(60) << left << "Evaluate Checkmate: " << evaluate_checkmate(v.return_board(), m.return_oppControlSquares(), m.valid_Moves(), turn, fen) << endl;
     cout << setw(60) << left << "Evalute Material: " << evaluate_material(v.return_board()) << endl;
     cout << setw(60) << left << "Pawn Structure: " << evaluate_pawn_structure(reverseBoard(v.return_board()), m.return_controlSquares(), m.return_oppControlSquares(), turn, fen) << endl;
@@ -34,4 +35,11 @@ int main()
     for (auto str : m.return_trappedPieces()) cout << str.type << endl;
     cout << "-----> For opponent too, if any:" << endl;
     for (auto str : m.return_trappedOppPieces()) cout << str.type << endl;
+    EvalBar bar;
+    int cs = v.castle_options();
+    for (auto mv : m.valid_Moves())
+    {
+        getchar();
+        cout << bar.playOneMove(mv, v.return_board(), v.return_turn(), ((cs>>3)&1), ((cs>>2)&1), ((cs>>1)&1), (cs&1), v.return_ep(), v.return_eps(), v.return_halfmoveclk(), v.return_fullmoves()) << endl;
+    }
 }

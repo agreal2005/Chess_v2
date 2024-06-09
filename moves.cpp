@@ -696,7 +696,7 @@ void Moves::checkPinned()
     for (auto &piece : oppPieces)
     {
         // Cycle over all opponent pieces that are in line of sight of the king
-        if (piece.type == 'Q' || piece.type == 'q' || piece.type == 'B' || piece.type == 'b' || piece.type == 'R' || piece.type == 'r' || piece.type == 'P' || piece.type == 'p')
+        if (piece.type == 'Q' || piece.type == 'q' || piece.type == 'B' || piece.type == 'b' || piece.type == 'R' || piece.type == 'r')
         {
             // Find if any of our piece(s) are on the straight line
             if (!(piece.i - piece.j == king_square.first - king_square.second || piece.i + piece.j == king_square.first + king_square.second || piece.i == king_square.first || piece.j == king_square.second))
@@ -814,7 +814,7 @@ void Moves::checkOppPinned()
     for (auto &piece : pieces)
     {
         // Cycle over all opponent pieces that are in line of sight of the king
-        if (piece.type == 'Q' || piece.type == 'q' || piece.type == 'B' || piece.type == 'b' || piece.type == 'R' || piece.type == 'r' || piece.type == 'P' || piece.type == 'p')
+        if (piece.type == 'Q' || piece.type == 'q' || piece.type == 'B' || piece.type == 'b' || piece.type == 'R' || piece.type == 'r')
         {
             // Find if any of our piece(s) are on the straight line
             if (!(piece.i - piece.j == oppKing_square.first - oppKing_square.second || piece.i + piece.j == oppKing_square.first + oppKing_square.second || piece.i == oppKing_square.first || piece.j == oppKing_square.second))
@@ -1228,7 +1228,9 @@ vector<string> Moves::valid_Moves()
                     str.push_back(piece.type);
                     str += ijs(piece.i, piece.j);
                     if (sd == -1)
+                    {
                         str += "x" + ijs(i, j);
+                    }
                     else
                     {
                         if (piece.type == 'P' || piece.type == 'p')
@@ -1262,7 +1264,7 @@ vector<string> Moves::valid_Moves()
                 {
                     if (board[piece.i - 2][piece.j] == '.' && board[piece.i - 1][piece.j] == '.')
                     {
-                        validMoves.push_back("P" + ijs(piece.i, piece.j) + "D" + ijs(piece.i - 2, piece.j));
+                        validMoves.push_back("P" + ijs(piece.i, piece.j) + "Z" + ijs(piece.i - 2, piece.j));
                     }
                 }
             }
@@ -1283,7 +1285,7 @@ vector<string> Moves::valid_Moves()
                 {
                     if (board[piece.i + 2][piece.j] == '.' && board[piece.i + 1][piece.j] == '.')
                     {
-                        validMoves.push_back("p" + ijs(piece.i, piece.j) + "d"+ ijs(piece.i + 2, piece.j));
+                        validMoves.push_back("p" + ijs(piece.i, piece.j) + "z"+ ijs(piece.i + 2, piece.j));
                     }
                 }
             }
@@ -1292,16 +1294,19 @@ vector<string> Moves::valid_Moves()
     // If EnPassant is possible then include that
     if (isEnPassant)
     {
-        for (auto piece : controlSquares[sij(epSquare).first][sij(epSquare).second])
+        if (turn == 0)
         {
-            if (piece.type == 'P')
-            {
-                validMoves.push_back("P" + ijs(piece.i, piece.j) + "E" + epSquare);
+            int x1 = sij(epSquare).first, y1 = sij(epSquare).second;
+            if (y1 > 0 && board[x1+1][y1-1] == 'P') {
+                validMoves.push_back("P" + ijs(x1+1, y1-1) + "Y" + epSquare);
             }
-            else if (piece.type == 'p')
-            {
-                validMoves.push_back("p" + ijs(piece.i, piece.j) + "e" + epSquare);
-            }
+            if (y1 < 7 && board[x1+1][y1+1] == 'P') validMoves.push_back("P" + ijs(x1+1, y1+1) + "Y" + epSquare);
+        }
+        else if (turn == 1)
+        {
+            int x1 = sij(epSquare).first, y1 = sij(epSquare).second;
+            if (y1 > 0 && board[x1-1][y1-1] == 'p') validMoves.push_back("p" + ijs(x1-1, y1-1) + "y" + epSquare);
+            if (y1 < 7 && board[x1-1][y1+1] == 'p') validMoves.push_back("p" + ijs(x1-1, y1+1) + "y" + epSquare);
         }
     }
     return validMoves;
@@ -1608,7 +1613,9 @@ vector<string> Moves::valid_oppMoves()
                     str.push_back(piece.type);
                     str += ijs(piece.i, piece.j);
                     if (sd == -1)
+                    {
                         str += "x" + ijs(i, j);
+                    }
                     else
                     {
                         if (piece.type == 'P' || piece.type == 'p')
@@ -1642,7 +1649,7 @@ vector<string> Moves::valid_oppMoves()
                 {
                     if (board[piece.i - 2][piece.j] == '.' && board[piece.i - 1][piece.j] == '.')
                     {
-                        validMoves.push_back("P" + ijs(piece.i, piece.j) + ijs(piece.i - 2, piece.j));
+                        validMoves.push_back("P" + ijs(piece.i, piece.j) + "z" + ijs(piece.i - 2, piece.j));
                     }
                 }
             }
@@ -1663,7 +1670,7 @@ vector<string> Moves::valid_oppMoves()
                 {
                     if (board[piece.i + 2][piece.j] == '.' && board[piece.i + 1][piece.j] == '.')
                     {
-                        validMoves.push_back("p" + ijs(piece.i, piece.j) + ijs(piece.i + 2, piece.j));
+                        validMoves.push_back("p" + ijs(piece.i, piece.j) + "z" + ijs(piece.i + 2, piece.j));
                     }
                 }
             }

@@ -12,8 +12,9 @@ string EvalBar::playOneMove(string move, vector<vector<char>> brd, bool t, bool 
 {
     string curr_position = move.substr(1, 2);
     string next_position = move.substr(move.length() - 2, 2);
-    pair<int, int> curr_ij = sij(curr_position);
-    pair<int, int> next_ij = sij(next_position);
+    pair<int,int> curr_ij, next_ij;
+    if (move[0] != 'o' && move[0] != 'O') curr_ij = sij(curr_position);
+    if (move[0] != 'o' && move[0] != 'O') next_ij = sij(next_position);
     if (move == "O-O") // white castling king side
     {
         brd[7][4] = 'R';
@@ -48,9 +49,17 @@ string EvalBar::playOneMove(string move, vector<vector<char>> brd, bool t, bool 
     }
     else if (move[0] == 'P' || move[0] == 'p')
     {
-        if (isEnp && (move[3] == 'e' || move[3] == 'E'))
+        if (isEnp && (move[3] == 'y' || move[3] == 'Y'))
         {
-            string passed_sq = move[0] == 'P' ? passed_sq = ijs(sij(epS).first + 1, sij(epS).second) : passed_sq = ijs(sij(epS).first - 1, sij(epS).second);
+            string passed_sq;
+            if (move[0] == 'P')
+            {
+                passed_sq = ijs(sij(epS).first + 1, sij(epS).second);
+            }
+            else
+            {
+                passed_sq = ijs(sij(epS).first - 1, sij(epS).second);
+            }
             brd[sij(passed_sq).first][sij(passed_sq).second] = '.';
             brd[curr_ij.first][curr_ij.second] = '.';
             brd[next_ij.first][next_ij.second] = move[0];
@@ -61,7 +70,7 @@ string EvalBar::playOneMove(string move, vector<vector<char>> brd, bool t, bool 
             brd[curr_ij.first][curr_ij.second] = '.';
             brd[next_ij.first][next_ij.second] = move[0];
             isEnp = false;
-            if (move[3] == 'D')
+            if (move[3] == 'Z')
             {
                 if ((next_ij.second - 1 >= 0 && brd[next_ij.first][next_ij.second - 1] == 'p') ||
                     (next_ij.second + 1 < 8 && brd[next_ij.first][next_ij.second + 1] == 'p'))
@@ -70,7 +79,7 @@ string EvalBar::playOneMove(string move, vector<vector<char>> brd, bool t, bool 
                     epS = ijs(next_ij.first + 1, next_ij.second);
                 }
             }
-            else if(move[3]=='d')
+            else if(move[3]=='z')
             {
                 if ((next_ij.second - 1 >= 0 && brd[next_ij.first][next_ij.second - 1] == 'P') ||
                     (next_ij.second + 1 < 8 && brd[next_ij.first][next_ij.second + 1] == 'P'))
@@ -88,8 +97,8 @@ string EvalBar::playOneMove(string move, vector<vector<char>> brd, bool t, bool 
         isEnp = false;
     }
     t = !t;
-    Board_FEN temp;
-    return temp.get_FEN(brd, t, wck, wcq, bck, bcq, isEnp, epS, hfc, fms);
+    display_board(brd); // for testing purposes
+    return fen.get_FEN(brd, t, wck, wcq, bck, bcq, isEnp, epS, hfc, fms);
 }
 
 double complete_eval(EvalParams pr, bool isOpp = false)
