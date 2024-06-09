@@ -1,0 +1,100 @@
++----+----+----+----+----+----+----+----
+| r || . || b || q || k || b || . || r |
++----+----+----+----+----+----+----+----
+| . || . || p || p || . || p || p || p |
++----+----+----+----+----+----+----+----
+| p || . || . || . || . || . || . || . |
++----+----+----+----+----+----+----+----
+| . || p || . || . || n || . || . || . |
++----+----+----+----+----+----+----+----
+| . || . || . || . || . || . || . || . |
++----+----+----+----+----+----+----+----
+| . || P || N || P || . || . || . || . |
++----+----+----+----+----+----+----+----
+| . || P || P || . || . || P || P || P |
++----+----+----+----+----+----+----+----
+| R || . || B || Q || R || . || K || . |
++----+----+----+----+----+----+----+----
+Evaluate Checkmate:                                         0
+Evalute Material:                                           -3
+Pawn Structure:                                             -0.4
+Evaluate Outposts:                                          0
+Hanging Piece Penalty:                                      2.4
+Weaker Attacked Penalty:                                    -0
+Mobility:                                                   0.25
+Piece Square Evaluation:                                    -677
+(Special) Pieces eval:                                      0.3875
+----> Valid Moves of Player: 
+Kg1f1
+Kg1h1
+Ra1xa6
+Bc1h6
+Ra1a5
+Nc3xb5
+Nc3d5
+Re1xe5
+Bc1g5
+Qd1h5
+Nc3a4
+Ra1a4
+Nc3e4
+Re1e4
+Bc1f4
+Qd1g4
+Ra1a3
+Bc1e3
+Re1e3
+Qd1f3
+Nc3a2
+Ra1a2
+Bc1d2
+Qd1d2
+Nc3e2
+Qd1e2
+Re1e2
+Nc3b1
+Ra1b1
+Re1f1
+Pb3b4
+Pd3d4
+Pf2f3
+Pf2Df4
+Pg2g3
+Pg2Dg4
+Ph2h3
+Ph2Dh4
+----> Valid Moves of Opponent: 
+ke8e7
+ra8b8
+rh8g8
+ra8a7
+bc8b7
+qd8e7
+bf8e7
+ne5c6
+bf8d6
+qd8f6
+ne5g6
+bf8c5
+qd8g5
+bf8b4
+ne5c4
+ne5g4
+qd8h4
+bf8a3
+ne5xd3
+ne5f3
+pc7c6
+pc7c5
+pd7d6
+pd7d5
+pf7f6
+pf7f5
+pg7g6
+pg7g5
+ph7h6
+ph7h5
+pa6a5
+pb5b4
+-----> Trapped pieces (if any):
+-----> For opponent too, if any:
