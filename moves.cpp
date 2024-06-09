@@ -1090,50 +1090,50 @@ vector<string> Moves::valid_Moves()
     for (auto piece: pieces)
     {
         if (piece.type == 'P' || piece.type == 'p')
+        {
+            if (turn == 0)
+            {
+                if (piece.i == 1 && board[0][piece.j] == '.')
+                {
+                    validMoves.push_back("P"+ijs(1,piece.j)+"pp"); // pp = pawn promotion
+                }
+                else if (piece.i > 1)
+                {
+                    if (board[piece.i-1][piece.j] == '.')
                     {
-                        if (turn == 0)
-                        {
-                            if (piece.i == 1 && board[0][piece.j] == '.')
-                            {
-                                validMoves.push_back("P"+ijs(1,piece.j)+"pp"); // pp = pawn promotion
-                            }
-                            else if (piece.i > 1)
-                            {
-                                if (board[piece.i-1][piece.j] == '.')
-                                {
-                                    validMoves.push_back("P"+ijs(piece.i,piece.j)+ijs(piece.i-1, piece.j));
-                                }
-                            }
-                            if (piece.i == 6)
-                            {
-                                if (board[piece.i-2][piece.j] == '.' && board[piece.i-1][piece.j] == '.')
-                                {
-                                    validMoves.push_back("P"+ijs(piece.i,piece.j)+ijs(piece.i-2, piece.j));
-                                }
-                            }
-                        }
-                        if (turn == 1)
-                        {
-                            if (piece.i == 6 && board[7][piece.j] == '.')
-                            {
-                                validMoves.push_back("p"+ijs(6,piece.j)+"pp"); // pp = pawn promotion
-                            }
-                            else if (piece.i < 6)
-                            {
-                                if (board[piece.i+1][piece.j] == '.')
-                                {
-                                    validMoves.push_back("p"+ijs(piece.i,piece.j)+ijs(piece.i+1, piece.j));
-                                }
-                            }
-                            if (piece.i == 1)
-                            {
-                                if (board[piece.i+2][piece.j] == '.' && board[piece.i+1][piece.j] == '.')
-                                {
-                                    validMoves.push_back("p"+ijs(piece.i,piece.j)+ijs(piece.i+2, piece.j));
-                                }
-                            }
-                        }
+                        validMoves.push_back("P"+ijs(piece.i,piece.j)+ijs(piece.i-1, piece.j));
                     }
+                }
+                if (piece.i == 6)
+                {
+                    if (board[piece.i-2][piece.j] == '.' && board[piece.i-1][piece.j] == '.')
+                    {
+                        validMoves.push_back("P"+ijs(piece.i,piece.j)+ijs(piece.i-2, piece.j));
+                    }
+                }
+            }
+            if (turn == 1)
+            {
+                if (piece.i == 6 && board[7][piece.j] == '.')
+                {
+                    validMoves.push_back("p"+ijs(6,piece.j)+"pp"); // pp = pawn promotion
+                }
+                else if (piece.i < 6)
+                {
+                    if (board[piece.i+1][piece.j] == '.')
+                    {
+                        validMoves.push_back("p"+ijs(piece.i,piece.j)+ijs(piece.i+1, piece.j));
+                    }
+                }
+                if (piece.i == 1)
+                {
+                    if (board[piece.i+2][piece.j] == '.' && board[piece.i+1][piece.j] == '.')
+                    {
+                        validMoves.push_back("p"+ijs(piece.i,piece.j)+ijs(piece.i+2, piece.j));
+                    }
+                }
+            }
+        }
     }
     // If EnPassant is possible then include that
     if (isEnPassant)
@@ -1402,7 +1402,7 @@ vector<string> Moves::valid_oppMoves()
     {
         if (wck)
         {
-            if (board[7][5] == '.' && board[7][6] == '.' && board[7][4] == 'k' && board[7][7] == 'r')
+            if (board[7][5] == '.' && board[7][6] == '.' && board[7][4] == 'K' && board[7][7] == 'R')
             {
                 if (controlSquares[7][5].size() == 0 && controlSquares[7][6].size() == 0)
                 {
@@ -1412,7 +1412,7 @@ vector<string> Moves::valid_oppMoves()
         }
         else if (wcq)
         {
-            if (board[7][2] == '.' && board[7][3] == '.' && board[7][1] == '.' && board[7][4] == 'k' && board[7][0] == 'r')
+            if (board[7][2] == '.' && board[7][3] == '.' && board[7][1] == '.' && board[7][4] == 'K' && board[7][0] == 'R')
             {
                 if (controlSquares[7][1].size() == 0 && controlSquares[7][2].size() == 0 && controlSquares[7][3].size() == 0)
                 {
