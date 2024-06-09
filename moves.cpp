@@ -1018,7 +1018,7 @@ vector<string> Moves::valid_Moves()
             {
                 if (oppControlSquares[0][5].size() == 0 && oppControlSquares[0][6].size() == 0)
                 {
-                    validMoves.push_back("O-O");
+                    validMoves.push_back("o-o");
                 }
             }
         }
@@ -1028,7 +1028,7 @@ vector<string> Moves::valid_Moves()
             {
                 if (oppControlSquares[0][1].size() == 0 && oppControlSquares[0][2].size() == 0 && oppControlSquares[0][3].size() == 0)
                 {
-                    validMoves.push_back("O-O-O");
+                    validMoves.push_back("o-o-o");
                 }
             }
         }
@@ -1383,7 +1383,7 @@ vector<string> Moves::valid_oppMoves()
             {
                 if (controlSquares[0][5].size() == 0 && controlSquares[0][6].size() == 0)
                 {
-                    validMoves.push_back("O-O");
+                    validMoves.push_back("o-o");
                 }
             }
         }
@@ -1393,7 +1393,7 @@ vector<string> Moves::valid_oppMoves()
             {
                 if (controlSquares[0][1].size() == 0 && controlSquares[0][2].size() == 0 && controlSquares[0][3].size() == 0)
                 {
-                    validMoves.push_back("O-O-O");
+                    validMoves.push_back("o-o-o");
                 }
             }
         }
@@ -1513,6 +1513,7 @@ vector<Piece> Moves::return_trappedPieces()
     for(string move: all_moves)
     {
         string pc = move.substr(0, 3);
+        if (pc[0] == 'P' || pc[0] == 'p' || pc[0] == 'o' || pc[0] == 'O') continue;
         pair<int,int> ij = sij(move.substr(move.length()-2, 2));
         piece_moves_mp[pc].push_back(ij);
     }
@@ -1554,6 +1555,7 @@ vector<Piece> Moves::return_trappedOppPieces()
     for(string move: all_moves)
     {
         string pc = move.substr(0, 3);
+        if (pc[0] == 'P' || pc[0] == 'p' || pc[0] == 'o' || pc[0] == 'O') continue;
         pair<int,int> ij = sij(move.substr(move.length()-2, 2));
         piece_moves_mp[pc].push_back(ij);
     }

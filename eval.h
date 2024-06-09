@@ -21,8 +21,6 @@ double evaluate_outposts(const vector<vector<char>> &board, const vector<vector<
 double hanging_piece_penalty(const vector<vector<char>> &board, const vector<vector<vector<Piece>>> &control_squares, const vector<vector<vector<Piece>>> &oppcontrol_squares, bool turn);
 double weaker_attacked_penalty(const vector<vector<char>> &board, const vector<vector<vector<Piece>>> &control_squares, const vector<vector<vector<Piece>>> &oppcontrol_squares, bool turn);
 
-double mobility(const vector<vector<char>> &board, const vector<vector<vector<Piece>>> &control_squares, const vector<vector<vector<Piece>>> &oppcontrol_squares, bool turn, bool enpassant,string epsquare,int castling);
-
 // short getStage(int material_count);
 double mobility(const vector<vector<char>> &board, const vector<vector<vector<Piece>>> &control_squares, const vector<vector<vector<Piece>>> &oppcontrol_squares, bool turn = 0, bool enpassant = 0,string epsquare = "",int castling = 15);
 double pieces_eval(const vector<vector<char>> &board, const vector<Piece> pieces, const vector<Piece> oppPieces, bool turn = 0);

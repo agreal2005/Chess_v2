@@ -588,7 +588,7 @@ double hanging_piece_penalty(const vector<vector<char>> &board, const vector<vec
             total_penalty -= black_penalty[i];
     }
 
-    return total_penalty;
+    return -total_penalty;
 }
 
 double weaker_attacked_penalty(const vector<vector<char>> &board, const vector<vector<vector<Piece>>> &control_squares, const vector<vector<vector<Piece>>> &oppcontrol_squares, bool turn)
@@ -733,7 +733,7 @@ double weaker_attacked_penalty(const vector<vector<char>> &board, const vector<v
             total_penalty -= black_penalty[i];
     }
 
-    return total_penalty;
+    return -total_penalty;
 }
 
 
@@ -817,7 +817,7 @@ double mobility(const vector<vector<char>> &board, const vector<vector<vector<Pi
     }
 
     for(auto itr:all_moves){
-        if(isupper(itr[0])&& itr[0]!='K'){
+        if(isupper(itr[0])&& itr[0]!='K' && itr[0]!='O'){
             string pos_in_char;
             pos_in_char.push_back(itr[itr.size()-2]);
             pos_in_char.push_back(itr[itr.size()-1]);
@@ -851,7 +851,7 @@ double mobility(const vector<vector<char>> &board, const vector<vector<vector<Pi
             if(min_val_attack < this_piece_val ) res_in_weak_att=true;
             if(!res_in_hang && !res_in_weak_att)white_mobility++;
         }
-        else if(islower(itr[0]) && itr[0]!='k' ){
+        else if(islower(itr[0]) && itr[0]!='k' && itr[0]!='o'){
             string pos_in_char;
             pos_in_char.push_back(itr[itr.size()-2]);
             pos_in_char.push_back(itr[itr.size()-1]);
