@@ -2,6 +2,7 @@
 
 EvalBar::EvalBar(string f)
 {
+    pst.init_tables();
     fen.input_FEN(f);
     m.fetch_Moves(fen.board, fen.turn, fen.isEnPassant, fen.epSquare, fen.castle_options());
 }
@@ -97,19 +98,24 @@ string EvalBar::playOneMove(string move, vector<vector<char>> brd, bool t, bool 
         isEnp = false;
     }
     t = !t;
-    display_board(brd); // for testing purposes
+    // display_board(brd); // for testing purposes
     return fen.get_FEN(brd, t, wck, wcq, bck, bcq, isEnp, epS, hfc, fms);
 }
 
 double EvalBar::complete_eval(EvalParams pr)
 {
-    double eval = evaluate_material(pr.board) + evaluate_pawn_structure(reverseBoard(pr.board), pr.controlSquares, pr.oppControlSquares, pr.turn, pr.f) + evaluate_outposts(pr.board, pr.controlSquares, pr.oppControlSquares, pr.turn)+
-           hanging_piece_penalty(pr.board, pr.controlSquares, pr.oppControlSquares, pr.turn)+weaker_attacked_penalty(pr.board, pr.controlSquares, pr.oppControlSquares, pr.turn) + mobility(pr.board, pr.controlSquares, pr.oppControlSquares, pr.turn);
-    double king_score = eval_kingsafety(pr.board, pr.controlSquares, pr.oppControlSquares, pr.turn);
-    
+    double eval = evaluate_material(pr.board);
+    // eval += evaluate_pawn_structure(reverseBoard(pr.board), pr.controlSquares, pr.oppControlSquares, pr.turn, pr.f);
+    // eval += evaluate_outposts(pr.board, pr.controlSquares, pr.oppControlSquares, pr.turn);
+    // eval += hanging_piece_penalty(pr.board, pr.controlSquares, pr.oppControlSquares, pr.turn);
+    // eval += weaker_attacked_penalty(pr.board, pr.controlSquares, pr.oppControlSquares, pr.turn);
+    // eval += mobility(pr.board, pr.controlSquares, pr.oppControlSquares, pr.turn);
+    eval += pieces_eval(pr.board, pr.pieces, pr.oppPieces, pr.turn);
+    eval += (double)pst.eval_sq_tables(pr.board)/625.0;
+    // double king_score = eval_kingsafety(pr.board, pr.controlSquares, pr.oppControlSquares, pr.turn);
     if(gamePhase > 24)
     {
-        eval += king_score;
+        // eval += king_score;
     }
     return eval;
 }
@@ -119,7 +125,7 @@ pair<string, double> EvalBar::evalTree(string f, int d ){
          cout<<"Invalid depth for evaluation\n";
          return {"_____",0.0};
     }
-
+    cout << f << " at depth: " << d << endl;
     Board_FEN temp_fen(f);
     Moves temp_Moves(temp_fen.return_board(),temp_fen.return_turn(),temp_fen.return_ep(),temp_fen.return_eps(),temp_fen.castle_options());
     vector<string> my_moves=temp_Moves.valid_Moves();
@@ -134,17 +140,19 @@ pair<string, double> EvalBar::evalTree(string f, int d ){
             
             int cas_opt=temp_fen.castle_options();
             pair<string,double> result={"_",0.0};
-            
             for(auto move: my_moves){
+                 cout << move << ' ';
                  string res=playOneMove(move,temp_fen.return_board(),temp_fen.return_turn(),((cas_opt&8)!=0),((cas_opt&4)!=0),((cas_opt&2)!=0),((cas_opt&1)!=0),temp_fen.return_ep(),temp_fen.return_eps(),temp_fen.return_halfmoveclk(),temp_fen.return_fullmoves());
+                 cout << res << endl;
                  Board_FEN final_fen(res);
                  Moves final_Moves(final_fen.return_board(),final_fen.return_turn(),final_fen.return_ep(),final_fen.return_eps(),final_fen.castle_options());
 
                  pair<string,double> temp;
                  temp.first=move;
                  
-                 EvalParams lmao_mujhe_ni_pata_kya_hai_ye(final_Moves,final_fen,f);
-                 temp.second=complete_eval(lmao_mujhe_ni_pata_kya_hai_ye);
+                //  EvalParams lmao_mujhe_ni_pata_kya_hai_ye(final_Moves,final_fen,f);
+                //  temp.second=complete_eval(lmao_mujhe_ni_pata_kya_hai_ye);
+                temp.second = -0.01;
 
                  if(result.first=="_")result=temp;
                  else if(temp_fen.return_turn())if(result.second>temp.second)result=temp;
@@ -154,7 +162,7 @@ pair<string, double> EvalBar::evalTree(string f, int d ){
             return result;
     }
 
-    
+
     int cas_opt=temp_fen.castle_options();
 
     pair<string,double> result={"_",0.0};
