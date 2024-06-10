@@ -101,7 +101,7 @@ string EvalBar::playOneMove(string move, vector<vector<char>> brd, bool t, bool 
     return fen.get_FEN(brd, t, wck, wcq, bck, bcq, isEnp, epS, hfc, fms);
 }
 
-double complete_eval(EvalParams pr, bool isOpp = false)
+double EvalBar::complete_eval(EvalParams pr)
 {
     double eval = evaluate_material(pr.board) + evaluate_pawn_structure(reverseBoard(pr.board), pr.controlSquares, pr.oppControlSquares, pr.turn, pr.f) + evaluate_outposts(pr.board, pr.controlSquares, pr.oppControlSquares, pr.turn)+
            hanging_piece_penalty(pr.board, pr.controlSquares, pr.oppControlSquares, pr.turn)+weaker_attacked_penalty(pr.board, pr.controlSquares, pr.oppControlSquares, pr.turn) + mobility(pr.board, pr.controlSquares, pr.oppControlSquares, pr.turn);
@@ -113,3 +113,70 @@ double complete_eval(EvalParams pr, bool isOpp = false)
     }
     return eval;
 }
+
+pair<string, double> EvalBar::evalTree(string f, int d ){
+    if(d<=0){
+         cout<<"Invalid depth for evaluation\n";
+         return {"_____",0.0};
+    }
+
+    Board_FEN temp_fen(f);
+    Moves temp_Moves(temp_fen.return_board(),temp_fen.return_turn(),temp_fen.return_ep(),temp_fen.return_eps(),temp_fen.castle_options());
+    vector<string> my_moves=temp_Moves.valid_Moves();
+
+    double check_for_end=evaluate_checkmate(temp_fen.return_board(),temp_Moves.return_oppControlSquares(),temp_Moves.valid_Moves(),temp_fen.return_turn(),f);
+   
+    if(check_for_end==inf||check_for_end==-inf||(check_for_end==0.0 && my_moves.size()==0)){
+        return {"_",check_for_end};
+    }
+    
+    if(d==1){
+            
+            int cas_opt=temp_fen.castle_options();
+            pair<string,double> result={"_",0.0};
+            
+            for(auto move: my_moves){
+                 string res=playOneMove(move,temp_fen.return_board(),temp_fen.return_turn(),((cas_opt&8)!=0),((cas_opt&4)!=0),((cas_opt&2)!=0),((cas_opt&1)!=0),temp_fen.return_ep(),temp_fen.return_eps(),temp_fen.return_halfmoveclk(),temp_fen.return_fullmoves());
+                 Board_FEN final_fen(res);
+                 Moves final_Moves(final_fen.return_board(),final_fen.return_turn(),final_fen.return_ep(),final_fen.return_eps(),final_fen.castle_options());
+
+                 pair<string,double> temp;
+                 temp.first=move;
+                 
+                 EvalParams lmao_mujhe_ni_pata_kya_hai_ye(final_Moves,final_fen,f);
+                 temp.second=complete_eval(lmao_mujhe_ni_pata_kya_hai_ye);
+
+                 if(result.first=="_")result=temp;
+                 else if(temp_fen.return_turn())if(result.second>temp.second)result=temp;
+                 else if(result.second<temp.second)result=temp;
+            }
+
+            return result;
+    }
+
+    
+    int cas_opt=temp_fen.castle_options();
+
+    pair<string,double> result={"_",0.0};
+
+    for(auto move: my_moves){
+                 string res=playOneMove(move,temp_fen.return_board(),temp_fen.return_turn(),((cas_opt&8)!=0),((cas_opt&4)!=0),((cas_opt&2)!=0),((cas_opt&1)!=0),temp_fen.return_ep(),temp_fen.return_eps(),temp_fen.return_halfmoveclk(),temp_fen.return_fullmoves());
+              
+                 pair<string,double> temp=evalTree(res,d-1);
+
+                 if(result.first=="_"){
+                    result=temp;
+                    result.first=move;
+                 }
+                 else if(temp_fen.return_turn())if(result.second>temp.second){
+                    result=temp;
+                    result.first=move;
+                 }
+                 else if(result.second<temp.second){
+                    result=temp;
+                    result.first=move;
+                 }
+    }
+    return result;
+}
+    

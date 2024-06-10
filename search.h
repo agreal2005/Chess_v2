@@ -16,6 +16,23 @@ struct EvalParams
     vector<Piece> trappedOppPieces; // from moves.h
     vector<string> validMoves; // from moves.h
     vector<string> validOppMoves; // from moves.h
+
+    EvalParams( Moves &mv, Board_FEN &bf, string &fen){
+       f=fen;
+       board=bf.return_board();
+       pieces=mv.return_pieces();
+       oppPieces=mv.return_oppPieces();
+       controlSquares=mv.return_controlSquares();
+       oppControlSquares=mv.return_oppControlSquares();
+       turn=bf.return_turn();
+       isEnPassant=bf.return_ep();
+       castling=bf.castle_options();
+       epSquare=bf.return_eps();
+       trappedPieces=mv.return_trappedPieces();
+       trappedOppPieces=mv.return_trappedOppPieces();
+       validMoves=mv.valid_Moves();
+       validOppMoves=mv.valid_oppMoves();
+    }
 };
 
 class EvalBar
@@ -36,12 +53,12 @@ class EvalBar
         Castling also has to be updated
         Turn also has to be updated
     */
-    pair<string, double> evalTree(string f, int d, bool isOpp = false);  // d = depth, f = fen, isOpp = is it Opponent's turn or not
+    pair<string, double> evalTree(string f, int d);  // d = depth, f = fen, isOpp = is it Opponent's turn or not
     // First take the fen 'f' and send it to playOneMove
     // Retrieve the parameters in the function
     // Make the vectors for pieces, oppPieces, controlSquares, oppControlSquares, validMoves, validOppMoves
     // See fen.h & moves.h for reference
     // pass everything to complete_eval including isOpp
-    double complete_eval(EvalParams pr, bool isOpp = false); // To be called when eval reaches its depth
+    double complete_eval(EvalParams pr); // To be called when eval reaches its depth
     
 };
