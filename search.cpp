@@ -125,7 +125,7 @@ pair<string, double> EvalBar::evalTree(string f, int d ){
          cout<<"Invalid depth for evaluation\n";
          return {"_____",0.0};
     }
-    cout << f << " at depth: " << d << endl;
+    // cout << f << " at depth: " << d << endl;
     Board_FEN temp_fen(f);
     Moves temp_Moves(temp_fen.return_board(),temp_fen.return_turn(),temp_fen.return_ep(),temp_fen.return_eps(),temp_fen.castle_options());
     vector<string> my_moves=temp_Moves.valid_Moves();
@@ -141,9 +141,9 @@ pair<string, double> EvalBar::evalTree(string f, int d ){
             int cas_opt=temp_fen.castle_options();
             pair<string,double> result={"_",0.0};
             for(auto move: my_moves){
-                 cout << move << ' ';
+                //  cout << move << ' ';
                  string res=playOneMove(move,temp_fen.return_board(),temp_fen.return_turn(),((cas_opt&8)!=0),((cas_opt&4)!=0),((cas_opt&2)!=0),((cas_opt&1)!=0),temp_fen.return_ep(),temp_fen.return_eps(),temp_fen.return_halfmoveclk(),temp_fen.return_fullmoves());
-                 cout << res << endl;
+                //  cout << res << endl;
                  Board_FEN final_fen(res);
                  Moves final_Moves(final_fen.return_board(),final_fen.return_turn(),final_fen.return_ep(),final_fen.return_eps(),final_fen.castle_options());
 

@@ -9,7 +9,7 @@ psTables pst;
 
 int main()
 {
-    string fen = "2k4r/8/2K5/8/8/8/8/8 w - - 0 1";
+    string fen = "8/2K1k2r/8/8/8/8/8/8 w - - 0 1";
     // getline(cin, fen);
     Board_FEN v(fen);
     EvalBar lesgo(fen);
@@ -21,9 +21,14 @@ int main()
         cout << "Enter your move: " << endl;
         cin >> str;
         if (str == "exit") break;
+        #ifdef _WIN32
+        system("cls");
+        #else
+        system("clear");
+        #endif
         v.input_FEN(lesgo.playOneMove(str, v.return_board(),v.return_turn(),((cas_opt&8)!=0),((cas_opt&4)!=0),((cas_opt&2)!=0),((cas_opt&1)!=0),v.return_ep(),v.return_eps(),v.return_halfmoveclk(),v.return_fullmoves()));
         cout << v.get_FEN() << endl;
-        pair<string, double> p = lesgo.evalTree(v.get_FEN(), 5);
+        pair<string, double> p = lesgo.evalTree(v.get_FEN(), 3);
         cout << "Computer's move: " << p.first << endl;
         cout << "Eval: " << p.second << endl;
         v.input_FEN(lesgo.playOneMove(p.first, v.return_board(),v.return_turn(),((cas_opt&8)!=0),((cas_opt&4)!=0),((cas_opt&2)!=0),((cas_opt&1)!=0),v.return_ep(),v.return_eps(),v.return_halfmoveclk(),v.return_fullmoves()));
