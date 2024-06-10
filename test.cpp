@@ -26,6 +26,7 @@ int main()
         pair<string, double> p = lesgo.evalTree(v.get_FEN(), 5);
         cout << "Computer's move: " << p.first << endl;
         cout << "Eval: " << p.second << endl;
+        v.input_FEN(lesgo.playOneMove(p.first, v.return_board(),v.return_turn(),((cas_opt&8)!=0),((cas_opt&4)!=0),((cas_opt&2)!=0),((cas_opt&1)!=0),v.return_ep(),v.return_eps(),v.return_halfmoveclk(),v.return_fullmoves()));
     }
     // Moves m;
     // bool turn = v.return_turn();

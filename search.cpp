@@ -150,9 +150,8 @@ pair<string, double> EvalBar::evalTree(string f, int d ){
                  pair<string,double> temp;
                  temp.first=move;
                  
-                //  EvalParams lmao_mujhe_ni_pata_kya_hai_ye(final_Moves,final_fen,f);
-                //  temp.second=complete_eval(lmao_mujhe_ni_pata_kya_hai_ye);
-                temp.second = -0.01;
+                 EvalParams lmao_mujhe_ni_pata_kya_hai_ye(final_Moves,final_fen,f);
+                 temp.second=complete_eval(lmao_mujhe_ni_pata_kya_hai_ye);
 
                  if(result.first=="_")result=temp;
                  else if(temp_fen.return_turn())if(result.second>temp.second)result=temp;
