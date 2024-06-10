@@ -927,7 +927,7 @@ void Moves::checkOppPinned()
     }
 }
 
-vector<string> Moves::valid_Moves()
+vector<string> Moves::valid_Moves(bool flag)
 {
     vector<string> validMoves;
     // First writing function assuming pov of white
@@ -1068,28 +1068,24 @@ vector<string> Moves::valid_Moves()
                 validMoves.push_back(king + ijs(king_square.first, king_square.second) + "x" + ijs(in_ver, in_hor + 1));
         }
         // Illegal King Moves to be checked
-        if (validMoves.size() != 0)
+        vector<string> vmc;
+        for (auto mv : validMoves)
         {
-            auto it = validMoves.begin();
-            while (it != validMoves.end())
-            {
-                string mv = *it;
-                int index = it - validMoves.begin();
-                it++;
                 string square;
                 square.push_back(mv[mv.length() - 2]);
                 square.push_back(mv[mv.length() - 1]);
+                bool f = 0;
                 for (auto sq : illegalSquares)
                 {
                     if (sq == square)
                     {
-                        validMoves.erase(validMoves.begin() + index);
+                        f = 1;
                         break;
                     }
                 }
-            }
+                if (!f) vmc.push_back(mv);
         }
-        return validMoves;
+        return vmc;
     }
 
     // If no check, then compute valid moves of King that could include Castling (see for checks)
