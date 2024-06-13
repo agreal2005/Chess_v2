@@ -791,7 +791,7 @@ double pieces_eval(const vector<vector<char>> &board, const vector<Piece> pieces
     return score;
 }
 
-double mobility(const vector<vector<char>> &board, const vector<vector<vector<Piece>>> &control_squares, const vector<vector<vector<Piece>>> &oppcontrol_squares, bool turn, bool enpassant,string epsquare,int castling){
+double mobility(vector<vector<char>> &board, const vector<vector<vector<Piece>>> &control_squares, const vector<vector<vector<Piece>>> &oppcontrol_squares, bool turn, bool enpassant,string epsquare,int castling){
     double total_mobility=0.0;
     double white_mobility=0.0;
     double black_mobility=0.0;

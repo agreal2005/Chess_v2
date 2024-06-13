@@ -9,7 +9,7 @@ EvalBar::EvalBar(string f)
 
 // Make functions for complete evaluation and Game Search Tree here
 
-string EvalBar::playOneMove(string move, vector<vector<char>> brd, bool t, bool wck, bool wcq, bool bck, bool bcq, bool isEnp, string epS, int hfc, int fms)
+string EvalBar::playOneMove(string &move, vector<vector<char>> brd, bool t, bool wck, bool wcq, bool bck, bool bcq, bool isEnp, string epS, int hfc, int fms)
 {
     string curr_position = move.substr(1, 2);
     string next_position = move.substr(move.length() - 2, 2);
@@ -102,32 +102,32 @@ string EvalBar::playOneMove(string move, vector<vector<char>> brd, bool t, bool 
     return fen.get_FEN(brd, t, wck, wcq, bck, bcq, isEnp, epS, hfc, fms);
 }
 
-double EvalBar::complete_eval(EvalParams pr)
+double EvalBar::complete_eval(EvalParams &pr)
 {
     double eval = evaluate_material(pr.board);
-    // eval += evaluate_pawn_structure(reverseBoard(pr.board), pr.controlSquares, pr.oppControlSquares, pr.turn, pr.f);
-    // eval += evaluate_outposts(pr.board, pr.controlSquares, pr.oppControlSquares, pr.turn);
-    // eval += hanging_piece_penalty(pr.board, pr.controlSquares, pr.oppControlSquares, pr.turn);
-    // eval += weaker_attacked_penalty(pr.board, pr.controlSquares, pr.oppControlSquares, pr.turn);
-    // eval += mobility(pr.board, pr.controlSquares, pr.oppControlSquares, pr.turn);
+    eval += evaluate_pawn_structure(reverseBoard(pr.board), pr.controlSquares, pr.oppControlSquares, pr.turn, pr.f);
+    eval += evaluate_outposts(pr.board, pr.controlSquares, pr.oppControlSquares, pr.turn);
+    eval += hanging_piece_penalty(pr.board, pr.controlSquares, pr.oppControlSquares, pr.turn);
+    eval += weaker_attacked_penalty(pr.board, pr.controlSquares, pr.oppControlSquares, pr.turn);
     eval += pieces_eval(pr.board, pr.pieces, pr.oppPieces, pr.turn);
     eval += (double)pst.eval_sq_tables(pr.board)/625.0;
-    // double king_score = eval_kingsafety(pr.board, pr.controlSquares, pr.oppControlSquares, pr.turn);
+    double king_score = eval_kingsafety(pr.board, pr.controlSquares, pr.oppControlSquares, pr.turn);
     if(gamePhase > 24)
     {
-        // eval += king_score;
+        eval += king_score;
     }
+    eval += mobility(pr.board, pr.controlSquares, pr.oppControlSquares, pr.turn);
     return eval;
 }
 
-pair<string, double> EvalBar::evalTree(string f, int d ){
+pair<string, double> EvalBar::evalTree(string &f, int d ){
     if(d<=0){
          cout<<"Invalid depth for evaluation\n";
          return {"_____",0.0};
     }
     // cout << f << " at depth: " << d << endl;
     Board_FEN temp_fen(f);
-    Moves temp_Moves(temp_fen.return_board(),temp_fen.return_turn(),temp_fen.return_ep(),temp_fen.return_eps(),temp_fen.castle_options());
+    Moves temp_Moves(temp_fen.board,temp_fen.return_turn(),temp_fen.return_ep(),temp_fen.return_eps(),temp_fen.castle_options());
     vector<string> my_moves=temp_Moves.valid_Moves();
 
     double check_for_end=evaluate_checkmate(temp_fen.return_board(),temp_Moves.return_oppControlSquares(),temp_Moves.valid_Moves(),temp_fen.return_turn(),f);
@@ -145,11 +145,11 @@ pair<string, double> EvalBar::evalTree(string f, int d ){
                  string res=playOneMove(move,temp_fen.return_board(),temp_fen.return_turn(),((cas_opt&8)!=0),((cas_opt&4)!=0),((cas_opt&2)!=0),((cas_opt&1)!=0),temp_fen.return_ep(),temp_fen.return_eps(),temp_fen.return_halfmoveclk(),temp_fen.return_fullmoves());
                 //  cout << res << endl;
                  Board_FEN final_fen(res);
-                 Moves final_Moves(final_fen.return_board(),final_fen.return_turn(),final_fen.return_ep(),final_fen.return_eps(),final_fen.castle_options());
+                 Moves final_Moves(final_fen.board,final_fen.return_turn(),final_fen.return_ep(),final_fen.return_eps(),final_fen.castle_options());
 
                  pair<string,double> temp;
                  temp.first=move;
-                 
+
                  EvalParams lmao_mujhe_ni_pata_kya_hai_ye(final_Moves,final_fen,f);
                  temp.second=complete_eval(lmao_mujhe_ni_pata_kya_hai_ye);
 

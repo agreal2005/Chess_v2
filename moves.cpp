@@ -18,12 +18,12 @@ Moves::Moves()
     oppKing_square = sij("e8");
 }
 
-Moves::Moves(vector<vector<char>> board, bool turn, bool isEnPassant, string epSquare, int castling)
+Moves::Moves(vector<vector<char>> &board, bool turn, bool isEnPassant, string epSquare, int castling)
 {
     fetch_Moves(board, turn, isEnPassant, epSquare, castling);
 }
 
-void Moves::fetch_Moves(vector<vector<char>> board, bool turn, bool isEnPassant, string epSquare, int castling)
+void Moves::fetch_Moves(vector<vector<char>> &board, bool turn, bool isEnPassant, string epSquare, int castling)
 {
     for (int i = 0; i < 8; ++i)
     {
