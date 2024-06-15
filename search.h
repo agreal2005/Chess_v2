@@ -52,7 +52,7 @@ class EvalBar
         Castling also has to be updated
         Turn also has to be updated
     */
-    pair<string, double> evalTree(string &f, int d = DEPTH);  // d = depth, f = fen, isOpp = is it Opponent's turn or not
+    pair<string, double> evalTree(string f, int d = DEPTH);  // d = depth, f = fen, isOpp = is it Opponent's turn or not
     // First take the fen 'f' and send it to playOneMove
     // Retrieve the parameters in the function
     // Make the vectors for pieces, oppPieces, controlSquares, oppControlSquares, validMoves, validOppMoves

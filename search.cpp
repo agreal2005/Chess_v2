@@ -120,7 +120,7 @@ double EvalBar::complete_eval(EvalParams &pr)
     return eval;
 }
 
-pair<string, double> EvalBar::evalTree(string &f, int d ){
+pair<string, double> EvalBar::evalTree(string f, int d ){
     if(d<=0){
          cout<<"Invalid depth for evaluation\n";
          return {"_____",0.0};
@@ -159,11 +159,9 @@ pair<string, double> EvalBar::evalTree(string &f, int d ){
                  }
                  else if(temp_fen.return_turn())if(result.second>temp.second){
                     result=temp;
-                    result.first=move;
                  }
                  else if(result.second<temp.second){
                     result=temp;
-                    result.first=move;
                  }
             }
 
@@ -174,12 +172,13 @@ pair<string, double> EvalBar::evalTree(string &f, int d ){
     int cas_opt=temp_fen.castle_options();
 
     pair<string,double> result={"_",0.0};
-
+    getchar();
     for(auto move: my_moves){
                  string res=playOneMove(move,temp_fen.return_board(),temp_fen.return_turn(),((cas_opt&8)!=0),((cas_opt&4)!=0),((cas_opt&2)!=0),((cas_opt&1)!=0),temp_fen.return_ep(),temp_fen.return_eps(),temp_fen.return_halfmoveclk(),temp_fen.return_fullmoves());
               
                  pair<string,double> temp=evalTree(res,d-1);
-
+                 cout << "? " <<  move << ' ' << temp.first << endl;
+                 getchar();
                  if(result.first=="_"){
                     result=temp;
                     result.first=move;
