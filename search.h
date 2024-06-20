@@ -20,18 +20,18 @@ struct EvalParams
     EvalParams( Moves &mv, Board_FEN &bf, string &fen){
        f=fen;
        board=bf.board;
-       pieces=mv.pieces;
-       oppPieces=mv.oppPieces;
        controlSquares=mv.return_controlSquares();
        oppControlSquares=mv.return_oppControlSquares();
+       validMoves=mv.valid_Moves();
+       validOppMoves=mv.valid_oppMoves();
+       trappedPieces=mv.return_trappedPieces();
+       trappedOppPieces=mv.return_trappedOppPieces();
+       pieces=mv.pieces;
+       oppPieces=mv.oppPieces;
        turn=bf.return_turn();
        isEnPassant=bf.return_ep();
        castling=bf.castle_options();
        epSquare=bf.return_eps();
-       trappedPieces=mv.return_trappedPieces();
-       trappedOppPieces=mv.return_trappedOppPieces();
-       validMoves=mv.valid_Moves();
-       validOppMoves=mv.valid_oppMoves();
     }
 };
 

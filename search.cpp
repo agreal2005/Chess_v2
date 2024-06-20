@@ -111,12 +111,12 @@ double EvalBar::complete_eval(EvalParams &pr)
     eval += weaker_attacked_penalty(pr.board, pr.controlSquares, pr.oppControlSquares, pr.turn);
     eval += pieces_eval(pr.board, pr.pieces, pr.oppPieces, pr.turn);
     eval += (double)pst.eval_sq_tables(pr.board)/625.0;
-    double king_score = eval_kingsafety(pr.board, pr.controlSquares, pr.oppControlSquares, pr.turn);
-    if(gamePhase > 24)
-    {
-        eval += king_score;
-    }
-    eval += mobility(pr.board, pr.controlSquares, pr.oppControlSquares, pr.turn);
+    // double king_score = eval_kingsafety(pr.board, pr.controlSquares, pr.oppControlSquares, pr.turn);
+    // if(gamePhase > 24)
+    // {
+    //     eval += king_score;
+    // }
+    // eval += mobility(pr.board, pr.controlSquares, pr.oppControlSquares, pr.turn);
     return eval;
 }
 
@@ -131,13 +131,12 @@ pair<string, double> EvalBar::evalTree(string f, int d ){
     vector<string> my_moves=temp_Moves.valid_Moves();
 
     double check_for_end=evaluate_checkmate(temp_fen.return_board(),temp_Moves.return_oppControlSquares(),temp_Moves.valid_Moves(),temp_fen.return_turn(),f);
-   
+    
     if(check_for_end==inf||check_for_end==-inf||(check_for_end==0.0 && my_moves.size()==0)){
         return {"_",check_for_end};
     }
     
     if(d==1){
-            
             int cas_opt=temp_fen.castle_options();
             pair<string,double> result={"_",0.0};
             for(auto move: my_moves){
@@ -152,19 +151,21 @@ pair<string, double> EvalBar::evalTree(string f, int d ){
 
                  EvalParams lmao_mujhe_ni_pata_kya_hai_ye(final_Moves,final_fen,f);
                  temp.second=complete_eval(lmao_mujhe_ni_pata_kya_hai_ye);
-
+                // temp.second = 0.01;
+                
                  if(result.first=="_"){
                     result=temp;
                     result.first=move;
                  }
-                 else if(temp_fen.return_turn())if(result.second>temp.second){
-                    result=temp;
+                 else if(temp_fen.return_turn()){
+                    if(result.second>=temp.second){
+                        result=temp;
+                    }
                  }
                  else if(result.second<temp.second){
                     result=temp;
                  }
             }
-
             return result;
     }
 
@@ -172,25 +173,27 @@ pair<string, double> EvalBar::evalTree(string f, int d ){
     int cas_opt=temp_fen.castle_options();
 
     pair<string,double> result={"_",0.0};
-    getchar();
+    // getchar();
     for(auto move: my_moves){
                  string res=playOneMove(move,temp_fen.return_board(),temp_fen.return_turn(),((cas_opt&8)!=0),((cas_opt&4)!=0),((cas_opt&2)!=0),((cas_opt&1)!=0),temp_fen.return_ep(),temp_fen.return_eps(),temp_fen.return_halfmoveclk(),temp_fen.return_fullmoves());
               
                  pair<string,double> temp=evalTree(res,d-1);
-                 cout << "? " <<  move << ' ' << temp.first << endl;
-                 getchar();
+                //  cout << "? " <<  move << ' ' << temp.first << endl;
+                //  getchar();
                  if(result.first=="_"){
                     result=temp;
                     result.first=move;
                  }
-                 else if(temp_fen.return_turn())if(result.second>temp.second){
-                    result=temp;
-                    result.first=move;
+                 else if(temp_fen.return_turn()){
+                        if(result.second>=temp.second){
+                            result=temp;
+                            result.first=move;
+                        }
                  }
-                 else if(result.second<temp.second){
-                    result=temp;
-                    result.first=move;
-                 }
+                else if(result.second<temp.second){
+                        result=temp;
+                        result.first=move;
+                    }
     }
     return result;
 }
