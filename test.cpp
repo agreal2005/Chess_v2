@@ -3,7 +3,10 @@
 #include "eval.h"
 #include "functions.h"
 #include "search.h"
+#include <chrono>
 using namespace std;
+using namespace std::chrono;
+
 int gamePhase;
 psTables pst;
 
@@ -29,10 +32,14 @@ int main()
         v.input_FEN(lesgo.playOneMove(str, v.return_board(),v.return_turn(),((cas_opt&8)!=0),((cas_opt&4)!=0),((cas_opt&2)!=0),((cas_opt&1)!=0),v.return_ep(),v.return_eps(),v.return_halfmoveclk(),v.return_fullmoves()));
         cout << v.get_FEN() << endl;
         string changed_str = v.get_FEN();
+        auto start = high_resolution_clock::now();
         pair<string, double> p = lesgo.evalTree(changed_str, 4);
+        auto stop = high_resolution_clock::now();
         cout << "Computer's move: " << p.first << endl;
         cout << "Eval: " << p.second << endl;
         v.input_FEN(lesgo.playOneMove(p.first, v.return_board(),v.return_turn(),((cas_opt&8)!=0),((cas_opt&4)!=0),((cas_opt&2)!=0),((cas_opt&1)!=0),v.return_ep(),v.return_eps(),v.return_halfmoveclk(),v.return_fullmoves()));
+        auto duration = duration_cast<seconds>(stop - start);
+        cout << "Executed in " << duration.count() << " seconds." << endl;
     }
     // Moves m;
     // bool turn = v.return_turn();
