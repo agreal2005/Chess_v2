@@ -144,11 +144,13 @@ pair<string, double> EvalBar::evalTree(string f, int d ){
                  string res=playOneMove(move,temp_fen.return_board(),temp_fen.return_turn(),((cas_opt&8)!=0),((cas_opt&4)!=0),((cas_opt&2)!=0),((cas_opt&1)!=0),temp_fen.return_ep(),temp_fen.return_eps(),temp_fen.return_halfmoveclk(),temp_fen.return_fullmoves());
                 //  cout << res << endl;
                  Board_FEN final_fen(res);
+                //  cout << final_fen.get_FEN() << " ; ";
+                //  cout << final_fen.return_turn() << " " << final_fen.return_ep() << " " << final_fen.return_eps() << " " << final_fen.castle_options() << endl;
                  Moves final_Moves(final_fen.board,final_fen.return_turn(),final_fen.return_ep(),final_fen.return_eps(),final_fen.castle_options());
+                // return {move, 0.0};
 
                  pair<string,double> temp;
                  temp.first=move;
-
                  EvalParams lmao_mujhe_ni_pata_kya_hai_ye(final_Moves,final_fen,f);
                  temp.second=complete_eval(lmao_mujhe_ni_pata_kya_hai_ye);
                 // temp.second = 0.01;
@@ -173,7 +175,6 @@ pair<string, double> EvalBar::evalTree(string f, int d ){
     int cas_opt=temp_fen.castle_options();
 
     pair<string,double> result={"_",0.0};
-    // getchar();
     for(auto move: my_moves){
                  string res=playOneMove(move,temp_fen.return_board(),temp_fen.return_turn(),((cas_opt&8)!=0),((cas_opt&4)!=0),((cas_opt&2)!=0),((cas_opt&1)!=0),temp_fen.return_ep(),temp_fen.return_eps(),temp_fen.return_halfmoveclk(),temp_fen.return_fullmoves());
               

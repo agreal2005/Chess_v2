@@ -23,7 +23,7 @@ Moves::Moves(vector<vector<char>> &board, bool turn, bool isEnPassant, string ep
     fetch_Moves(board, turn, isEnPassant, epSquare, castling);
 }
 
-void Moves::fetch_Moves(vector<vector<char>> &board, bool turn, bool isEnPassant, string epSquare, int castling)
+void Moves::fetch_Moves(vector<vector<char>> &brd, bool turn, bool isEnPassant, string epSquare, int castling)
 {
     for (int i = 0; i < 8; ++i)
     {
@@ -31,7 +31,7 @@ void Moves::fetch_Moves(vector<vector<char>> &board, bool turn, bool isEnPassant
         controlSquares.push_back(initialize);
     }
     oppControlSquares = controlSquares;
-    this->board = board;
+    board = brd;
     this->turn = turn;
     this->isEnPassant = isEnPassant;
     this->epSquare = epSquare;
