@@ -106,7 +106,7 @@ double EvalBar::complete_eval(EvalParams &pr)
 {
     double eval = evaluate_material(pr.board);
     eval += evaluate_pawn_structure(reverseBoard(pr.board), pr.controlSquares, pr.oppControlSquares, pr.turn, pr.f);
-    eval += evaluate_outposts(pr.board, pr.controlSquares, pr.oppControlSquares, pr.turn);
+    eval += evaluate_outposts(reverseBoard(pr.board), pr.controlSquares, pr.oppControlSquares, pr.turn);
     eval += hanging_piece_penalty(pr.board, pr.controlSquares, pr.oppControlSquares, pr.turn);
     eval += weaker_attacked_penalty(pr.board, pr.controlSquares, pr.oppControlSquares, pr.turn);
     eval += pieces_eval(pr.board, pr.pieces, pr.oppPieces, pr.turn);
@@ -116,7 +116,7 @@ double EvalBar::complete_eval(EvalParams &pr)
     // {
     //     eval += king_score;
     // }
-    // eval += mobility(pr.board, pr.controlSquares, pr.oppControlSquares, pr.turn);
+    eval += mobility(pr.board, pr.controlSquares, pr.oppControlSquares, pr.validMoves, pr.validOppMoves, pr.turn, pr.isEnPassant, pr.epSquare, pr.castling);
     return eval;
 }
 
@@ -132,8 +132,12 @@ pair<string, double> EvalBar::evalTree(string f, int d ){
 
     double check_for_end=evaluate_checkmate(temp_fen.return_board(),temp_Moves.return_oppControlSquares(),temp_Moves.valid_Moves(),temp_fen.return_turn(),f);
     
-    if(check_for_end==inf||check_for_end==-inf||(check_for_end==0.0 && my_moves.size()==0)){
-        return {"_",check_for_end};
+    if(check_for_end==inf||check_for_end==-inf){
+        return {"#",check_for_end};
+    }
+    if ((check_for_end==0.0 && my_moves.size()==0))
+    {
+        return {"-", 0.0};
     }
     
     if(d==1){

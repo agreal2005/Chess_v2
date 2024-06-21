@@ -791,14 +791,14 @@ double pieces_eval(const vector<vector<char>> &board, const vector<Piece> pieces
     return score;
 }
 
-double mobility(vector<vector<char>> &board, const vector<vector<vector<Piece>>> &control_squares, const vector<vector<vector<Piece>>> &oppcontrol_squares, bool turn, bool enpassant,string epsquare,int castling){
+double mobility(vector<vector<char>> &board, const vector<vector<vector<Piece>>> &control_squares, const vector<vector<vector<Piece>>> &oppcontrol_squares, vector<string> my_moves, vector<string> opp_moves, bool turn, bool enpassant,string epsquare,int castling){
     double total_mobility=0.0;
     double white_mobility=0.0;
     double black_mobility=0.0;
-    Moves temp(board,turn,enpassant,epsquare,castling);
+    // Moves temp(board,turn,enpassant,epsquare,castling);
     
-    vector<string> my_moves= temp.valid_Moves();
-    vector<string> opp_moves=temp.valid_oppMoves();
+    // vector<string> my_moves= temp.valid_Moves();
+    // vector<string> opp_moves=temp.valid_oppMoves();
     vector<string> all_moves;
     all_moves.reserve(my_moves.size()+opp_moves.size());
     all_moves.insert(all_moves.end(),my_moves.begin(),my_moves.end());

@@ -12,7 +12,7 @@ psTables pst;
 
 int main()
 {
-    string fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+    string fen = "8/8/2kr4/8/2K2N2/3B4/8/8 w - - 0 1";
     // getline(cin, fen);
     Board_FEN v(fen);
     EvalBar lesgo(fen);
@@ -33,14 +33,24 @@ int main()
         cout << v.get_FEN() << endl;
         string changed_str = v.get_FEN();
         auto start = high_resolution_clock::now();
-        pair<string, double> p = lesgo.evalTree(changed_str, 4);
+        pair<string, double> p = lesgo.evalTree(changed_str, 3);
         auto stop = high_resolution_clock::now();
         cout << "Computer's move: " << p.first << endl;
         cout << "Eval: " << p.second << endl;
         v.input_FEN(lesgo.playOneMove(p.first, v.return_board(),v.return_turn(),((cas_opt&8)!=0),((cas_opt&4)!=0),((cas_opt&2)!=0),((cas_opt&1)!=0),v.return_ep(),v.return_eps(),v.return_halfmoveclk(),v.return_fullmoves()));
         auto duration = duration_cast<seconds>(stop - start);
         cout << "Executed in " << duration.count() << " seconds." << endl;
+        if (p.second == inf || p.second == -inf) {
+            cout << "CHECKMATE!" << endl;
+            break;
+        }
+        if (p.first == "-")
+        {
+            cout << "STALEMATE!" << endl;
+            break;
+        }
     }
+    v.display_board_FEN();
     // Moves m;
     // bool turn = v.return_turn();
     // m.fetch_Moves(v.return_board(), turn, v.return_ep(), v.return_eps(), v.castle_options());
