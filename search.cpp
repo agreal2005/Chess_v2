@@ -18,32 +18,32 @@ string EvalBar::playOneMove(string &move, vector<vector<char>> brd, bool t, bool
     if (move[0] != 'o' && move[0] != 'O') next_ij = sij(next_position);
     if (move == "O-O") // white castling king side
     {
-        brd[7][4] = 'R';
-        brd[7][7] = 'K';
+        brd[7][5] = 'R';
+        brd[7][6] = 'K';
         wck = false;
         wcq = false;
         isEnp = false;
     }
     else if (move == "O-O-O") // black castling queen side
     {
-        brd[7][4] = 'R';
-        brd[7][0] = 'K';
+        brd[7][3] = 'R';
+        brd[7][2] = 'K';
         wck = false;
         wcq = false;
         isEnp = false;
     }
     else if (move == "o-o") // black castling king side
     {
-        brd[0][4] = 'r';
-        brd[0][7] = 'k';
+        brd[0][5] = 'r';
+        brd[0][6] = 'k';
         bck = false;
         bcq = false;
         isEnp = false;
     }
     else if (move == "o-o-o") // black castling queen side
     {
-        brd[0][4] = 'r';
-        brd[0][0] = 'k';
+        brd[0][3] = 'r';
+        brd[0][2] = 'k';
         bck = false;
         bcq = false;
         isEnp = false;
@@ -111,11 +111,11 @@ double EvalBar::complete_eval(EvalParams &pr)
     eval += weaker_attacked_penalty(pr.board, pr.controlSquares, pr.oppControlSquares, pr.turn);
     eval += pieces_eval(pr.board, pr.pieces, pr.oppPieces, pr.turn);
     eval += (double)pst.eval_sq_tables(pr.board)/625.0;
-    // double king_score = eval_kingsafety(pr.board, pr.controlSquares, pr.oppControlSquares, pr.turn);
-    // if(gamePhase > 24)
-    // {
-    //     eval += king_score;
-    // }
+    double king_score = eval_kingsafety(pr.board, pr.controlSquares, pr.oppControlSquares, pr.turn);
+    if(gamePhase > 24)
+    {
+        eval += king_score;
+    }
     eval += mobility(pr.board, pr.controlSquares, pr.oppControlSquares, pr.validMoves, pr.validOppMoves, pr.turn, pr.isEnPassant, pr.epSquare, pr.castling);
     return eval;
 }
