@@ -12,8 +12,9 @@ psTables pst;
 
 int main()
 {
-    // string fen = "2r5/1P1pkp1p/b4p2/p3pB2/4P3/P3B1P1/2PK3P/1R6 b - - 0 1";
-    string fen = "6r1/7P/1k1K4/8/8/8/8/8 w - - 0 1";
+    string fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"; /* Starting position */
+    // string fen = "rnbqk1nr/pppp1ppp/4p3/8/1b1PP3/8/PPP2PPP/RNBQKBNR w KQkq - 0 1";
+    // string fen = "rnbqk1nr/pppp1ppp/4p3/8/1b1PP3/2P5/PP3PPP/RNBQKBNR b KQkq - 0 1";
     // getline(cin, fen);
     Board_FEN v(fen);
     EvalBar lesgo(fen);
@@ -34,18 +35,30 @@ int main()
         cout << v.get_FEN() << endl;
         string changed_str = v.get_FEN();
         auto start = high_resolution_clock::now();
-        pair<string, double> p = lesgo.evalTree(changed_str, 3);
+        pair<string, double> p = lesgo.evalTree(changed_str, (gamePhase > 18) ? 3 : 4);
         auto stop = high_resolution_clock::now();
+        if (p.first == "#")
+        {
+            cout << "CHECKMATE!" << endl;
+            break;
+        }
+        else if (p.first == "-")
+        {
+            cout << "STALEMATE!" << endl;
+            break;
+        }
         cout << "Computer's move: " << p.first << endl;
         cout << "Eval: " << p.second << endl;
         v.input_FEN(lesgo.playOneMove(p.first, v.return_board(),v.return_turn(),((cas_opt&8)!=0),((cas_opt&4)!=0),((cas_opt&2)!=0),((cas_opt&1)!=0),v.return_ep(),v.return_eps(),v.return_halfmoveclk(),v.return_fullmoves()));
         auto duration = duration_cast<seconds>(stop - start);
         cout << "Executed in " << duration.count() << " seconds." << endl;
-        if (p.second == inf || p.second == -inf) {
+        pair <string,double> breakmate = lesgo.evalTree(v.get_FEN(), 1);
+        if (breakmate.first == "#")
+        {
             cout << "CHECKMATE!" << endl;
             break;
         }
-        if (p.first == "-")
+        else if (breakmate.first == "-")
         {
             cout << "STALEMATE!" << endl;
             break;
@@ -76,9 +89,11 @@ int main()
     // for (auto str : m.return_trappedOppPieces()) cout << str.type << endl;
     // EvalBar bar;
     // int cs = v.castle_options();
+    // pair<string, double> p = bar.evalTree(fen, 3);
+    // cout << p.second << " " << p.first << endl;
     // for (auto mv : m.valid_Moves())
     // {
     //     getchar();
-    //     cout << bar.playOneMove(mv, v.return_board(), v.return_turn(), ((cs>>3)&1), ((cs>>2)&1), ((cs>>1)&1), (cs&1), v.return_ep(), v.return_eps(), v.return_halfmoveclk(), v.return_fullmoves()) << endl;
+        // cout << bar.playOneMove(mv, v.return_board(), v.return_turn(), ((cs>>3)&1), ((cs>>2)&1), ((cs>>1)&1), (cs&1), v.return_ep(), v.return_eps(), v.return_halfmoveclk(), v.return_fullmoves()) << endl;
     // }
 }
