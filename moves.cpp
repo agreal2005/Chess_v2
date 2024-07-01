@@ -1310,11 +1310,11 @@ vector<string> Moves::valid_Moves(bool flag)
         {
             if (turn == 0)
             {
-                if (piece.i == 1 && board[0][piece.j] == '.' && piece.resi==-1  && piece.pini == -1)
-                {
-                    validMoves.push_back("P" + ijs(1, piece.j) + "PP"); // pp = pawn promotion
-                }
-                else if (piece.i > 1 && piece.resi==-1 && piece.pini == -1)
+                // if (piece.i == 1 && board[0][piece.j] == '.' && piece.resi==-1  && piece.pini == -1)
+                // {
+                //     validMoves.push_back("P" + ijs(1, piece.j) + "PP"); // pp = pawn promotion
+                // }
+                if (piece.i > 0 && piece.resi==-1 && piece.pini == -1)
                 {
                     if (board[piece.i - 1][piece.j] == '.')
                     {
@@ -1331,11 +1331,11 @@ vector<string> Moves::valid_Moves(bool flag)
             }
             if (turn == 1)
             {
-                if (piece.i == 6 && board[7][piece.j] == '.' && piece.resi!=-1  && piece.pini == -1)
-                {
-                    validMoves.push_back("p" + ijs(6, piece.j) + "pp"); // pp = pawn promotion
-                }
-                else if (piece.i < 6 && piece.resi==-1  && piece.pini == -1)
+                // if (piece.i == 6 && board[7][piece.j] == '.' && piece.resi!=-1  && piece.pini == -1)
+                // {
+                //     validMoves.push_back("p" + ijs(6, piece.j) + "pp"); // pp = pawn promotion
+                // }
+                if (piece.i < 7 && piece.resi==-1  && piece.pini == -1)
                 {
                     if (board[piece.i + 1][piece.j] == '.')
                     {
@@ -1601,11 +1601,11 @@ vector<string> Moves::valid_oppMoves()
         {
             if (turn == 1)
             {
-                if (piece.i == 1 && board[0][piece.j] == '.' && piece.resi==-1  && piece.pini == -1)
-                {
-                    validMoves.push_back("P" + ijs(1, piece.j) + "PP"); // pp = pawn promotion
-                }
-                else if (piece.i > 1 && piece.resi==-1 && piece.pini == -1)
+                // if (piece.i == 1 && board[0][piece.j] == '.' && piece.resi==-1  && piece.pini == -1)
+                // {
+                //     validMoves.push_back("P" + ijs(1, piece.j) + "PP"); // pp = pawn promotion
+                // }
+                if (piece.i > 0 && piece.resi==-1 && piece.pini == -1)
                 {
                     if (board[piece.i - 1][piece.j] == '.')
                     {
@@ -1622,11 +1622,11 @@ vector<string> Moves::valid_oppMoves()
             }
             if (turn == 0)
             {
-                if (piece.i == 6 && board[7][piece.j] == '.' && piece.resi!=-1  && piece.pini == -1)
-                {
-                    validMoves.push_back("p" + ijs(6, piece.j) + "pp"); // pp = pawn promotion
-                }
-                else if (piece.i < 6 && piece.resi==-1  && piece.pini == -1)
+                // if (piece.i == 6 && board[7][piece.j] == '.' && piece.resi!=-1  && piece.pini == -1)
+                // {
+                //     validMoves.push_back("p" + ijs(6, piece.j) + "pp"); // pp = pawn promotion
+                // }
+                if (piece.i < 7 && piece.resi==-1  && piece.pini == -1)
                 {
                     if (board[piece.i + 1][piece.j] == '.')
                     {
