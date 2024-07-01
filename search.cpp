@@ -116,7 +116,15 @@ string EvalBar::playOneMove(string &move, vector<vector<char>> brd, bool t, bool
         brd[curr_ij.first][curr_ij.second] = '.';
         brd[next_ij.first][next_ij.second] = move[0];
         isEnp = false;
-        if (move[0] == 'R' && curr_position == "h1") wck = 0;
+        if (move[0] == 'K')
+        {
+            wck = 0; wcq = 0;
+        }
+        else if (move[0] == 'k')
+        {
+            bck = 0; bcq = 0;
+        }
+        else if (move[0] == 'R' && curr_position == "h1") wck = 0;
         else if (move[0] == 'R' && curr_position == "a1") wcq = 0;
         else if (move[0] == 'r' && curr_position == "h8") bck = 0;
         else if (move[0] == 'r' && curr_position == "a8") bcq = 0;
@@ -152,7 +160,14 @@ pair<string, double> EvalBar::evalTree(string f, int d ){
     // cout << f << " at depth: " << d << endl;
     Board_FEN temp_fen(f);
     Moves temp_Moves(temp_fen.board,temp_fen.return_turn(),temp_fen.return_ep(),temp_fen.return_eps(),temp_fen.castle_options());
-    vector<string> my_moves=temp_Moves.valid_Moves();
+    vector<string> my_moves = temp_Moves.valid_Moves();
+    
+    // if (d!=1) {
+    //     my_moves = temp_Moves.valid_Moves();
+    // }
+    // else {
+    //     return {"#", inf};
+    // }
 
     double check_for_end=evaluate_checkmate(temp_fen.return_board(),temp_Moves.return_oppControlSquares(),temp_Moves.valid_Moves(),temp_fen.return_turn(),f);
     
@@ -163,7 +178,7 @@ pair<string, double> EvalBar::evalTree(string f, int d ){
     {
         return {"-", 0.0};
     }
-    
+
     if(d==1){
             int cas_opt=temp_fen.castle_options();
             pair<string,double> result={"_",0.0};
@@ -198,7 +213,6 @@ pair<string, double> EvalBar::evalTree(string f, int d ){
             }
             return result;
     }
-
 
     int cas_opt=temp_fen.castle_options();
 

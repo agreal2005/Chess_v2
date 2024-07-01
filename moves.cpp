@@ -71,10 +71,30 @@ void Moves::fetch_Moves(vector<vector<char>> &brd, bool turn, bool isEnPassant, 
             }
         }
     }
-    checkPinned();
-    checkOppPinned();
-    return_controlSquares();
-    return_oppControlSquares();
+    try {
+        checkPinned();
+    }
+    catch (const std::bad_alloc&) {
+        cout << "checkPinned() is faulty" << endl;
+    }
+    try {
+        checkOppPinned();
+    }
+    catch (const std::bad_alloc&){
+        cout << "checkOppPinned() is faulty" << endl;
+    }
+    try {
+        return_controlSquares();
+    }
+    catch (const std::bad_alloc&){
+        cout << "control Squares is faulty" << endl;
+    }
+    try {
+        return_oppControlSquares();
+    }
+    catch (const std::bad_alloc&){
+        cout << "opp Control Squares is faulty" << endl;
+    }
 }
 
 vector<vector<vector<Piece>>> Moves::return_controlSquares()
@@ -988,7 +1008,7 @@ vector<string> Moves::valid_Moves(bool flag)
                                     }
                                     else {
                                         if (p.i == x+1 && p.j == y) {
-                                            validMoves.push_back("p" + ijs(x-1,y) + ijs(x,y));
+                                            validMoves.push_back("p" + ijs(x+1,y) + ijs(x,y));
                                         }
                                         else if (board[x+1][y] == '.' && p.i == x+2 && p.j == y) {
                                             validMoves.push_back("p" + ijs(x+2,y) + "z" + ijs(x,y));
