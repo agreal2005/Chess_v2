@@ -979,19 +979,19 @@ vector<string> Moves::valid_Moves(bool flag)
                                 if (p.type == 'p' || p.type == 'P') {
                                     if (p.pinned) continue;
                                     if (turn == 0) {
-                                        if (p.i == x+1 && p.j == y) {
-                                            validMoves.push_back("P" + ijs(x+1,y) + ijs(x,y));
+                                        if (p.i == x-1 && p.j == y) {
+                                            validMoves.push_back("P" + ijs(x-1,y) + ijs(x,y));
                                         }
-                                        else if (board[x+1][y] == '.' && p.i == x+2 && p.j == y) {
-                                            validMoves.push_back("P" + ijs(x+2,y) + "Z" + ijs(x,y));
+                                        else if (board[x-1][y] == '.' && p.i == x-2 && p.j == y) {
+                                            validMoves.push_back("P" + ijs(x-2,y) + "Z" + ijs(x,y));
                                         }
                                     }
                                     else {
-                                        if (p.i == x-1 && p.j == y) {
+                                        if (p.i == x+1 && p.j == y) {
                                             validMoves.push_back("p" + ijs(x-1,y) + ijs(x,y));
                                         }
-                                        else if (board[x-1][y] == '.' && p.i == x-2 && p.j == y) {
-                                            validMoves.push_back("p" + ijs(x-2,y) + "z" + ijs(x,y));
+                                        else if (board[x+1][y] == '.' && p.i == x+2 && p.j == y) {
+                                            validMoves.push_back("p" + ijs(x+2,y) + "z" + ijs(x,y));
                                         }
                                     }
                                 }

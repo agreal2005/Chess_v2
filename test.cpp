@@ -12,7 +12,7 @@ psTables pst;
 
 int main()
 {
-    string fen = "8/8/2kr4/8/2K2N2/3B4/8/8 w - - 0 1";
+    string fen = "r1b1k2r/pppp1ppp/4pq2/4n3/4P3/P1P2NP1/1PP2K1P/R1BQ1B1R w kq - 0 1";
     // getline(cin, fen);
     Board_FEN v(fen);
     EvalBar lesgo(fen);

@@ -18,6 +18,8 @@ string EvalBar::playOneMove(string &move, vector<vector<char>> brd, bool t, bool
     if (move[0] != 'o' && move[0] != 'O') next_ij = sij(next_position);
     if (move == "O-O") // white castling king side
     {
+        brd[7][4] = '.';
+        brd[7][7] = '.';
         brd[7][5] = 'R';
         brd[7][6] = 'K';
         wck = false;
@@ -28,6 +30,9 @@ string EvalBar::playOneMove(string &move, vector<vector<char>> brd, bool t, bool
     {
         brd[7][3] = 'R';
         brd[7][2] = 'K';
+        brd[7][0] = '.';
+        brd[7][1] = '.';
+        brd[7][4] = '.';
         wck = false;
         wcq = false;
         isEnp = false;
@@ -36,6 +41,8 @@ string EvalBar::playOneMove(string &move, vector<vector<char>> brd, bool t, bool
     {
         brd[0][5] = 'r';
         brd[0][6] = 'k';
+        brd[0][4] = '.';
+        brd[0][7] = '.';
         bck = false;
         bcq = false;
         isEnp = false;
@@ -44,9 +51,22 @@ string EvalBar::playOneMove(string &move, vector<vector<char>> brd, bool t, bool
     {
         brd[0][3] = 'r';
         brd[0][2] = 'k';
+        brd[0][1] = '.';
+        brd[0][0] = '.';
+        brd[0][4] = '.';
         bck = false;
         bcq = false;
         isEnp = false;
+    }
+    else if (next_position == "PP")
+    {
+        brd[curr_ij.first][curr_ij.second] = '.';
+        brd[0][curr_ij.second] = 'Q';
+    }
+    else if (next_position == "pp")
+    {
+        brd[curr_ij.first][curr_ij.second] = '.';
+        brd[7][curr_ij.second] = 'q';
     }
     else if (move[0] == 'P' || move[0] == 'p')
     {
@@ -96,6 +116,10 @@ string EvalBar::playOneMove(string &move, vector<vector<char>> brd, bool t, bool
         brd[curr_ij.first][curr_ij.second] = '.';
         brd[next_ij.first][next_ij.second] = move[0];
         isEnp = false;
+        if (move[0] == 'R' && curr_position == "h1") wck = 0;
+        else if (move[0] == 'R' && curr_position == "a1") wcq = 0;
+        else if (move[0] == 'r' && curr_position == "h8") bck = 0;
+        else if (move[0] == 'r' && curr_position == "a8") bcq = 0;
     }
     t = !t;
     // display_board(brd); // for testing purposes
