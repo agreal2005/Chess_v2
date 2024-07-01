@@ -6,7 +6,7 @@
 #define queen_score 9
 
 double evaluate_checkmate(const vector<vector<char>> &board, const vector<vector<vector<Piece>>> &oppcontrol_squares,
-                          const vector<string> &legal_moves, bool turn, string FEN)
+                          const vector<string> &legal_moves, bool turn, string FEN = "")
 {
     if (turn == 0)
     {

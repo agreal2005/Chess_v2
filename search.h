@@ -1,9 +1,10 @@
 #include "eval.h"
 #pragma once
-#define DEPTH 5
+#define DEPTH 3
 struct EvalParams
 {
     string f; // fen
+    string tag; // important part of the fen
     vector<vector<char>> board; // from fen.h
     vector<Piece> pieces; // from moves.h
     vector<Piece> oppPieces; // from moves.h
@@ -19,6 +20,7 @@ struct EvalParams
 
     EvalParams( Moves &mv, Board_FEN &bf, string &fen){
        f=fen;
+       tag = fen.substr(0, fen.length() - 4);
        board=bf.board;
        controlSquares=mv.return_controlSquares();
        oppControlSquares=mv.return_oppControlSquares();
@@ -33,6 +35,12 @@ struct EvalParams
        castling=bf.castle_options();
        epSquare=bf.return_eps();
     }
+    // bool operator<(const EvalParams &o) const {
+    //     return tag < o.tag;
+    // }
+    // bool operator==(const EvalParams &o) const {
+    //     return tag == o.tag;
+    // }
 };
 
 class EvalBar
@@ -40,7 +48,7 @@ class EvalBar
     private:
     Board_FEN fen; // Contains info about the board, turn, ep Square, Castling, etc.
     Moves m; // Contains info about pieces controlling squares, valid Moves, etc.
-    
+    map<string, pair<bool, pair<string, double>>> vis;
     public:
     EvalBar(string f = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
     string playOneMove(string &move, vector<vector<char>> brd, bool t, bool wck, bool wcq, bool bck, bool bcq, bool isEnp, string epS, int hfc, int fms); // Return FEN

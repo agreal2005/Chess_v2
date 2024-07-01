@@ -3,7 +3,11 @@
 
 void destroy_fen(string fen_val)
 {
-    system("cls");
+    #ifdef _WIN32
+        system("cls");
+    #else
+        system("clear");
+    #endif
     cout << "INVALID FEN:\n";
     cout << fen_val << endl;
     abort();

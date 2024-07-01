@@ -750,14 +750,17 @@ void Moves::checkPinned()
                 if (sd == -1)
                 {
                     pinx = -1, piny = -1;
+                    resx = -1, resy = -1;
                     break;
                 }
                 if (sd == 1)
                 {
-                    if (pinx != -1)
+                    if (pinx != -1 || resx != -1)
                     {
                         pinx = -1;
                         piny = -1;
+                        resx = -1;
+                        resy = -1;
                         break;
                     }
                     else
@@ -771,7 +774,7 @@ void Moves::checkPinned()
                             else
                             {
                                 resx = x, resy = y;
-                                break;
+                                // break;
                             }
                         }
                         else if (i_inc == 0)
@@ -783,7 +786,7 @@ void Moves::checkPinned()
                             else
                             {
                                 resx = x, resy = y;
-                                break;
+                                // break;
                             }
                         }
                         else
@@ -797,7 +800,7 @@ void Moves::checkPinned()
                                 if (x == piece.i + i_inc && y == piece.j + j_inc)
                                 {
                                     resx = x, resy = y;
-                                    break;
+                                    // break;
                                 }
                                 else
                                 {
@@ -807,7 +810,7 @@ void Moves::checkPinned()
                             else
                             {
                                 resx = x, resy = y;
-                                break;
+                                // break;
                             }
                         }
                     }
@@ -999,19 +1002,19 @@ vector<string> Moves::valid_Moves(bool flag)
                                 if (p.type == 'p' || p.type == 'P') {
                                     if (p.pinned) continue;
                                     if (turn == 0) {
-                                        if (p.i == x-1 && p.j == y) {
-                                            validMoves.push_back("P" + ijs(x-1,y) + ijs(x,y));
+                                        if (p.i == x+1 && p.j == y) {
+                                            validMoves.push_back("P" + ijs(x+1,y) + ijs(x,y));
                                         }
-                                        else if (board[x-1][y] == '.' && p.i == x-2 && p.j == y) {
-                                            validMoves.push_back("P" + ijs(x-2,y) + "Z" + ijs(x,y));
+                                        else if (x == 4 && board[5][y] == '.' && p.i == 6 && p.j == y) {
+                                            validMoves.push_back("P" + ijs(6,y) + "Z" + ijs(4,y));
                                         }
                                     }
                                     else {
-                                        if (p.i == x+1 && p.j == y) {
-                                            validMoves.push_back("p" + ijs(x+1,y) + ijs(x,y));
+                                        if (p.i == x-1 && p.j == y) {
+                                            validMoves.push_back("p" + ijs(x-1,y) + ijs(x,y));
                                         }
-                                        else if (board[x+1][y] == '.' && p.i == x+2 && p.j == y) {
-                                            validMoves.push_back("p" + ijs(x+2,y) + "z" + ijs(x,y));
+                                        else if (x == 3 && board[2][y] == '.' && p.i == 1 && p.j == y) {
+                                            validMoves.push_back("p" + ijs(1,y) + "z" + ijs(3,y));
                                         }
                                     }
                                 }
@@ -1035,7 +1038,9 @@ vector<string> Moves::valid_Moves(bool flag)
                                     else if (p.type == 'p') str += "y" + ijs(x,y);
                                 } 
                                 else {
-                                    if (board[x][y] == '.' && p.type == 'p' || p.type == 'P') continue;
+                                    if (board[x][y] == '.' && (p.type == 'p' || p.type == 'P')) {
+                                        continue;
+                                    }
                                     str += "x" + ijs(x, y);
                                 }
                             }

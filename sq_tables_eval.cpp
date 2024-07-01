@@ -2,7 +2,7 @@
 
 void psTables::init_tables()
 {
-    gamePhase = 0;
+    gamePhase = 100;
     int p, sq;
     for (p = PAWN; p <= KING; p++)
     {
