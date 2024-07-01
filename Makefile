@@ -9,10 +9,10 @@ $(TARG): $(DEPS)
 	$(CC) $(CFLAGS) -o $@ $(DEPS)
 
 test.o: test.cpp 
-	$(CC) $(CFLAGS) -c -o $@ $<
+	$(CC) $(CFLAGS) -c -g -o $@ $<
 
 %.o: %.cpp %.h
-	$(CC) $(CFLAGS) -c -o $@ $<
+	$(CC) $(CFLAGS) -c -g -o $@ $<
 
 clean:
-	del *.o Test.exe
+	del *.o Test.exe vt.exe

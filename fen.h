@@ -51,4 +51,5 @@ class Board_FEN
 
    friend class Moves;
    friend class EvalBar;
+   friend struct EvalParams;
 };

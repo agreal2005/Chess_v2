@@ -3,13 +3,16 @@
 #include "eval.h"
 #include "functions.h"
 #include "search.h"
+#include <chrono>
 using namespace std;
+using namespace std::chrono;
+
 int gamePhase;
 psTables pst;
 
 int main()
 {
-    string fen = "2k4r/8/2K5/8/8/8/8/8 w - - 0 1";
+    string fen = "r3k2r/pb1p1p1p/1p3p2/2p1p3/4P3/P1P1B1PB/1PP1K2P/R5R1 w q - 0 1";
     // getline(cin, fen);
     Board_FEN v(fen);
     EvalBar lesgo(fen);
@@ -21,25 +24,46 @@ int main()
         cout << "Enter your move: " << endl;
         cin >> str;
         if (str == "exit") break;
+        #ifdef _WIN32
+        system("cls");
+        #else
+        system("clear");
+        #endif
         v.input_FEN(lesgo.playOneMove(str, v.return_board(),v.return_turn(),((cas_opt&8)!=0),((cas_opt&4)!=0),((cas_opt&2)!=0),((cas_opt&1)!=0),v.return_ep(),v.return_eps(),v.return_halfmoveclk(),v.return_fullmoves()));
         cout << v.get_FEN() << endl;
-        pair<string, double> p = lesgo.evalTree(v.get_FEN(), 5);
+        string changed_str = v.get_FEN();
+        auto start = high_resolution_clock::now();
+        pair<string, double> p = lesgo.evalTree(changed_str, 3);
+        auto stop = high_resolution_clock::now();
         cout << "Computer's move: " << p.first << endl;
         cout << "Eval: " << p.second << endl;
         v.input_FEN(lesgo.playOneMove(p.first, v.return_board(),v.return_turn(),((cas_opt&8)!=0),((cas_opt&4)!=0),((cas_opt&2)!=0),((cas_opt&1)!=0),v.return_ep(),v.return_eps(),v.return_halfmoveclk(),v.return_fullmoves()));
+        auto duration = duration_cast<seconds>(stop - start);
+        cout << "Executed in " << duration.count() << " seconds." << endl;
+        if (p.second == inf || p.second == -inf) {
+            cout << "CHECKMATE!" << endl;
+            break;
+        }
+        if (p.first == "-")
+        {
+            cout << "STALEMATE!" << endl;
+            break;
+        }
     }
+    v.display_board_FEN();
     // Moves m;
     // bool turn = v.return_turn();
-    // m.fetch_Moves(v.return_board(), turn, v.return_ep(), v.return_eps(), v.castle_options());
+    // vector<vector<char>> brd = v.return_board();
+    // m.fetch_Moves(brd, turn, v.return_ep(), v.return_eps(), v.castle_options());
     // cout << setw(60) << left << "Evaluate Checkmate: " << evaluate_checkmate(v.return_board(), m.return_oppControlSquares(), m.valid_Moves(), turn, fen) << endl;
-    // cout << setw(60) << left << "Evalute Material: " << evaluate_material(v.return_board()) << endl;
+    // cout << setw(60) << left << "Evaluate Material: " << evaluate_material(v.return_board()) << endl;
     // cout << setw(60) << left << "Pawn Structure: " << evaluate_pawn_structure(reverseBoard(v.return_board()), m.return_controlSquares(), m.return_oppControlSquares(), turn, fen) << endl;
     // cout << setw(60) << left << "Evaluate Outposts: " << evaluate_outposts(v.return_board(), m.return_controlSquares(), m.return_oppControlSquares(), turn) << endl;
     // cout << setw(60) << left << "Hanging Piece Penalty: " << hanging_piece_penalty(v.return_board(), m.return_controlSquares(), m.return_oppControlSquares(), turn) << endl;
     // cout << setw(60) << left << "Weaker Attacked Penalty: " << weaker_attacked_penalty(v.return_board(), m.return_controlSquares(), m.return_oppControlSquares(), turn) << endl;
-    // cout << setw(60) << left << "Mobility: " << mobility(v.return_board(), m.return_controlSquares(), m.return_oppControlSquares(), turn, v.return_ep(), v.return_eps(), v.castle_options()) << endl;
+    // // cout << setw(60) << left << "Mobility: " << mobility(v.return_board(), m.return_controlSquares(), m.return_oppControlSquares(), turn, v.return_ep(), v.return_eps(), v.castle_options()) << endl;
     // cout << setw(60) << left << "Piece Square Evaluation: " << pst.eval_sq_tables(v.return_board()) << endl;
-    // cout << setw(60) << left << "King safey" << eval_kingsafety(v.return_board(), m.return_controlSquares(), m.return_oppControlSquares(), turn);
+    // cout << setw(60) << left << "King safety" << eval_kingsafety(v.return_board(), m.return_controlSquares(), m.return_oppControlSquares(), turn) << endl;
     // cout << setw(60) << left << "(Special) Pieces eval: " << pieces_eval(v.return_board(), m.return_pieces(), m.return_oppPieces(), turn) << endl;
     // cout << "----> Valid Moves of Player: " << endl;
     // for (auto str : m.valid_Moves()) cout << str << endl;

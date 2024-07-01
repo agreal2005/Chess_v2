@@ -19,8 +19,8 @@ class Moves
     string epSquare;
     public:
     Moves();
-    Moves(vector<vector<char>> board, bool turn, bool isEnPassant = false, string epSquare = "", int castling = 0);
-    void fetch_Moves(vector<vector<char>> board, bool turn, bool isEnPassant = false, string epSquare = "", int castling = 0); // Fetch the board and the turn of the player
+    Moves(vector<vector<char>> &board, bool turn, bool isEnPassant = false, string epSquare = "", int castling = 0);
+    void fetch_Moves(vector<vector<char>> &board, bool turn, bool isEnPassant = false, string epSquare = "", int castling = 0); // Fetch the board and the turn of the player
     vector<string> valid_Moves(bool flag = 0); // It is assumed that illegal positions + wrong player to move are not given
     vector<string> valid_oppMoves();
     vector<vector<vector<Piece>>> return_controlSquares();
@@ -35,6 +35,7 @@ class Moves
     vector<Piece> return_trappedPieces();
     vector<Piece> return_trappedOppPieces();
     friend class EvalBar;
+    friend struct EvalParams;
     /*
         Note: controlSquares and oppCS are computed in the
         following order: Q, R, B, N, P, K
