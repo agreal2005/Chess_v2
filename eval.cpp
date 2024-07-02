@@ -570,20 +570,20 @@ double hanging_piece_penalty(const vector<vector<char>> &board, const vector<vec
             }
         }
     }
-    sort(white_penalty.begin(), white_penalty.end(), greater<double>());
-    sort(black_penalty.begin(), black_penalty.end(), greater<double>());
+    // sort(white_penalty.begin(), white_penalty.end(), greater<double>());
+    // sort(black_penalty.begin(), black_penalty.end(), greater<double>());
     if (turn)
     {
-        for (int i = 0; i < white_penalty.size(); i += 2)
+        for (int i = 0; i < white_penalty.size(); i++) // i+=2
             total_penalty += white_penalty[i];
-        for (int i = 1; i < black_penalty.size(); i += 2)
+        for (int i = 0; i < black_penalty.size(); i++) // i=1, i+=2
             total_penalty -= black_penalty[i];
     }
     else
     {
-        for (int i = 1; i < white_penalty.size(); i += 2)
+        for (int i = 0; i < white_penalty.size(); i++)
             total_penalty += white_penalty[i];
-        for (int i = 0; i < black_penalty.size(); i += 2)
+        for (int i = 0; i < black_penalty.size(); i++)
             total_penalty -= black_penalty[i];
     }
 
@@ -714,21 +714,21 @@ double weaker_attacked_penalty(const vector<vector<char>> &board, const vector<v
         }
     }
 
-    sort(white_penalty.begin(), white_penalty.end(), greater<double>());
-    sort(black_penalty.begin(), black_penalty.end(), greater<double>());
+    // sort(white_penalty.begin(), white_penalty.end(), greater<double>());
+    // sort(black_penalty.begin(), black_penalty.end(), greater<double>());
 
     if (turn)
     {
-        for (int i = 0; i < white_penalty.size(); i += 2)
+        for (int i = 0; i < white_penalty.size(); i++)
             total_penalty += white_penalty[i];
-        for (int i = 1; i < black_penalty.size(); i += 2)
+        for (int i = 0; i < black_penalty.size(); i++)
             total_penalty -= black_penalty[i];
     }
     else
     {
-        for (int i = 1; i < white_penalty.size(); i += 2)
+        for (int i = 0; i < white_penalty.size(); i++)
             total_penalty += white_penalty[i];
-        for (int i = 0; i < black_penalty.size(); i += 2)
+        for (int i = 0; i < black_penalty.size(); i++)
             total_penalty -= black_penalty[i];
     }
 
@@ -1017,4 +1017,46 @@ double eval_kingsafety(const vector<vector<char>> &board, const vector<vector<ve
     }
 
     return white_attack-black_attack-white_missing_pawn+black_missing_pawn;
+}
+
+double trapped_eval(const vector<Piece> whitetrapped, const vector<Piece> blacktrapped)
+{
+    double penaldo = 0.0;
+    for (auto piece: whitetrapped)
+    {
+        switch (piece.type)
+        {
+            case 'Q':
+            penaldo += 7.2;
+            break;
+            case 'R':
+            penaldo += 4.0;
+            break;
+            case 'B':
+            penaldo += 2.4;
+            break;
+            case 'N':
+            penaldo += 2.4;
+            break;
+        }
+    }
+    for (auto piece: blacktrapped)
+    {
+        switch (piece.type)
+        {
+            case 'q':
+            penaldo -= 7.2;
+            break;
+            case 'r':
+            penaldo -= 4.0;
+            break;
+            case 'b':
+            penaldo -= 2.4;
+            break;
+            case 'n':
+            penaldo -= 2.4;
+            break;
+        }
+    }
+    return -penaldo;
 }

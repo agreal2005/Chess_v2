@@ -1238,11 +1238,11 @@ vector<string> Moves::valid_Moves(bool flag)
                 }
             }
         }
-        else if (bcq)
+        if (bcq)
         {
             if (board[0][2] == '.' && board[0][3] == '.' && board[0][1] == '.' && board[0][4] == 'k' && board[0][0] == 'r')
             {
-                if (oppControlSquares[0][1].size() == 0 && oppControlSquares[0][2].size() == 0 && oppControlSquares[0][3].size() == 0)
+                if (oppControlSquares[0][2].size() == 0 && oppControlSquares[0][3].size() == 0)
                 {
                     validMoves.push_back("o-o-o");
                 }
@@ -1261,11 +1261,11 @@ vector<string> Moves::valid_Moves(bool flag)
                 }
             }
         }
-        else if (wcq)
+        if (wcq)
         {
             if (board[7][2] == '.' && board[7][3] == '.' && board[7][1] == '.' && board[7][4] == 'K' && board[7][0] == 'R')
             {
-                if (oppControlSquares[7][1].size() == 0 && oppControlSquares[7][2].size() == 0 && oppControlSquares[7][3].size() == 0)
+                if (oppControlSquares[7][2].size() == 0 && oppControlSquares[7][3].size() == 0)
                 {
                     validMoves.push_back("O-O-O");
                 }
@@ -1529,11 +1529,11 @@ vector<string> Moves::valid_oppMoves()
                 }
             }
         }
-        else if (bcq)
+        if (bcq)
         {
             if (board[0][2] == '.' && board[0][3] == '.' && board[0][1] == '.' && board[0][4] == 'k' && board[0][0] == 'r')
             {
-                if (controlSquares[0][1].size() == 0 && controlSquares[0][2].size() == 0 && controlSquares[0][3].size() == 0)
+                if (controlSquares[0][2].size() == 0 && controlSquares[0][3].size() == 0)
                 {
                     validMoves.push_back("o-o-o");
                 }
@@ -1552,11 +1552,11 @@ vector<string> Moves::valid_oppMoves()
                 }
             }
         }
-        else if (wcq)
+        if (wcq)
         {
             if (board[7][2] == '.' && board[7][3] == '.' && board[7][1] == '.' && board[7][4] == 'K' && board[7][0] == 'R')
             {
-                if (controlSquares[7][1].size() == 0 && controlSquares[7][2].size() == 0 && controlSquares[7][3].size() == 0)
+                if (controlSquares[7][2].size() == 0 && controlSquares[7][3].size() == 0)
                 {
                     validMoves.push_back("O-O-O");
                 }

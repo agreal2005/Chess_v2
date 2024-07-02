@@ -26,5 +26,7 @@ double mobility(vector<vector<char>> &board, const vector<vector<vector<Piece>>>
 double pieces_eval(const vector<vector<char>> &board, const vector<Piece> pieces, const vector<Piece> oppPieces, bool turn = 0);
 double eval_kingsafety(const vector<vector<char>> &board, const vector<vector<vector<Piece>>> &control_squares, const vector<vector<vector<Piece>>> &oppcontrol_squares, bool turn);
 
+double trapped_eval(const vector<Piece> whitetrapped, const vector<Piece> blacktrapped);
+
 extern int gamePhase;
 extern psTables pst;

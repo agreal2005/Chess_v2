@@ -13,8 +13,8 @@ psTables pst;
 int main()
 {
     string fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"; /* Starting position */
-    // string fen = "rnbqk1nr/pppp1ppp/4p3/8/1b1PP3/8/PPP2PPP/RNBQKBNR w KQkq - 0 1";
-    // string fen = "r6q/3k1p2/2p1p3/1p1p4/1P1N4/3PK3/4br2/5B2 w - - 0 1";
+    // string fen = "r3kb1r/1bpqpp2/p1n2n1p/1p4p1/3P4/1BN2NB1/PPP2PPP/R2Q1RK1 w kq - 0 1";
+    // string fen = "r3kb1r/1bpqpp2/p1n2n1p/6p1/p2P4/1BN2NB1/1PP2PPP/R2Q1RK1 w kq - 0 1";
     // getline(cin, fen);
     Board_FEN v(fen);
     EvalBar lesgo(fen);
