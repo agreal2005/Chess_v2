@@ -21,3 +21,5 @@ pair<int,int> sij(string s); // Convert square name to (i, j)
 int piece_type(char ch, bool turn);
 
 vector<vector<char>> reverseBoard(const vector<vector<char>> &board);
+
+int get_material(const vector<vector<char>> &board);
