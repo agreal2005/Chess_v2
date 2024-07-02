@@ -136,17 +136,19 @@ string EvalBar::playOneMove(string &move, vector<vector<char>> brd, bool t, bool
 
 double EvalBar::complete_eval(EvalParams &pr)
 {
-    double eval = 8*evaluate_material(pr.board);
+    double eval = 10*evaluate_material(pr.board);
     eval += evaluate_pawn_structure(reverseBoard(pr.board), pr.controlSquares, pr.oppControlSquares, pr.turn, pr.f);
     eval += evaluate_outposts(reverseBoard(pr.board), pr.controlSquares, pr.oppControlSquares, pr.turn);
     eval += 4*hanging_piece_penalty(pr.board, pr.controlSquares, pr.oppControlSquares, pr.turn);
     eval += 4*weaker_attacked_penalty(pr.board, pr.controlSquares, pr.oppControlSquares, pr.turn);
-    eval += 2*pieces_eval(pr.board, pr.pieces, pr.oppPieces, pr.turn);
+    eval += pieces_eval(pr.board, pr.pieces, pr.oppPieces, pr.turn);
     eval += (double)pst.eval_sq_tables(pr.board)/625.0;
+    if (pr.turn == 0) eval += 4*trapped_eval(pr.trappedPieces, pr.trappedOppPieces);
+    else eval += 4*trapped_eval(pr.trappedOppPieces, pr.trappedPieces);
     double king_score = eval_kingsafety(pr.board, pr.controlSquares, pr.oppControlSquares, pr.turn);
     if(gamePhase > 18)
     {
-        eval += 0.05 * king_score;
+        eval += 2*king_score;
     }
     eval += mobility(pr.board, pr.controlSquares, pr.oppControlSquares, pr.validMoves, pr.validOppMoves, pr.turn, pr.isEnPassant, pr.epSquare, pr.castling);
     return eval;
@@ -243,7 +245,8 @@ pair<string, double> EvalBar::evalTree(string f, int d, int c) {
                 {
                     temp = vis[tag].second;
                 }
-                // if (move == "Pc3xb4") cout << temp.first << " " << temp.second << endl;
+                // if (move == "o-o-o") cout << "****" << temp.first << " " << temp.second << endl;
+                // if (d==2) cout << temp.first << " " << temp.second << endl;
                 // if (move.substr(0,3) == "bb4") cout << move << " " << temp.first << " " << temp.second << endl;
                 // if (f == "rnb1k1nr/pppp1ppp/4p3/8/1P1Pq3/8/PP3PPP/RNBQKBNR w KQkq - 0 1") cout << move << " : " <<  temp.first << " " << temp.second << endl;
                 // if (f == "rnbk2nr/pppp1ppp/4p3/8/1P1PQ3/8/PP3PPP/RNB1KBNR b KQkq - 0 1") cout << move << " : " << temp.first << " " << temp.second << endl;
