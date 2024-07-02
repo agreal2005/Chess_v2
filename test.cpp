@@ -14,7 +14,7 @@ int main()
 {
     string fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"; /* Starting position */
     // string fen = "rnbqk1nr/pppp1ppp/4p3/8/1b1PP3/8/PPP2PPP/RNBQKBNR w KQkq - 0 1";
-    // string fen = "rnbqk1nr/pppp1ppp/4p3/8/1b1PP3/2P5/PP3PPP/RNBQKBNR b KQkq - 0 1";
+    // string fen = "r6q/3k1p2/2p1p3/1p1p4/1P1N4/3PK3/4br2/5B2 w - - 0 1";
     // getline(cin, fen);
     Board_FEN v(fen);
     EvalBar lesgo(fen);
@@ -35,7 +35,9 @@ int main()
         cout << v.get_FEN() << endl;
         string changed_str = v.get_FEN();
         auto start = high_resolution_clock::now();
-        pair<string, double> p = lesgo.evalTree(changed_str, (gamePhase > 18) ? 3 : 4);
+        int depth = 3;
+        if (get_material(v.return_board()) <= 20) depth = 4; 
+        pair<string, double> p = lesgo.evalTree(changed_str, depth, 0);
         auto stop = high_resolution_clock::now();
         if (p.first == "#")
         {
@@ -89,7 +91,7 @@ int main()
     // for (auto str : m.return_trappedOppPieces()) cout << str.type << endl;
     // EvalBar bar;
     // int cs = v.castle_options();
-    // pair<string, double> p = bar.evalTree(fen, 3);
+    // pair<string, double> p = bar.evalTree(fen, 3, 0);
     // cout << p.second << " " << p.first << endl;
     // for (auto mv : m.valid_Moves())
     // {

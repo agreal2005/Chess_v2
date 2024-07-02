@@ -104,3 +104,53 @@ vector<vector<char>> reverseBoard(const vector<vector<char>> &board)
     }
     return rev;
 }
+
+int get_material(const vector<vector<char>> &board)
+{
+    int white_score = 0;
+    int black_score = 0;
+    for (int i = 0; i < 8; i++)
+    {
+        for (int j = 0; j < 8; j++)
+        {
+            switch (board[i][j])
+            {
+            case 'P':
+                white_score += 1;
+                break;
+            case 'N':
+                white_score += 3;
+                break;
+            case 'R':
+                white_score += 5;
+                break;
+            case 'B':
+                white_score += 3;
+                break;
+            case 'Q':
+                white_score += 9;
+                break;
+
+            case 'p':
+                black_score += 1;
+                break;
+            case 'n':
+                black_score += 3;
+                break;
+            case 'r':
+                black_score += 5;
+                break;
+            case 'b':
+                black_score += 3;
+                break;
+            case 'q':
+                black_score += 9;
+                break;
+
+            default:
+                break;
+            }
+        }
+    }
+    return white_score + black_score;
+}

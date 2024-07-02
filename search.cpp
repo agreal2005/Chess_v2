@@ -136,15 +136,15 @@ string EvalBar::playOneMove(string &move, vector<vector<char>> brd, bool t, bool
 
 double EvalBar::complete_eval(EvalParams &pr)
 {
-    double eval = 10*evaluate_material(pr.board);
+    double eval = 8*evaluate_material(pr.board);
     eval += evaluate_pawn_structure(reverseBoard(pr.board), pr.controlSquares, pr.oppControlSquares, pr.turn, pr.f);
     eval += evaluate_outposts(reverseBoard(pr.board), pr.controlSquares, pr.oppControlSquares, pr.turn);
-    eval += 2*hanging_piece_penalty(pr.board, pr.controlSquares, pr.oppControlSquares, pr.turn);
-    eval += 2*weaker_attacked_penalty(pr.board, pr.controlSquares, pr.oppControlSquares, pr.turn);
-    eval += pieces_eval(pr.board, pr.pieces, pr.oppPieces, pr.turn);
+    eval += 4*hanging_piece_penalty(pr.board, pr.controlSquares, pr.oppControlSquares, pr.turn);
+    eval += 4*weaker_attacked_penalty(pr.board, pr.controlSquares, pr.oppControlSquares, pr.turn);
+    eval += 2*pieces_eval(pr.board, pr.pieces, pr.oppPieces, pr.turn);
     eval += (double)pst.eval_sq_tables(pr.board)/625.0;
     double king_score = eval_kingsafety(pr.board, pr.controlSquares, pr.oppControlSquares, pr.turn);
-    if(gamePhase > 24)
+    if(gamePhase > 18)
     {
         eval += 0.05 * king_score;
     }
@@ -152,13 +152,14 @@ double EvalBar::complete_eval(EvalParams &pr)
     return eval;
 }
 
-pair<string, double> EvalBar::evalTree(string f, int d ) {
-    if (vis.size() == vis.max_size()) {
-        while (vis.size()!=vis.max_size() - vis.max_size()/10)
+pair<string, double> EvalBar::evalTree(string f, int d, int c) {
+    if (vis.size() == vis.max_size()/2) {
+        while (vis.size()!=vis.max_size()/2 - vis.max_size()/10)
         {
             vis.erase(vis.begin());
         }
     }
+    // if (d == 3 && c == 0) vis.clear();
     if(d<=0){
          cout<<"Invalid depth for evaluation\n";
          return {"_____",0.0};
@@ -236,7 +237,7 @@ pair<string, double> EvalBar::evalTree(string f, int d ) {
                 pair<string,double> temp;
                 if (vis[tag].first == 0)
                 {
-                    temp = evalTree(res,d-1);
+                    temp = evalTree(res,d-1, 1+c);
                 }
                 else
                 {
