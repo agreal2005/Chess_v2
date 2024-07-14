@@ -570,8 +570,8 @@ double hanging_piece_penalty(const vector<vector<char>> &board, const vector<vec
             }
         }
     }
-    // sort(white_penalty.begin(), white_penalty.end(), greater<double>());
-    // sort(black_penalty.begin(), black_penalty.end(), greater<double>());
+    sort(white_penalty.begin(), white_penalty.end(), greater<double>());
+    sort(black_penalty.begin(), black_penalty.end(), greater<double>());
     if (turn)
     {
         for (int i = 0; i < white_penalty.size(); i++) // i+=2
@@ -604,7 +604,6 @@ double weaker_attacked_penalty(const vector<vector<char>> &board, const vector<v
             {
 
                 int this_piece_val = 0;
-
                 switch (board[in_ver][in_hor])
                 {
                 case 'P':
@@ -629,12 +628,14 @@ double weaker_attacked_penalty(const vector<vector<char>> &board, const vector<v
                 int opp_piece_val = 9;
                 vector<Piece> vec_of_opp_pieces;
                 if (turn)
-                    vec_of_opp_pieces = control_squares[in_ver][in_ver];
+                    vec_of_opp_pieces = control_squares[in_ver][in_hor];
                 else
                     vec_of_opp_pieces = oppcontrol_squares[in_ver][in_hor];
 
                 for (auto it : vec_of_opp_pieces)
                 {
+                    if (turn == 0 && oppcontrol_squares[it.i][it.j].size() == 0) continue;
+                    if (turn == 1 && control_squares[it.i][it.j].size() == 0) continue;
                     switch (it.type)
                     {
                     case 'p':
@@ -656,7 +657,7 @@ double weaker_attacked_penalty(const vector<vector<char>> &board, const vector<v
                  if(this_piece_val>opp_piece_val)white_penalty.push_back(0.9 * (this_piece_val - opp_piece_val));
             }
 
-            if (board[in_ver][in_hor] >= 'a' && board[in_ver][in_hor] <= 'z')
+            else if (board[in_ver][in_hor] >= 'a' && board[in_ver][in_hor] <= 'z')
             {
 
                 int this_piece_val = 0;
@@ -685,12 +686,14 @@ double weaker_attacked_penalty(const vector<vector<char>> &board, const vector<v
                 int opp_piece_val = 9;
                 vector<Piece> vec_of_opp_pieces;
                 if (!turn)
-                    vec_of_opp_pieces = control_squares[in_ver][in_ver];
+                    vec_of_opp_pieces = control_squares[in_ver][in_hor];
                 else
                     vec_of_opp_pieces = oppcontrol_squares[in_ver][in_hor];
 
                 for (auto it : vec_of_opp_pieces)
                 {
+                    if (turn == 0 && control_squares[it.i][it.j].size() == 0) continue;
+                    if (turn == 1 && oppcontrol_squares[it.i][it.j].size() == 0) continue;
                     switch (it.type)
                     {
                     case 'P':
@@ -719,9 +722,9 @@ double weaker_attacked_penalty(const vector<vector<char>> &board, const vector<v
 
     if (turn)
     {
-        for (int i = 0; i < white_penalty.size(); i++)
+        for (int i = 0; i < white_penalty.size(); i++) // i+=2
             total_penalty += white_penalty[i];
-        for (int i = 0; i < black_penalty.size(); i++)
+        for (int i = 0; i < black_penalty.size(); i++) // i=1, i+=2
             total_penalty -= black_penalty[i];
     }
     else
