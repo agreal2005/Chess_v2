@@ -49,6 +49,7 @@ class EvalBar
     Board_FEN fen; // Contains info about the board, turn, ep Square, Castling, etc.
     Moves m; // Contains info about pieces controlling squares, valid Moves, etc.
     map<string, pair<bool, pair<string, double>>> vis;
+    // map<string, double> memoFen;
     public:
     EvalBar(string f = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
     string playOneMove(string &move, vector<vector<char>> brd, bool t, bool wck, bool wcq, bool bck, bool bcq, bool isEnp, string epS, int hfc, int fms); // Return FEN
@@ -67,5 +68,6 @@ class EvalBar
     // See fen.h & moves.h for reference
     // pass everything to complete_eval including isOpp
     double complete_eval(EvalParams &pr); // To be called when eval reaches its depth
+    pair<string, double> NewEvalTree(string BoardFen, int depth, int c, double alpha, double beta);
     
 };
