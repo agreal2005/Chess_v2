@@ -163,12 +163,12 @@ double EvalBar::complete_eval(EvalParams &pr)
     else // Middle game
     {
         matwt = 5.9;
-        pawnwt = 0.03;
+        pawnwt = 0.05;
         outpostwt = 0;
-        hangingwt = 1.5;
-        weakerattacwt = 2;
+        hangingwt = 2.3;
+        weakerattacwt = 1.2;
         trappedwt = 0.5;
-        pstwt = 0.088;
+        pstwt = 0.089;
         kingwt = 0.01;
         mobilitywt = 0.003;
     }
