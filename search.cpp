@@ -353,6 +353,7 @@ pair<string, double> EvalBar :: NewEvalTree(string BoardFen, int depth, int c, d
         for(auto move : MyMoves){
             string res = playOneMove(move ,CurrentFENString.return_board(),CurrentFENString.return_turn(),((cas_opt&8)!=0),((cas_opt&4)!=0),((cas_opt&2)!=0),((cas_opt&1)!=0),CurrentFENString.return_ep(),CurrentFENString.return_eps(),CurrentFENString.return_halfmoveclk(),CurrentFENString.return_fullmoves());
             double PotentialScore = NewEvalTree(res, depth-1, c, alpha, beta).second;
+            vis[BoardFen.substr(0, BoardFen.length()-4)] = {!CurrentFENString.turn, {move, PotentialScore}};
             if(PotentialScore > MaxScore){
                 MaxScore = PotentialScore;
                 MoveToBePlayed = move;
