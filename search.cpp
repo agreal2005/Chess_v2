@@ -140,37 +140,37 @@ double EvalBar::complete_eval(EvalParams &pr)
     double matwt = 0, pawnwt = 0, outpostwt = 0, hangingwt = 0, weakerattacwt = 0, pieceswt = 0, pstwt = 0, trappedwt = 0, kingwt = 0, mobilitywt = 0;
     if (material <= 20) // Endgame
     {
-        matwt = 7;
+        matwt = 5.9;
         pawnwt = 1/10;
-        hangingwt = 1.5;
+        hangingwt = 2.5;
         weakerattacwt = 2;
-        trappedwt = 1;
-        pstwt = 0.8;
+        trappedwt = 0.5;
+        pstwt = 0.5;
         mobilitywt = 0.007;
     }
     else if (material > 68) // Opening
     {
-        matwt = 7;
-        pawnwt = 1/20;
+        matwt = 5.9;
+        pawnwt = 0.05;
         outpostwt = 0;
-        hangingwt = 1.5;
+        hangingwt = 2.3;
         weakerattacwt = 1.2;
-        trappedwt = 1;
-        pstwt = 0.04;
+        trappedwt = 0.5;
+        pstwt = 0.089;
         kingwt = 0.01;
-        mobilitywt = 0.001;
+        mobilitywt = 0.003;
     }
     else // Middle game
     {
-        matwt = 7;
-        pawnwt = 1/30;
+        matwt = 5.9;
+        pawnwt = 0.03;
         outpostwt = 0;
         hangingwt = 1.5;
         weakerattacwt = 2;
-        trappedwt = 1;
-        pstwt = 0.08;
+        trappedwt = 0.5;
+        pstwt = 0.088;
         kingwt = 0.01;
-        mobilitywt = 0.001;
+        mobilitywt = 0.003;
     }
     double eval = matwt*evaluate_material(pr.board);
     eval += pawnwt*evaluate_pawn_structure(reverseBoard(pr.board), pr.controlSquares, pr.oppControlSquares, pr.turn, pr.f);
@@ -187,7 +187,7 @@ double EvalBar::complete_eval(EvalParams &pr)
         eval += king_score;
     }
     eval += mobilitywt*mobility(pr.board, pr.controlSquares, pr.oppControlSquares, pr.validMoves, pr.validOppMoves, pr.turn, pr.isEnPassant, pr.epSquare, pr.castling);
-    return eval;
+    return eval/10;
 }
 
 pair<string, double> EvalBar::evalTree(string f, int d, int c) {
@@ -353,7 +353,7 @@ pair<string, double> EvalBar :: NewEvalTree(string BoardFen, int depth, int c, d
         for(auto move : MyMoves){
             string res = playOneMove(move ,CurrentFENString.return_board(),CurrentFENString.return_turn(),((cas_opt&8)!=0),((cas_opt&4)!=0),((cas_opt&2)!=0),((cas_opt&1)!=0),CurrentFENString.return_ep(),CurrentFENString.return_eps(),CurrentFENString.return_halfmoveclk(),CurrentFENString.return_fullmoves());
             double PotentialScore = NewEvalTree(res, depth-1, c, alpha, beta).second;
-            vis[BoardFen.substr(0, BoardFen.length()-4)] = {!CurrentFENString.turn, {move, PotentialScore}};
+            if (depth >= 3) vis[BoardFen.substr(0, BoardFen.length()-4)] = {!CurrentFENString.turn, {move, PotentialScore}};
             if(PotentialScore > MaxScore){
                 MaxScore = PotentialScore;
                 MoveToBePlayed = move;
@@ -374,7 +374,7 @@ pair<string, double> EvalBar :: NewEvalTree(string BoardFen, int depth, int c, d
         for(auto move : MyMoves){
             string res=playOneMove(move ,CurrentFENString.return_board(),CurrentFENString.return_turn(),((cas_opt&8)!=0),((cas_opt&4)!=0),((cas_opt&2)!=0),((cas_opt&1)!=0),CurrentFENString.return_ep(),CurrentFENString.return_eps(),CurrentFENString.return_halfmoveclk(),CurrentFENString.return_fullmoves());
             double PotentialScore = NewEvalTree(res, depth-1, c, alpha, beta).second;
-            vis[BoardFen.substr(0, BoardFen.length()-4)] = {!CurrentFENString.turn, {move, PotentialScore}};
+            if (depth >= 3) vis[BoardFen.substr(0, BoardFen.length()-4)] = {!CurrentFENString.turn, {move, PotentialScore}};
             if(PotentialScore < MinScore){
                 MinScore = PotentialScore;
                 MoveToBePlayed = move;
