@@ -1436,7 +1436,27 @@ vector<string> Moves::valid_Moves(bool flag)
             }
         }
     }
-    return validMoves;
+    // Sorting Valid Moves on basis of Checks and captures first
+    vector<string> vm2, vm3, vm4;
+    for (auto mv : validMoves)
+    {
+        if (mv[0] != 'o' && mv[0] != 'O')
+        {
+            if (mv.substr(mv.length()-2, 2) == king) vm2.push_back(mv);
+            else if (mv[3] == 'x' || mv[3] == 'y' || mv[3] == 'Y') vm3.push_back(mv);
+            else vm4.push_back(mv);
+        }
+        else vm4.push_back(mv);
+    }
+    for (auto mv : vm3)
+    {
+        vm2.push_back(mv);
+    }
+    for (auto mv : vm4)
+    {
+        vm2.push_back(mv);
+    }
+    return vm2;
 }
 
 vector<string> Moves::valid_oppMoves()

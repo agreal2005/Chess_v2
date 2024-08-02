@@ -281,7 +281,7 @@ pair<string, double> EvalBar::evalTree(string f, int d, int c) {
                 {
                     temp = vis[tag].second;
                 }
-                // if (move == "Pc3xb4") cout << "****" << temp.first << " " << temp.second << endl;
+                // if (move == "Be3d4") cout << "****" << temp.first << " " << temp.second << endl;
                 // if (d==2) cout << temp.first << " " << temp.second << endl;
                 // if (move.substr(0,3) == "bb4") cout << move << " " << temp.first << " " << temp.second << endl;
                 // if (f == "rnb1k1nr/pppp1ppp/4p3/8/1P1Pq3/8/PP3PPP/RNBQKBNR w KQkq - 0 1") cout << move << " : " <<  temp.first << " " << temp.second << endl;
@@ -305,4 +305,84 @@ pair<string, double> EvalBar::evalTree(string f, int d, int c) {
     }
     return result;
 }
-    
+
+pair<string, double> EvalBar :: NewEvalTree(string BoardFen, int depth, int c, double alpha, double beta){
+    // If the first string is a ___ it means that the position is invalid
+    // If the first string is a # it means that checkmate has happened
+    // If the first string is a - it means that a stalemate has happened
+    // If the first string is a _ it means that a leaf has been reached
+    if (vis.size() == vis.max_size()/2) {
+        while (vis.size()!=vis.max_size()/2 - vis.max_size()/10)
+        {
+            vis.erase(vis.begin());
+        }
+    }
+    // check if depth is done
+    if(depth < 0){
+         cout<<"Invalid depth for evaluation\n";
+         return {"___",0.0};
+    }
+
+    // initialise all the needed objects containing data about the board here
+    Board_FEN CurrentFENString(BoardFen);
+    Moves CurrMoves(CurrentFENString.board,CurrentFENString.return_turn(),CurrentFENString.return_ep(),CurrentFENString.return_eps(),CurrentFENString.castle_options());
+    vector<string> MyMoves = CurrMoves.valid_Moves();
+
+    // check whether tapli has been received
+    double CheckForEnd=evaluate_checkmate(CurrentFENString.return_board(), CurrMoves.return_oppControlSquares() , CurrMoves.valid_Moves(), CurrentFENString.return_turn(), BoardFen);
+    if(CheckForEnd== inf || CheckForEnd ==-inf){
+        return {"#", CheckForEnd};
+    }
+    if ((CheckForEnd==0.0 && MyMoves.size()==0))
+    {
+        return {"-", 0.0};
+    }
+
+    if(depth == 0){
+            EvalParams AllEvalParams(CurrMoves, CurrentFENString, BoardFen);
+            double CurrentScore = complete_eval(AllEvalParams);
+            return {"_", CurrentScore};
+    }
+
+    // check kiska move hai 
+    if(CurrentFENString.return_turn() == 0){
+        // White kheltoy atta
+        string MoveToBePlayed;
+        double MaxScore = -inf;
+        int cas_opt = CurrentFENString.castle_options();
+        for(auto move : MyMoves){
+            string res = playOneMove(move ,CurrentFENString.return_board(),CurrentFENString.return_turn(),((cas_opt&8)!=0),((cas_opt&4)!=0),((cas_opt&2)!=0),((cas_opt&1)!=0),CurrentFENString.return_ep(),CurrentFENString.return_eps(),CurrentFENString.return_halfmoveclk(),CurrentFENString.return_fullmoves());
+            double PotentialScore = NewEvalTree(res, depth-1, c, alpha, beta).second;
+            if(PotentialScore > MaxScore){
+                MaxScore = PotentialScore;
+                MoveToBePlayed = move;
+            }
+            alpha = max(alpha, PotentialScore);
+            if(beta <= alpha){
+                break;
+            }
+        }
+        return {MoveToBePlayed, MaxScore};
+    }
+
+    else{
+        // Black kheltoy atta
+        string MoveToBePlayed;
+        double MinScore = inf;
+        int cas_opt = CurrentFENString.castle_options();
+        for(auto move : MyMoves){
+            string res=playOneMove(move ,CurrentFENString.return_board(),CurrentFENString.return_turn(),((cas_opt&8)!=0),((cas_opt&4)!=0),((cas_opt&2)!=0),((cas_opt&1)!=0),CurrentFENString.return_ep(),CurrentFENString.return_eps(),CurrentFENString.return_halfmoveclk(),CurrentFENString.return_fullmoves());
+            double PotentialScore = NewEvalTree(res, depth-1, c, alpha, beta).second;
+            vis[BoardFen.substr(0, BoardFen.length()-4)] = {!CurrentFENString.turn, {move, PotentialScore}};
+            if(PotentialScore < MinScore){
+                MinScore = PotentialScore;
+                MoveToBePlayed = move;
+            }
+            beta = min(beta, PotentialScore);
+            if(beta <= alpha){
+                break;
+            }
+        }
+        return {MoveToBePlayed, MinScore};
+    }
+}

@@ -1,9 +1,9 @@
 #include "eval.h"
-#define pawn_score 1
+#define pawn_score 0.5
 #define bishop_score 3
 #define knight_score 3
-#define rook_score 5
-#define queen_score 9
+#define rook_score 5.5
+#define queen_score 11
 
 double evaluate_checkmate(const vector<vector<char>> &board, const vector<vector<vector<Piece>>> &oppcontrol_squares,
                           const vector<string> &legal_moves, bool turn, string FEN = "")
