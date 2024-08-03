@@ -31,7 +31,7 @@ void gameTesting(string fen)
         cout << v.get_FEN() << endl;
         string changed_str = v.get_FEN();
         auto start = high_resolution_clock::now();
-        int depth = 4;
+        int depth = 5;
         // if (get_material(v.return_board()) <= 20) depth = 4; 
         // pair<string, double> p = lesgo.evalTree(changed_str, depth, 0);
         pair<string, double> p = lesgo.NewEvalTree(changed_str, depth, 0, -(inf+100), inf+100);
@@ -100,8 +100,8 @@ void positionTesting(string fen)
     int cs = v.castle_options();
     pair<string, double> p = bar.NewEvalTree(fen, 4, 0, -(inf+100), inf+100);
     cout << p.second << " " << p.first << endl;
-    p = bar.evalTree(fen, 4, 0);
-    cout << "Old eval: " << p.second << " " << p.first << endl;
+    // p = bar.evalTree(fen, 4, 0);
+    // cout << "Old eval: " << p.second << " " << p.first << endl;
 }
 
 int main()
@@ -113,7 +113,8 @@ int main()
     // Board_FEN v(fen);
     // v.display_board_FEN();
     gameTesting(fen);
-    // positionTesting("rnbqkbnr/pppp1ppp/4p3/8/3PP3/8/PPP2PPP/RNBQKBNR b KQkq - 0 1");
+    // positionTesting(fen);
+    // positionTesting("rnb1k1nr/pppp1ppp/4p3/8/1b1PP2q/2N5/PPP1QPPP/R1B1KBNR b KQkq - 0 1");
     // positionTesting("rnbqk1nr/p1pp1ppp/1p2p3/8/1b1PP3/2P2N2/PP3PPP/RNBQKB1R b KQkq - 0 1");
     // positionTesting("1rb2k1r/ppNpnpp1/3N1q2/7p/4P3/P3B3/1PPQ1PP1/R4K2 b - - 0 1");
 }

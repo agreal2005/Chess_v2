@@ -149,7 +149,7 @@ vector<vector<vector<Piece>>> Moves::return_controlSquares()
                     else
                     {
                         int x = pinx, y = piny;
-                        while (x != king_square.first && y != king_square.second)
+                        while (x != king_square.first || y != king_square.second)
                         {
                             if (x != piece.i || y != piece.j)
                             {
@@ -463,7 +463,7 @@ vector<vector<vector<Piece>>> Moves::return_oppControlSquares()
                     else
                     {
                         int x = pinx, y = piny;
-                        while (x != king_square.first && y != king_square.second)
+                        while (x != king_square.first || y != king_square.second)
                         {
                             if (x != piece.i || y != piece.j)
                             {
