@@ -167,7 +167,7 @@ vector<vector<vector<Piece>>> Moves::return_controlSquares()
             {
 
                 int temp_hor = in_hor - 1;
-                while (in_hor >= 0 && board[in_ver][temp_hor] == '.')
+                while (temp_hor >= 0 && board[in_ver][temp_hor] == '.')
                 {
                     controlSquares[in_ver][temp_hor].push_back(piece);
                     temp_hor--;
@@ -176,7 +176,7 @@ vector<vector<vector<Piece>>> Moves::return_controlSquares()
                     controlSquares[in_ver][temp_hor].push_back(piece);
 
                 temp_hor = in_hor + 1;
-                while (in_hor < 8 && board[in_ver][temp_hor] == '.')
+                while (temp_hor < 8 && board[in_ver][temp_hor] == '.')
                 {
                     controlSquares[in_ver][temp_hor].push_back(piece);
                     temp_hor++;
@@ -250,7 +250,7 @@ vector<vector<vector<Piece>>> Moves::return_controlSquares()
             if (temp == 'R')
             {
                 int temp_hor = in_hor - 1;
-                while (in_hor >= 0 && board[in_ver][temp_hor] == '.')
+                while (temp_hor >= 0 && board[in_ver][temp_hor] == '.')
                 {
                     controlSquares[in_ver][temp_hor].push_back(piece);
                     temp_hor--;
@@ -259,7 +259,7 @@ vector<vector<vector<Piece>>> Moves::return_controlSquares()
                     controlSquares[in_ver][temp_hor].push_back(piece);
 
                 temp_hor = in_hor + 1;
-                while (in_hor < 8 && board[in_ver][temp_hor] == '.')
+                while (temp_hor < 8 && board[in_ver][temp_hor] == '.')
                 {
                     controlSquares[in_ver][temp_hor].push_back(piece);
                     temp_hor++;
@@ -479,7 +479,7 @@ vector<vector<vector<Piece>>> Moves::return_oppControlSquares()
             if (temp == 'Q')
             {
                 int temp_hor = in_hor - 1;
-                while (in_hor >= 0 && board[in_ver][temp_hor] == '.')
+                while (temp_hor >= 0 && board[in_ver][temp_hor] == '.')
                 {
                     oppControlSquares[in_ver][temp_hor].push_back(piece);
                     temp_hor--;
@@ -488,7 +488,7 @@ vector<vector<vector<Piece>>> Moves::return_oppControlSquares()
                     oppControlSquares[in_ver][temp_hor].push_back(piece);
 
                 temp_hor = in_hor + 1;
-                while (in_hor < 8 && board[in_ver][temp_hor] == '.')
+                while (temp_hor < 8 && board[in_ver][temp_hor] == '.')
                 {
                     oppControlSquares[in_ver][temp_hor].push_back(piece);
                     temp_hor++;
@@ -562,7 +562,7 @@ vector<vector<vector<Piece>>> Moves::return_oppControlSquares()
             if (temp == 'R')
             {
                 int temp_hor = in_hor - 1;
-                while (in_hor >= 0 && board[in_ver][temp_hor] == '.')
+                while (temp_hor >= 0 && board[in_ver][temp_hor] == '.')
                 {
                     oppControlSquares[in_ver][temp_hor].push_back(piece);
                     temp_hor--;
@@ -571,7 +571,7 @@ vector<vector<vector<Piece>>> Moves::return_oppControlSquares()
                     oppControlSquares[in_ver][temp_hor].push_back(piece);
 
                 temp_hor = in_hor + 1;
-                while (in_hor < 8 && board[in_ver][temp_hor] == '.')
+                while (temp_hor < 8 && board[in_ver][temp_hor] == '.')
                 {
                     oppControlSquares[in_ver][temp_hor].push_back(piece);
                     temp_hor++;
