@@ -156,6 +156,32 @@ double EvalBar::complete_eval(EvalParams &pr)
     return eval/10;
 }
 
+AllEvalScores EvalBar::complete_TrainingEval(EvalParams &pr){
+    int material = get_material(pr.board);
+    wt.changeWeights(material);
+    double eval = wt.matwt*evaluate_material(pr.board);
+    eval += wt.pawnwt*evaluate_pawn_structure(reverseBoard(pr.board), pr.controlSquares, pr.oppControlSquares, pr.turn, pr.f);
+    eval += wt.outpostwt*evaluate_outposts(reverseBoard(pr.board), pr.controlSquares, pr.oppControlSquares, pr.turn);
+    eval += wt.hangingwt*hanging_piece_penalty(pr.board, pr.controlSquares, pr.oppControlSquares, pr.turn);
+    eval += wt.weakerattacwt*weaker_attacked_penalty(pr.board, pr.controlSquares, pr.oppControlSquares, pr.turn);
+    eval += wt.pieceswt*pieces_eval(pr.board, pr.pieces, pr.oppPieces, pr.turn);
+    eval += ((double)pst.eval_sq_tables(pr.board)/625.0)*wt.pstwt;
+    if (pr.turn == 0) eval += wt.trappedwt*trapped_eval(pr.trappedPieces, pr.trappedOppPieces);
+    else eval += wt.trappedwt*trapped_eval(pr.trappedOppPieces, pr.trappedPieces);
+    double king_score = wt.kingwt*eval_kingsafety(pr.board, pr.controlSquares, pr.oppControlSquares, pr.turn);
+    if(gamePhase > 18)
+    {
+        eval += king_score;
+    }
+    eval += wt.mobilitywt*mobility(pr.board, pr.controlSquares, pr.oppControlSquares, pr.validMoves, pr.validOppMoves, pr.turn, pr.isEnPassant, pr.epSquare, pr.castling);
+    AllEvalScores Scores(evaluate_pawn_structure(reverseBoard(pr.board), pr.controlSquares, pr.oppControlSquares, pr.turn, pr.f), (double)material, evaluate_outposts(reverseBoard(pr.board), pr.controlSquares, pr.oppControlSquares, pr.turn),
+                         hanging_piece_penalty(pr.board, pr.controlSquares, pr.oppControlSquares, pr.turn) ,  weaker_attacked_penalty(pr.board, pr.controlSquares, pr.oppControlSquares, pr.turn), 
+                         mobility(pr.board, pr.controlSquares, pr.oppControlSquares, pr.validMoves, pr.validOppMoves, pr.turn, pr.isEnPassant, pr.epSquare, pr.castling),  pieces_eval(pr.board, pr.pieces, pr.oppPieces, pr.turn), 
+                         eval_kingsafety(pr.board, pr.controlSquares, pr.oppControlSquares, pr.turn), trapped_eval(pr.trappedOppPieces, pr.trappedPieces),  (double)pst.eval_sq_tables(pr.board)/625.0);
+
+    return Scores;               
+}
+
 pair<string, double> EvalBar::evalTree(string f, int d, int c) {
     if (vis.size() == vis.max_size()/2) {
         while (vis.size()!=vis.max_size()/2 - vis.max_size()/10)
@@ -355,3 +381,75 @@ pair<string, double> EvalBar :: NewEvalTree(string BoardFen, int depth, int c, d
         return {MoveToBePlayed, MinScore};
     }
 }
+
+pair<string, AllEvalScores> EvalBar :: TrainingTree(string BoardFen, int depth, int c, double alpha, double beta){
+    if(depth < 0){
+         cout<<"Invalid depth for evaluation\n";
+         AllEvalScores tapli;
+         return {"___", tapli};
+    }
+
+    Board_FEN CurrentFENString(BoardFen);
+    Moves CurrMoves(CurrentFENString.board,CurrentFENString.return_turn(),CurrentFENString.return_ep(),CurrentFENString.return_eps(),CurrentFENString.castle_options());
+    vector<string> MyMoves = CurrMoves.valid_Moves();
+    double CheckForEnd=evaluate_checkmate(CurrentFENString.return_board(), CurrMoves.return_oppControlSquares() , CurrMoves.valid_Moves(), CurrentFENString.return_turn(), BoardFen);
+    if(CheckForEnd== inf || CheckForEnd ==-inf){
+        AllEvalScores tapli;
+        tapli.TotalScore = CheckForEnd;
+        return {"#", tapli};
+    }
+    if ((CheckForEnd==0.0 && MyMoves.size()==0))
+    {   
+        AllEvalScores tapli;
+        return {"-", tapli};
+    }
+
+    if(depth == 0){
+            EvalParams AllEvalParams(CurrMoves, CurrentFENString, BoardFen);
+            AllEvalScores CurrentScore = complete_TrainingEval(AllEvalParams);
+            return {"_", CurrentScore};
+    }
+
+    if(CurrentFENString.return_turn() == 0){
+        // White kheltoy atta
+        string MoveToBePlayed;
+        AllEvalScores MaxScore;
+        MaxScore.TotalScore = -inf;
+        int cas_opt = CurrentFENString.castle_options();
+        for(auto move : MyMoves){
+            string res = playOneMove(move ,CurrentFENString.return_board(),CurrentFENString.return_turn(),((cas_opt&8)!=0),((cas_opt&4)!=0),((cas_opt&2)!=0),((cas_opt&1)!=0),CurrentFENString.return_ep(),CurrentFENString.return_eps(),CurrentFENString.return_halfmoveclk(),CurrentFENString.return_fullmoves());
+            AllEvalScores PotentialScore;
+            PotentialScore = TrainingTree(res, depth-1, c, alpha, beta).second;
+            if(PotentialScore.TotalScore > MaxScore.TotalScore){
+                MaxScore = PotentialScore;
+                MoveToBePlayed = move;
+            }
+            alpha = max(alpha, PotentialScore.TotalScore);
+            if(beta <= alpha){
+                break;
+            }
+        }
+        return {MoveToBePlayed, MaxScore};
+    }
+    else{
+        // Black kheltoy atta
+        string MoveToBePlayed;
+        AllEvalScores Minscore;
+        Minscore.TotalScore = inf;
+        int cas_opt = CurrentFENString.castle_options();
+        for(auto move : MyMoves){
+            string res=playOneMove(move ,CurrentFENString.return_board(),CurrentFENString.return_turn(),((cas_opt&8)!=0),((cas_opt&4)!=0),((cas_opt&2)!=0),((cas_opt&1)!=0),CurrentFENString.return_ep(),CurrentFENString.return_eps(),CurrentFENString.return_halfmoveclk(),CurrentFENString.return_fullmoves());
+            AllEvalScores PotentialScore;
+            PotentialScore = TrainingTree(res, depth-1, c, alpha, beta).second;
+            if(PotentialScore.TotalScore < Minscore.TotalScore){
+                Minscore = PotentialScore;
+                MoveToBePlayed = move;
+            }
+            beta = min(beta, PotentialScore.TotalScore);
+            if(beta <= alpha){
+                break;
+            }
+        }
+        return {MoveToBePlayed, Minscore};
+    }
+}    

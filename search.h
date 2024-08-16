@@ -2,6 +2,35 @@
 #pragma once
 #define DEPTH 3
 
+class AllEvalScores{
+    public :
+    double TotalScore;
+    double PawnStructScore;
+    double MaterialScore;
+    double OutpostScore;
+    double HangingPiecePenalty;
+    double WeakerAttackedPenalty;
+    double MobilityScore;
+    double PiecesEval;
+    double KingSafetyScore;
+    double TrappedScore;
+    double PiecesquareScore;
+
+    AllEvalScores(double n1=0, double n2=0, double n3=0, double n4=0, double n5=0, double n6=0, double n7=0, double n8=0, double n9=0, double n10=0){
+        PawnStructScore = n1;
+        MaterialScore = n2;
+        OutpostScore = n3;
+        HangingPiecePenalty = n4;
+        WeakerAttackedPenalty = n5;
+        MobilityScore = n6;
+        PiecesEval = n7;
+        KingSafetyScore = n8;
+        TrappedScore = n9;
+        PiecesquareScore = n10;
+        TotalScore = n1+n2+n3+n4+n5+n6+n7+n8+n9+n10;
+    }
+};
+
 struct evalWeights
 {
     double matwt = 0, 
@@ -120,6 +149,8 @@ class EvalBar
     // See fen.h & moves.h for reference
     // pass everything to complete_eval including isOpp
     double complete_eval(EvalParams &pr); // To be called when eval reaches its depth
+    AllEvalScores complete_TrainingEval(EvalParams &pr);
     pair<string, double> NewEvalTree(string BoardFen, int depth, int c, double alpha, double beta);
+    pair<string, AllEvalScores> TrainingTree(string BoardFen, int depth, int c, double alpha, double beta);
     
 };
