@@ -1,6 +1,58 @@
 #include "eval.h"
 #pragma once
 #define DEPTH 3
+
+struct evalWeights
+{
+    double matwt = 0, 
+    pawnwt = 0, 
+    outpostwt = 0, 
+    hangingwt = 0, 
+    weakerattacwt = 0, 
+    pieceswt = 0, 
+    pstwt = 0, 
+    trappedwt = 0, 
+    kingwt = 0, 
+    mobilitywt = 0;
+    void changeWeights(int material)
+    {
+        if (material <= 20) // Endgame
+        {
+            matwt = 2;
+            pawnwt = 1/10;
+            hangingwt = 1;
+            weakerattacwt = 2;
+            trappedwt = 1;
+            pstwt = 0.01;
+            mobilitywt = 0.04;
+        }
+        else if (material > 74) // Opening
+        {
+            matwt = 1;
+            pawnwt = 1/10;
+            outpostwt = 0;
+            hangingwt = 1;
+            weakerattacwt = 1.2;
+            trappedwt = 1;
+            pstwt = 0.02;
+            kingwt = 0.006;
+            mobilitywt = 0.015;
+        }
+        else // Middle game
+        {
+            matwt = 1.5;
+            pawnwt = 1/30;
+            outpostwt = 0.5;
+            hangingwt = 1;
+            weakerattacwt = 2;
+            trappedwt = 1;
+            pstwt = 0.1;
+            kingwt = 0.01;
+            mobilitywt = 0.02;
+        }
+    }
+} wt;
+
 struct EvalParams
 {
     string f; // fen
