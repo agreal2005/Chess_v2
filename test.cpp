@@ -98,7 +98,7 @@ void positionTesting(string fen)
     for (auto str : m.return_trappedOppPieces()) cout << str.type << endl;
     EvalBar bar;
     int cs = v.castle_options();
-    pair<string, double> p = bar.NewEvalTree(fen, 4, 0, -(inf+100), inf+100);
+    pair<string, double> p = bar.NewEvalTree(fen, 5, 0, -(inf+100), inf+100);
     cout << p.second << " " << p.first << endl;
     // p = bar.evalTree(fen, 4, 0);
     // cout << "Old eval: " << p.second << " " << p.first << endl;
@@ -114,7 +114,7 @@ int main()
     // v.display_board_FEN();
     gameTesting(fen);
     // positionTesting(fen);
-    // positionTesting("rnb1k1nr/pppp1ppp/4p3/8/1b1PP2q/2N5/PPP1QPPP/R1B1KBNR b KQkq - 0 1");
+    // positionTesting("r1b1k2r/pppp1ppp/2n1pn2/4P2q/3P4/2PB1N1P/P1P2PP1/R1BQ1RK1 b kq - 0 1");
     // positionTesting("rnbqk1nr/p1pp1ppp/1p2p3/8/1b1PP3/2P2N2/PP3PPP/RNBQKB1R b KQkq - 0 1");
     // positionTesting("1rb2k1r/ppNpnpp1/3N1q2/7p/4P3/P3B3/1PPQ1PP1/R4K2 b - - 0 1");
 }

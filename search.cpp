@@ -137,56 +137,22 @@ string EvalBar::playOneMove(string &move, vector<vector<char>> brd, bool t, bool
 double EvalBar::complete_eval(EvalParams &pr)
 {
     int material = get_material(pr.board);
-    double matwt = 0, pawnwt = 0, outpostwt = 0, hangingwt = 0, weakerattacwt = 0, pieceswt = 0, pstwt = 0, trappedwt = 0, kingwt = 0, mobilitywt = 0;
-    if (material <= 20) // Endgame
-    {
-        matwt = 2;
-        pawnwt = 1/10;
-        hangingwt = 1;
-        weakerattacwt = 2;
-        trappedwt = 1;
-        pstwt = 0.01;
-        mobilitywt = 0.04;
-    }
-    else if (material > 74) // Opening
-    {
-        matwt = 1.5;
-        pawnwt = 1/20;
-        outpostwt = 0;
-        hangingwt = 1;
-        weakerattacwt = 1.2;
-        trappedwt = 1;
-        pstwt = 0.04;
-        kingwt = 0.01;
-        mobilitywt = 0.02;
-    }
-    else // Middle game
-    {
-        matwt = 1.5;
-        pawnwt = 1/35;
-        outpostwt = 0;
-        hangingwt = 1;
-        weakerattacwt = 2;
-        trappedwt = 1;
-        pstwt = 0.1;
-        kingwt = 0.01;
-        mobilitywt = 0.02;
-    }
-    double eval = matwt*evaluate_material(pr.board);
-    eval += pawnwt*evaluate_pawn_structure(reverseBoard(pr.board), pr.controlSquares, pr.oppControlSquares, pr.turn, pr.f);
-    eval += outpostwt*evaluate_outposts(reverseBoard(pr.board), pr.controlSquares, pr.oppControlSquares, pr.turn);
-    eval += hangingwt*hanging_piece_penalty(pr.board, pr.controlSquares, pr.oppControlSquares, pr.turn);
-    eval += weakerattacwt*weaker_attacked_penalty(pr.board, pr.controlSquares, pr.oppControlSquares, pr.turn);
-    eval += pieceswt*pieces_eval(pr.board, pr.pieces, pr.oppPieces, pr.turn);
-    eval += ((double)pst.eval_sq_tables(pr.board)/625.0)*pstwt;
-    if (pr.turn == 0) eval += trappedwt*trapped_eval(pr.trappedPieces, pr.trappedOppPieces);
-    else eval += trappedwt*trapped_eval(pr.trappedOppPieces, pr.trappedPieces);
-    double king_score = kingwt*eval_kingsafety(pr.board, pr.controlSquares, pr.oppControlSquares, pr.turn);
+    wt.changeWeights(material);
+    double eval = wt.matwt*evaluate_material(pr.board);
+    eval += wt.pawnwt*evaluate_pawn_structure(reverseBoard(pr.board), pr.controlSquares, pr.oppControlSquares, pr.turn, pr.f);
+    eval += wt.outpostwt*evaluate_outposts(reverseBoard(pr.board), pr.controlSquares, pr.oppControlSquares, pr.turn);
+    eval += wt.hangingwt*hanging_piece_penalty(pr.board, pr.controlSquares, pr.oppControlSquares, pr.turn);
+    eval += wt.weakerattacwt*weaker_attacked_penalty(pr.board, pr.controlSquares, pr.oppControlSquares, pr.turn);
+    eval += wt.pieceswt*pieces_eval(pr.board, pr.pieces, pr.oppPieces, pr.turn);
+    eval += ((double)pst.eval_sq_tables(pr.board)/625.0)*wt.pstwt;
+    if (pr.turn == 0) eval += wt.trappedwt*trapped_eval(pr.trappedPieces, pr.trappedOppPieces);
+    else eval += wt.trappedwt*trapped_eval(pr.trappedOppPieces, pr.trappedPieces);
+    double king_score = wt.kingwt*eval_kingsafety(pr.board, pr.controlSquares, pr.oppControlSquares, pr.turn);
     if(gamePhase > 18)
     {
         eval += king_score;
     }
-    eval += mobilitywt*mobility(pr.board, pr.controlSquares, pr.oppControlSquares, pr.validMoves, pr.validOppMoves, pr.turn, pr.isEnPassant, pr.epSquare, pr.castling);
+    eval += wt.mobilitywt*mobility(pr.board, pr.controlSquares, pr.oppControlSquares, pr.validMoves, pr.validOppMoves, pr.turn, pr.isEnPassant, pr.epSquare, pr.castling);
     return eval/10;
 }
 
@@ -344,6 +310,8 @@ pair<string, double> EvalBar :: NewEvalTree(string BoardFen, int depth, int c, d
             return {"_", CurrentScore};
     }
 
+    string tag = BoardFen.substr(0, BoardFen.length()-4);
+
     // check kiska move hai 
     if(CurrentFENString.return_turn() == 0){
         // White kheltoy atta
@@ -352,8 +320,8 @@ pair<string, double> EvalBar :: NewEvalTree(string BoardFen, int depth, int c, d
         int cas_opt = CurrentFENString.castle_options();
         for(auto move : MyMoves){
             string res = playOneMove(move ,CurrentFENString.return_board(),CurrentFENString.return_turn(),((cas_opt&8)!=0),((cas_opt&4)!=0),((cas_opt&2)!=0),((cas_opt&1)!=0),CurrentFENString.return_ep(),CurrentFENString.return_eps(),CurrentFENString.return_halfmoveclk(),CurrentFENString.return_fullmoves());
-            double PotentialScore = NewEvalTree(res, depth-1, c, alpha, beta).second;
-            if (depth >= 4) vis[BoardFen.substr(0, BoardFen.length()-4)] = {!CurrentFENString.turn, {move, PotentialScore}};
+            double PotentialScore;
+            PotentialScore = NewEvalTree(res, depth-1, c, alpha, beta).second;
             if(PotentialScore > MaxScore){
                 MaxScore = PotentialScore;
                 MoveToBePlayed = move;
@@ -373,8 +341,8 @@ pair<string, double> EvalBar :: NewEvalTree(string BoardFen, int depth, int c, d
         int cas_opt = CurrentFENString.castle_options();
         for(auto move : MyMoves){
             string res=playOneMove(move ,CurrentFENString.return_board(),CurrentFENString.return_turn(),((cas_opt&8)!=0),((cas_opt&4)!=0),((cas_opt&2)!=0),((cas_opt&1)!=0),CurrentFENString.return_ep(),CurrentFENString.return_eps(),CurrentFENString.return_halfmoveclk(),CurrentFENString.return_fullmoves());
-            double PotentialScore = NewEvalTree(res, depth-1, c, alpha, beta).second;
-            if (depth >= 4) vis[BoardFen.substr(0, BoardFen.length()-4)] = {!CurrentFENString.turn, {move, PotentialScore}};
+            double PotentialScore;
+            PotentialScore = NewEvalTree(res, depth-1, c, alpha, beta).second;
             if(PotentialScore < MinScore){
                 MinScore = PotentialScore;
                 MoveToBePlayed = move;
