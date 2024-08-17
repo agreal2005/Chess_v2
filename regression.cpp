@@ -1,5 +1,4 @@
 #include "search.h"
-#include "search.cpp"
 
 vector<pair<string, double>> PositionDatabase;
 float matwt = 1;
@@ -8,6 +7,7 @@ float outpostwt = 1;
 float hangingwt = 1;
 float weakerattacwt = 1;
 float pieceswt = 1;
+float pstwt = 1; // Implement this
 float trappedwt = 1;
 float kingwt = 1;
 float mobilitywt = 1;
@@ -161,8 +161,29 @@ void FitWeights(){
 }
 
 int main(){
+    // Opening is material > 74
+    // Endgame is material <= 20
+    // Middlegame is anything in between
     int number_of_iterations = 1000;
     for(int i=0; i<number_of_iterations; i++){
         FitWeights();
     }
+    /*
+        Based on the testing scenario
+        store results in 
+        ./openingTraining/ow.txt 
+        ./middlegameTraining/mw.txt 
+        ./endgameTraining/ew.txt
+        in this ORDER:
+        matwt
+        pawnwt
+        outpostwt
+        hangingwt
+        weakerattacwt
+        pieceswt 
+        pstwt
+        trappedwt
+        kingwt
+        mobilitywt
+    */
 }

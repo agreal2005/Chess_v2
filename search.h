@@ -1,4 +1,5 @@
 #include "eval.h"
+#include <fstream>
 #pragma once
 #define DEPTH 3
 
@@ -43,42 +44,67 @@ struct evalWeights
     trappedwt = 0, 
     kingwt = 0, 
     mobilitywt = 0;
+    double ow[10], mw[10], ew[10];
+    evalWeights()
+    {
+        updateWeights();
+    }
     void changeWeights(int material)
     {
         if (material <= 20) // Endgame
         {
-            matwt = 2;
-            pawnwt = 1/10;
-            hangingwt = 1;
-            weakerattacwt = 2;
-            trappedwt = 1;
-            pstwt = 0.01;
-            mobilitywt = 0.04;
+            matwt = ew[0], 
+            pawnwt = ew[1], 
+            outpostwt = ew[2], 
+            hangingwt = ew[3], 
+            weakerattacwt = ew[4], 
+            pieceswt = ew[5], 
+            pstwt = ew[6], 
+            trappedwt = ew[7], 
+            kingwt = ew[8], 
+            mobilitywt = ew[9];
         }
         else if (material > 74) // Opening
         {
-            matwt = 1;
-            pawnwt = 1/10;
-            outpostwt = 0;
-            hangingwt = 1;
-            weakerattacwt = 1.2;
-            trappedwt = 1;
-            pstwt = 0.02;
-            kingwt = 0.006;
-            mobilitywt = 0.015;
+            matwt = ow[0], 
+            pawnwt = ow[1], 
+            outpostwt = ow[2], 
+            hangingwt = ow[3], 
+            weakerattacwt = ow[4], 
+            pieceswt = ow[5], 
+            pstwt = ow[6], 
+            trappedwt = ow[7], 
+            kingwt = ow[8], 
+            mobilitywt = ow[9];
         }
         else // Middle game
         {
-            matwt = 1.5;
-            pawnwt = 1/30;
-            outpostwt = 0.5;
-            hangingwt = 1;
-            weakerattacwt = 2;
-            trappedwt = 1;
-            pstwt = 0.1;
-            kingwt = 0.01;
-            mobilitywt = 0.02;
+            matwt = mw[0], 
+            pawnwt = mw[1], 
+            outpostwt = mw[2], 
+            hangingwt = mw[3], 
+            weakerattacwt = mw[4], 
+            pieceswt = mw[5], 
+            pstwt = mw[6], 
+            trappedwt = mw[7], 
+            kingwt = mw[8], 
+            mobilitywt = mw[9];
         }
+    }
+    void updateWeights() // For updating weights from the LR files
+    {
+        ifstream opWeights("./openingTraining/ow.txt", ios::in);
+        ifstream mgWeights("./middlegameTraining/mw.txt", ios::in);
+        ifstream egWeights("./endgameTraining/ew.txt", ios::in);
+        for (int i=0; i<10; ++i)
+        {
+            opWeights >> ow[i];
+            mgWeights >> mw[i];
+            egWeights >> ew[i];
+        }
+        opWeights.close();
+        mgWeights.close();
+        egWeights.close();
     }
 } wt;
 
