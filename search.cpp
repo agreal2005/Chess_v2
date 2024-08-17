@@ -137,6 +137,7 @@ string EvalBar::playOneMove(string &move, vector<vector<char>> brd, bool t, bool
 double EvalBar::complete_eval(EvalParams &pr)
 {
     int material = get_material(pr.board);
+    evalWeights wt;
     wt.changeWeights(material);
     double eval = wt.matwt*evaluate_material(pr.board);
     eval += wt.pawnwt*evaluate_pawn_structure(reverseBoard(pr.board), pr.controlSquares, pr.oppControlSquares, pr.turn, pr.f);
@@ -158,6 +159,7 @@ double EvalBar::complete_eval(EvalParams &pr)
 
 AllEvalScores EvalBar::complete_TrainingEval(EvalParams &pr){
     int material = get_material(pr.board);
+    evalWeights wt;
     wt.changeWeights(material);
     double eval = wt.matwt*evaluate_material(pr.board);
     eval += wt.pawnwt*evaluate_pawn_structure(reverseBoard(pr.board), pr.controlSquares, pr.oppControlSquares, pr.turn, pr.f);

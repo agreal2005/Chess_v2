@@ -106,7 +106,7 @@ struct evalWeights
         mgWeights.close();
         egWeights.close();
     }
-} wt;
+};
 
 struct EvalParams
 {
