@@ -1437,38 +1437,27 @@ vector<string> Moves::valid_Moves(bool flag)
         }
     }
     // Reformatting promoting moves
-    for (auto &mv : validMoves)
+    for (int i=0; i<validMoves.size(); ++i)
     {
+        string mv = validMoves[i];
         if (mv[0] == 'P')
         {
             if (mv.back() == '8')
             {
-                mv.push_back('Q');
-                string mv2 = mv;
-                mv2[mv2.length()-1] = 'B';
-                validMoves.push_back(mv2);
-                mv2 = mv;
-                mv2[mv2.length()-1] = 'R';
-                validMoves.push_back(mv2);
-                mv2 = mv;
-                mv2[mv2.length()-1] = 'N';
-                validMoves.push_back(mv2);
+                validMoves.push_back(mv + "B");
+                validMoves.push_back(mv + "R");
+                validMoves.push_back(mv + "N");
+                validMoves[i].push_back('Q');
             }
         }
         if (mv[0] == 'p')
         {
             if (mv.back() == '1')
             {
-                mv.push_back('q');
-                string mv2 = mv;
-                mv2[mv2.length()-1] = 'b';
-                validMoves.push_back(mv2);
-                mv2 = mv;
-                mv2[mv2.length()-1] = 'r';
-                validMoves.push_back(mv2);
-                mv2 = mv;
-                mv2[mv2.length()-1] = 'n';
-                validMoves.push_back(mv2);
+                validMoves.push_back(mv + "b");
+                validMoves.push_back(mv + "r");
+                validMoves.push_back(mv + "n");
+                validMoves[i].push_back('q');
             }
         }
     }
@@ -1705,38 +1694,27 @@ vector<string> Moves::valid_oppMoves()
         }
     }
     // Reformatting promoting moves
-    for (auto &mv : validMoves)
+    for (int i=0; i<validMoves.size(); ++i)
     {
+        string mv = validMoves[i];
         if (mv[0] == 'P')
         {
             if (mv.back() == '8')
             {
-                mv.push_back('Q');
-                string mv2 = mv;
-                mv2[mv2.length()-1] = 'B';
-                validMoves.push_back(mv2);
-                mv2 = mv;
-                mv2[mv2.length()-1] = 'R';
-                validMoves.push_back(mv2);
-                mv2 = mv;
-                mv2[mv2.length()-1] = 'N';
-                validMoves.push_back(mv2);
+                validMoves.push_back(mv + "B");
+                validMoves.push_back(mv + "R");
+                validMoves.push_back(mv + "N");
+                validMoves[i].push_back('Q');
             }
         }
         if (mv[0] == 'p')
         {
             if (mv.back() == '1')
             {
-                mv.push_back('q');
-                string mv2 = mv;
-                mv2[mv2.length()-1] = 'b';
-                validMoves.push_back(mv2);
-                mv2 = mv;
-                mv2[mv2.length()-1] = 'r';
-                validMoves.push_back(mv2);
-                mv2 = mv;
-                mv2[mv2.length()-1] = 'n';
-                validMoves.push_back(mv2);
+                validMoves.push_back(mv + "b");
+                validMoves.push_back(mv + "r");
+                validMoves.push_back(mv + "n");
+                validMoves[i].push_back('q');
             }
         }
     }

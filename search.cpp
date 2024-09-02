@@ -340,12 +340,10 @@ pair<string, double> EvalBar :: NewEvalTree(string BoardFen, int depth, int c, d
             return {"_", CurrentScore};
     }
 
-    string tag = BoardFen.substr(0, BoardFen.length()-4);
-
     // check kiska move hai 
     if(CurrentFENString.return_turn() == 0){
         // White kheltoy atta
-        string MoveToBePlayed;
+        string MoveToBePlayed = MyMoves[0];
         double MaxScore = -inf;
         int cas_opt = CurrentFENString.castle_options();
         for(auto move : MyMoves){
@@ -366,7 +364,7 @@ pair<string, double> EvalBar :: NewEvalTree(string BoardFen, int depth, int c, d
 
     else{
         // Black kheltoy atta
-        string MoveToBePlayed;
+        string MoveToBePlayed = MyMoves[0];
         double MinScore = inf;
         int cas_opt = CurrentFENString.castle_options();
         for(auto move : MyMoves){
@@ -416,7 +414,7 @@ pair<string, AllEvalScores> EvalBar :: TrainingTree(string BoardFen, int depth, 
 
     if(CurrentFENString.return_turn() == 0){
         // White kheltoy atta
-        string MoveToBePlayed;
+        string MoveToBePlayed = MyMoves[0];
         AllEvalScores MaxScore;
         MaxScore.TotalScore = -inf;
         int cas_opt = CurrentFENString.castle_options();
@@ -437,7 +435,7 @@ pair<string, AllEvalScores> EvalBar :: TrainingTree(string BoardFen, int depth, 
     }
     else{
         // Black kheltoy atta
-        string MoveToBePlayed;
+        string MoveToBePlayed = MyMoves[0];
         AllEvalScores Minscore;
         Minscore.TotalScore = inf;
         int cas_opt = CurrentFENString.castle_options();
