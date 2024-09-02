@@ -1,6 +1,36 @@
 #include "eval.h"
+#include <fstream>
 #pragma once
 #define DEPTH 3
+
+class AllEvalScores{
+    public :
+    double TotalScore;
+    double PawnStructScore;
+    double MaterialScore;
+    double OutpostScore;
+    double HangingPiecePenalty;
+    double WeakerAttackedPenalty;
+    double MobilityScore;
+    double PiecesEval;
+    double KingSafetyScore;
+    double TrappedScore;
+    double PiecesquareScore;
+
+    AllEvalScores(double n1=0, double n2=0, double n3=0, double n4=0, double n5=0, double n6=0, double n7=0, double n8=0, double n9=0, double n10=0){
+        PawnStructScore = n1;
+        MaterialScore = n2;
+        OutpostScore = n3;
+        HangingPiecePenalty = n4;
+        WeakerAttackedPenalty = n5;
+        MobilityScore = n6;
+        PiecesEval = n7;
+        KingSafetyScore = n8;
+        TrappedScore = n9;
+        PiecesquareScore = n10;
+        TotalScore = n1+n2+n3+n4+n5+n6+n7+n8+n9+n10;
+    }
+};
 
 struct evalWeights
 {
@@ -14,44 +44,69 @@ struct evalWeights
     trappedwt = 0, 
     kingwt = 0, 
     mobilitywt = 0;
+    double ow[10], mw[10], ew[10];
+    evalWeights()
+    {
+        updateWeights();
+    }
     void changeWeights(int material)
     {
         if (material <= 20) // Endgame
         {
-            matwt = 2;
-            pawnwt = 1/10;
-            hangingwt = 1;
-            weakerattacwt = 2;
-            trappedwt = 1;
-            pstwt = 0.01;
-            mobilitywt = 0.04;
+            matwt = ew[0], 
+            pawnwt = ew[1], 
+            outpostwt = ew[2], 
+            hangingwt = ew[3], 
+            weakerattacwt = ew[4], 
+            pieceswt = ew[5], 
+            pstwt = ew[6], 
+            trappedwt = ew[7], 
+            kingwt = ew[8], 
+            mobilitywt = ew[9];
         }
         else if (material > 74) // Opening
         {
-            matwt = 1;
-            pawnwt = 1/10;
-            outpostwt = 0;
-            hangingwt = 1;
-            weakerattacwt = 1.2;
-            trappedwt = 1;
-            pstwt = 0.02;
-            kingwt = 0.006;
-            mobilitywt = 0.015;
+            matwt = ow[0], 
+            pawnwt = ow[1], 
+            outpostwt = ow[2], 
+            hangingwt = ow[3], 
+            weakerattacwt = ow[4], 
+            pieceswt = ow[5], 
+            pstwt = ow[6], 
+            trappedwt = ow[7], 
+            kingwt = ow[8], 
+            mobilitywt = ow[9];
         }
         else // Middle game
         {
-            matwt = 1.5;
-            pawnwt = 1/30;
-            outpostwt = 0.5;
-            hangingwt = 1;
-            weakerattacwt = 2;
-            trappedwt = 1;
-            pstwt = 0.1;
-            kingwt = 0.01;
-            mobilitywt = 0.02;
+            matwt = mw[0], 
+            pawnwt = mw[1], 
+            outpostwt = mw[2], 
+            hangingwt = mw[3], 
+            weakerattacwt = mw[4], 
+            pieceswt = mw[5], 
+            pstwt = mw[6], 
+            trappedwt = mw[7], 
+            kingwt = mw[8], 
+            mobilitywt = mw[9];
         }
     }
-} wt;
+    void updateWeights() // For updating weights from the LR files
+    {
+        ifstream opWeights("./openingTraining/ow.txt", ios::in);
+        ifstream mgWeights("./middlegameTraining/mw.txt", ios::in);
+        ifstream egWeights("./endgameTraining/ew.txt", ios::in);
+        for (int i=0; i<10; ++i)
+        {
+            opWeights >> ow[i];
+            mgWeights >> mw[i];
+            egWeights >> ew[i];
+        }
+        opWeights.close();
+        mgWeights.close();
+        egWeights.close();
+    }
+};
 
 struct EvalParams
 {
@@ -120,6 +175,8 @@ class EvalBar
     // See fen.h & moves.h for reference
     // pass everything to complete_eval including isOpp
     double complete_eval(EvalParams &pr); // To be called when eval reaches its depth
+    AllEvalScores complete_TrainingEval(EvalParams &pr);
     pair<string, double> NewEvalTree(string BoardFen, int depth, int c, double alpha, double beta);
+    pair<string, AllEvalScores> TrainingTree(string BoardFen, int depth, int c, double alpha, double beta);
     
 };

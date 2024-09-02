@@ -823,7 +823,7 @@ double mobility(vector<vector<char>> &board, const vector<vector<vector<Piece>>>
             string pos_in_char;
             pos_in_char.push_back(itr[itr.size()-2]);
             pos_in_char.push_back(itr[itr.size()-1]);
-            if (pos_in_char == "pp" || pos_in_char == "PP") continue;
+            if (pos_in_char.back() == 'Q' || pos_in_char.back() == 'R' || pos_in_char.back() == 'B' || pos_in_char.back() == 'N') continue;
             // cout << pos_in_char << endl;
             pair<int,int> pos_in_num = sij(pos_in_char);
             bool res_in_hang = false , res_in_weak_att = false;
@@ -859,6 +859,7 @@ double mobility(vector<vector<char>> &board, const vector<vector<vector<Piece>>>
             string pos_in_char;
             pos_in_char.push_back(itr[itr.size()-2]);
             pos_in_char.push_back(itr[itr.size()-1]);
+            if (pos_in_char.back() == 'q' || pos_in_char.back() == 'r' || pos_in_char.back() == 'b' || pos_in_char.back() == 'n') continue;
             pair<int,int> pos_in_num = sij(pos_in_char);
             bool res_in_hang = false , res_in_weak_att = false;
             if(white_control_squares[pos_in_num.first][pos_in_num.second].size()&&black_control_squares[pos_in_num.first][pos_in_num.second].empty()){
