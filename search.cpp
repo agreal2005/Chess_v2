@@ -58,15 +58,17 @@ string EvalBar::playOneMove(string &move, vector<vector<char>> brd, bool t, bool
         bcq = false;
         isEnp = false;
     }
-    else if (move[0] == 'P' && next_ij.first == 0)
+    else if (move[0] == 'P' && (move.back() == 'Q' || move.back() == 'R' || move.back() == 'B' || move.back() == 'N')) // Promotion
     {
         brd[curr_ij.first][curr_ij.second] = '.';
-        brd[0][next_ij.second] = 'Q';
+        next_ij = sij(move.substr(move.length() - 3, 2));
+        brd[0][next_ij.second] = move.back();
     }
-    else if (move[0] == 'p' && next_ij.first == 7)
+    else if (move[0] == 'p' && (move.back() == 'q' || move.back() == 'r' || move.back() == 'b' || move.back() == 'n')) // Promotion
     {
         brd[curr_ij.first][curr_ij.second] = '.';
-        brd[7][next_ij.second] = 'q';
+        next_ij = sij(move.substr(move.length() - 3, 2));
+        brd[7][next_ij.second] = move.back();
     }
     else if (move[0] == 'P' || move[0] == 'p')
     {

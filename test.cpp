@@ -28,8 +28,8 @@ void gameTesting(string fen)
         system("clear");
         #endif
         v.input_FEN(lesgo.playOneMove(str, v.return_board(),v.return_turn(),((cas_opt&8)!=0),((cas_opt&4)!=0),((cas_opt&2)!=0),((cas_opt&1)!=0),v.return_ep(),v.return_eps(),v.return_halfmoveclk(),v.return_fullmoves()));
-        cout << v.get_FEN() << endl;
         string changed_str = v.get_FEN();
+        cout << changed_str << endl;
         auto start = high_resolution_clock::now();
         int depth = 5;
         // if (get_material(v.return_board()) <= 20) depth = 4; 
@@ -112,9 +112,10 @@ int main()
     // getline(cin, fen);
     // Board_FEN v(fen);
     // v.display_board_FEN();
-    gameTesting(fen);
+    // gameTesting(fen);
+    gameTesting("2k5/5P2/3K4/8/8/8/8/8 w - - 0 1");
     // positionTesting(fen);
-    // positionTesting("r1b1k2r/pppp1ppp/2n1pn2/4P2q/3P4/2PB1N1P/P1P2PP1/R1BQ1RK1 b kq - 0 1");
+    // positionTesting("2k5/5P2/3K4/8/8/8/8/8 w - - 0 1");
     // positionTesting("rnbqk1nr/p1pp1ppp/1p2p3/8/1b1PP3/2P2N2/PP3PPP/RNBQKB1R b KQkq - 0 1");
     // positionTesting("1rb2k1r/ppNpnpp1/3N1q2/7p/4P3/P3B3/1PPQ1PP1/R4K2 b - - 0 1");
 }
