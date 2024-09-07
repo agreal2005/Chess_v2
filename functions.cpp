@@ -154,3 +154,445 @@ int get_material(const vector<vector<char>> &board)
     }
     return white_score + black_score;
 }
+
+string stdToV2(string fen, string std_move)
+{
+    Board_FEN Board(fen);
+    vector<vector<char>> board = Board.return_board();
+    bool turn = Board.return_turn();
+    string v2_move;
+    if(std_move.substr(0,3)=="O-O" || std_move.substr(0,3)=="o-o")
+    {
+        return std_move.substr(0,3);
+    }
+    if(std_move.substr(0,5)=="O-O-O" || std_move.substr(0,5)=="o-o-o")
+    {
+        return std_move.substr(0,5 );
+    }
+    if(turn==0)     // white to move
+    {
+        char piece = std_move[0];
+        string initial_position;
+        string next_position;
+        if(piece == 'Q' || piece=='B' 
+            || piece=='R' || piece=='K' 
+            || piece=='N')
+        // non pawn piece
+        {
+            if(std_move[1]=='x') // capture
+            {
+                next_position = std_move.substr(2,2);
+                pair<int,int> next_pos_ij = sij(next_position);
+                if(piece=='Q' || piece=='K')
+                {
+                    for(int i=0;i<8;i++)
+                    {
+                        for(int j=0;j<8;j++)
+                        {
+                            if(board[i][j]==piece)
+                                initial_position = ijs(i,j);
+                        }
+                    }
+                }
+                else if(piece=='R')
+                {
+                    for(int i=0;i<8;i++)
+                    {
+                        if(board[i][next_pos_ij.second]==piece)
+                            initial_position = ijs(i, next_pos_ij.second);
+                    }
+                    for(int j=0;j<8;j++)
+                    {
+                        if(board[next_pos_ij.first][j]==piece)
+                            initial_position = ijs(next_pos_ij.first, j);
+                    }
+                }
+                else if(piece=='B')
+                {
+
+                    for(int i=0;i<8;i++)
+                    {
+                        for(int j=0;j<8;j++)
+                        {
+                            if(board[i][j]==piece && abs(next_pos_ij.first-i)==abs(next_pos_ij.second-j))
+                                initial_position = ijs(i,j);
+                        }
+                    }
+                }
+                else if(piece=='N')
+                {
+                    for(int i=0;i<8;i++)
+                    {
+                        for(int j=0;j<8;j++)
+                        {
+                            if(board[i][j]==piece && (abs(next_pos_ij.first-i)==1 && (abs(next_pos_ij.second-j)==2)||(abs(next_pos_ij.first-i)==2 && abs(next_pos_ij.second-j)==1)))
+                            {
+                                initial_position = ijs(i,j);
+                            }
+                        }
+                    }
+                }
+                v2_move = "";
+                v2_move += piece;
+                v2_move += initial_position;
+                v2_move += 'x';
+                v2_move += next_position;
+                return v2_move;
+            }
+            else if(std_move[2]>='1' && std_move[2]<='8')   // normal move
+            {
+                next_position = std_move.substr(1,2);
+                pair<int,int> next_pos_ij = sij(next_position);
+                if(piece=='Q' || piece=='K')
+                {
+                    for(int i=0;i<8;i++)
+                    {
+                        for(int j=0;j<8;j++)
+                        {
+                            if(board[i][j]==piece)
+                                initial_position = ijs(i,j);
+                        }
+                    }
+                }
+                else if(piece=='R')
+                {
+                    for(int i=0;i<8;i++)
+                    {
+                        if(board[i][next_pos_ij.second]==piece)
+                            initial_position = ijs(i, next_pos_ij.second);
+                    }
+                    for(int j=0;j<8;j++)
+                    {
+                        if(board[next_pos_ij.first][j]==piece)
+                            initial_position = ijs(next_pos_ij.first, j);
+                    }
+                }
+                else if(piece=='B')
+                {
+
+                    for(int i=0;i<8;i++)
+                    {
+                        for(int j=0;j<8;j++)
+                        {
+                            if(board[i][j]==piece && abs(next_pos_ij.first-i)==abs(next_pos_ij.second-j))
+                                initial_position = ijs(i,j);
+                        }
+                    }
+                }
+                else if(piece=='N')
+                {
+                    for(int i=0;i<8;i++)
+                    {
+                        for(int j=0;j<8;j++)
+                        {
+                            if(board[i][j]==piece && (abs(next_pos_ij.first-i)==1 && (abs(next_pos_ij.second-j)==2)||(abs(next_pos_ij.first-i)==2 && abs(next_pos_ij.second-j)==1)))
+                            {
+                                initial_position = ijs(i,j);
+                            }
+                        }
+                    }
+                }
+                v2_move = "";
+                v2_move += piece;
+                v2_move += initial_position;
+                v2_move += next_position;
+                return v2_move;
+            }
+            else    // contention case where two pieces can move, happens with rook only ig
+            {
+                next_position = std_move.substr(2,2);
+                pair<int,int> next_pos_ij = sij(next_position);
+                char pos = std_move[1];
+                if(piece=='R')
+                {
+                    if(pos>='1' && pos<='8')
+                    {
+                        initial_position = "";
+                        initial_position += next_position[0];
+                        initial_position += pos;
+                    }
+                    else
+                    {
+                        initial_position = "";
+                        initial_position += pos;
+                        initial_position += next_position[1];
+                    }
+                }
+                v2_move = "";
+                v2_move += piece;
+                v2_move += initial_position;
+                v2_move += next_position;
+                return v2_move;
+            }
+        }
+        else    // pawn piece
+        {
+            if(std_move[1]=='x') // capture
+            {
+                next_position = std_move.substr(2,2);
+                pair<int,int> next_pos_ij = sij(next_position);
+                char col_of_sq1 = std_move[0];
+                if(std_move[4]=='=')    // promotion
+                {
+
+                }
+                else
+                {
+                    initial_position = "";
+                    initial_position += col_of_sq1;
+                    initial_position += next_position[1];
+                    v2_move = "";
+                    v2_move += piece;
+                    v2_move += initial_position;
+                    v2_move += "x";
+                    v2_move += next_position;
+                    return v2_move;
+                }
+            }
+            else
+            {
+                next_position = std_move.substr(0,2);
+                pair<int,int> next_pos_ij = sij(next_position);
+                if(std_move[2]=='=')    // promotion
+                {
+
+                }
+                else
+                {
+                    if(board[next_pos_ij.first-1][next_pos_ij.second]=='P')     // single move
+                    {
+                        initial_position = ijs(next_pos_ij.first-1, next_pos_ij.second);
+                        v2_move = "";
+                        v2_move += piece;
+                        v2_move += initial_position;
+                        v2_move += next_position;
+                        return v2_move;
+                    }
+                    else if(board[next_pos_ij.first-2][next_pos_ij.second]=='P')
+                    {
+                        initial_position = ijs(next_pos_ij.first-2, next_pos_ij.second);
+                        v2_move = "";
+                        v2_move += piece;
+                        v2_move += initial_position;
+                        v2_move += "Z";
+                        v2_move += next_position;
+                        return v2_move;
+                    }
+                }
+            }
+        }
+    }
+    else
+    {
+        char piece = std_move[0];
+        string initial_position;
+        string next_position;
+        if(piece == 'q' || piece=='b'
+            || piece=='r' || piece=='k' 
+            || piece=='n')
+        // non pawn piece
+        {
+            if(std_move[1]=='x') // capture
+            {
+                next_position = std_move.substr(2,2);
+                pair<int,int> next_pos_ij = sij(next_position);
+                if(piece=='q' || piece=='k')
+                {
+                    for(int i=0;i<8;i++)
+                    {
+                        for(int j=0;j<8;j++)
+                        {
+                            if(board[i][j]==piece)
+                                initial_position = ijs(i,j);
+                        }
+                    }
+                }
+                else if(piece=='r')
+                {
+                    for(int i=0;i<8;i++)
+                    {
+                        if(board[i][next_pos_ij.second]==piece)
+                            initial_position = ijs(i, next_pos_ij.second);
+                    }
+                    for(int j=0;j<8;j++)
+                    {
+                        if(board[next_pos_ij.first][j]==piece)
+                            initial_position = ijs(next_pos_ij.first, j);
+                    }
+                }
+                else if(piece=='b')
+                {
+
+                    for(int i=0;i<8;i++)
+                    {
+                        for(int j=0;j<8;j++)
+                        {
+                            if(board[i][j]==piece && abs(next_pos_ij.first-i)==abs(next_pos_ij.second-j))
+                                initial_position = ijs(i,j);
+                        }
+                    }
+                }
+                else if(piece=='n')
+                {
+                    for(int i=0;i<8;i++)
+                    {
+                        for(int j=0;j<8;j++)
+                        {
+                            if(board[i][j]==piece && (abs(next_pos_ij.first-i)==1 && (abs(next_pos_ij.second-j)==2)||(abs(next_pos_ij.first-i)==2 && abs(next_pos_ij.second-j)==1)))
+                            {
+                                initial_position = ijs(i,j);
+                            }
+                        }
+                    }
+                }
+                v2_move = "";
+                v2_move += piece;
+                v2_move += initial_position;
+                v2_move += 'x';
+                v2_move += next_position;
+                return v2_move;
+            }
+            else if(std_move[2]>='1' && std_move[2]<='8')   // normal move
+            {
+                next_position = std_move.substr(1,2);
+                pair<int,int> next_pos_ij = sij(next_position);
+                if(piece=='q' || piece=='k')
+                {
+                    for(int i=0;i<8;i++)
+                    {
+                        for(int j=0;j<8;j++)
+                        {
+                            if(board[i][j]==piece)
+                                initial_position = ijs(i,j);
+                        }
+                    }
+                }
+                else if(piece=='r')
+                {
+                    for(int i=0;i<8;i++)
+                    {
+                        if(board[i][next_pos_ij.second]==piece)
+                            initial_position = ijs(i, next_pos_ij.second);
+                    }
+                    for(int j=0;j<8;j++)
+                    {
+                        if(board[next_pos_ij.first][j]==piece)
+                            initial_position = ijs(next_pos_ij.first, j);
+                    }
+                }
+                else if(piece=='b')
+                {
+
+                    for(int i=0;i<8;i++)
+                    {
+                        for(int j=0;j<8;j++)
+                        {
+                            if(board[i][j]==piece && abs(next_pos_ij.first-i)==abs(next_pos_ij.second-j))
+                                initial_position = ijs(i,j);
+                        }
+                    }
+                }
+                else if(piece=='n')
+                {
+                    for(int i=0;i<8;i++)
+                    {
+                        for(int j=0;j<8;j++)
+                        {
+                            if(board[i][j]==piece && (abs(next_pos_ij.first-i)==1 && (abs(next_pos_ij.second-j)==2)||(abs(next_pos_ij.first-i)==2 && abs(next_pos_ij.second-j)==1)))
+                            {
+                                initial_position = ijs(i,j);
+                            }
+                        }
+                    }
+                }
+                v2_move = "";
+                v2_move += piece;
+                v2_move += initial_position;
+                v2_move += next_position;
+                return v2_move;
+            }
+            else    // contention case where two pieces can move, happens with rook only ig
+            {
+                next_position = std_move.substr(2,2);
+                pair<int,int> next_pos_ij = sij(next_position);
+                char pos = std_move[1];
+                if(piece=='R')
+                {
+                    if(pos>='1' && pos<='8')
+                    {
+                        initial_position = "";
+                        initial_position += next_position[0];
+                        initial_position += pos;
+                    }
+                    else
+                    {
+                        initial_position = "";
+                        initial_position += pos;
+                        initial_position += next_position[1];
+                    }
+                }
+                v2_move = "";
+                v2_move += piece;
+                v2_move += initial_position;
+                v2_move += next_position;
+                return v2_move;
+            }
+        }
+        else    // pawn piece
+        {
+            if(std_move[1]=='x') // capture
+            {
+                next_position = std_move.substr(2,2);
+                pair<int,int> next_pos_ij = sij(next_position);
+                char col_of_sq1 = std_move[0];
+                if(std_move[4]=='=')    // promotion
+                {
+
+                }
+                else
+                {
+                    initial_position = "";
+                    initial_position += col_of_sq1;
+                    initial_position += next_position[1];
+                    v2_move = "";
+                    v2_move += piece;
+                    v2_move += initial_position;
+                    v2_move += "x";
+                    v2_move += next_position;
+                    return v2_move;
+                }
+            }
+            else
+            {
+                next_position = std_move.substr(0,2);
+                pair<int,int> next_pos_ij = sij(next_position);
+                if(std_move[2]=='=')    // promotion
+                {
+
+                }
+                else
+                {
+                    if(board[next_pos_ij.first-1][next_pos_ij.second]=='p')     // single move
+                    {
+                        initial_position = ijs(next_pos_ij.first-1, next_pos_ij.second);
+                        v2_move = "";
+                        v2_move += piece;
+                        v2_move += initial_position;
+                        v2_move += next_position;
+                        return v2_move;
+                    }
+                    else if(board[next_pos_ij.first-2][next_pos_ij.second]=='p')
+                    {
+                        initial_position = ijs(next_pos_ij.first-2, next_pos_ij.second);
+                        v2_move = "";
+                        v2_move += piece;
+                        v2_move += initial_position;
+                        v2_move += "z";
+                        v2_move += next_position;
+                        return v2_move;
+                    }
+                }
+            }
+        }
+    }
+}

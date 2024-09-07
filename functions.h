@@ -1,6 +1,7 @@
 #include <iostream>
 #include <iomanip>
 #include <vector>
+#include <fen.h>
 using namespace std;
 #pragma once
 /*
@@ -23,3 +24,5 @@ int piece_type(char ch, bool turn);
 vector<vector<char>> reverseBoard(const vector<vector<char>> &board);
 
 int get_material(const vector<vector<char>> &board);
+
+string stdToV2(string fen, string std_move, int turn);
