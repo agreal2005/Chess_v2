@@ -9,6 +9,149 @@ EvalBar::EvalBar(string f)
 
 // Make functions for complete evaluation and Game Search Tree here
 
+//Make a class for storing the resukt of relevant evaluations, may use them later
+
+class score_entry{
+    private:
+        double depth;
+        AllEvalScores score;
+        string move;
+
+    public:
+        score_entry(double d=0.0, AllEvalScores s = AllEvalScores(), string m=""){
+            depth=d;
+            score=s;
+            move=m;
+        }
+        string getMove(){
+            return move;
+        }
+        AllEvalScores getScore(){
+            return score;
+        }
+        double getDepth(){
+            return depth;
+        }
+};
+
+
+/*
+make 11 maps, 
+Master map stores all the FEN strings and map them to their scores, and best deoth till now
+The other 10 maps are used to store strings and map them to  set
+Every entry of the 10 maps is used to map to a set, a map named WhitePawns map entries such that
+WhitePawns[4] stores all the entries in master map with entries having 4 white pawns;
+*/
+
+
+map<string, score_entry> MasterMap;
+map<int, set<string>> WhitePawns;
+map<int, set<string>> BlackPawns;
+map<int, set<string>> WhiteKnights;
+map<int, set<string>> BlackKnights;
+map<int, set<string>> WhiteBishops;
+map<int, set<string>> BlackBishops;
+map<int, set<string>> WhiteRooks;
+map<int, set<string>> BlackRooks;
+map<int, set<string>> WhiteQueens;
+map<int, set<string>> BlackQueens;
+
+
+void delete_from_related_maps(string FEN){
+    int wp = 0, bp = 0, wn = 0, bn = 0, wb = 0, bb = 0, wr = 0, br = 0, wq = 0, bq = 0;
+    for(int i=0; i<FEN.length(); i++){
+        if(FEN[i] == 'P') wp++;
+        if(FEN[i] == 'p') bp++;
+        if(FEN[i] == 'N') wn++;
+        if(FEN[i] == 'n') bn++;
+        if(FEN[i] == 'B') wb++;
+        if(FEN[i] == 'b') bb++;
+        if(FEN[i] == 'R') wr++;
+        if(FEN[i] == 'r') br++;
+        if(FEN[i] == 'Q') wq++;
+        if(FEN[i] == 'q') bq++;
+    }
+    MasterMap.erase(FEN);
+    WhitePawns[wp].erase(FEN);
+    BlackPawns[bp].erase(FEN);
+    WhiteKnights[wn].erase(FEN);
+    BlackKnights[bn].erase(FEN);
+    WhiteBishops[wb].erase(FEN);
+    BlackBishops[bb].erase(FEN);
+    WhiteRooks[wr].erase(FEN);
+    BlackRooks[br].erase(FEN);
+    WhiteQueens[wq].erase(FEN);
+    BlackQueens[bq].erase(FEN);
+}
+
+void insert_into__relevant_map(string FEN){
+    int wp = 0, bp = 0, wn = 0, bn = 0, wb = 0, bb = 0, wr = 0, br = 0, wq = 0, bq = 0;
+    for(int i=0; i<FEN.length(); i++){
+        if(FEN[i] == 'P') wp++;
+        if(FEN[i] == 'p') bp++;
+        if(FEN[i] == 'N') wn++;
+        if(FEN[i] == 'n') bn++;
+        if(FEN[i] == 'B') wb++;
+        if(FEN[i] == 'b') bb++;
+        if(FEN[i] == 'R') wr++;
+        if(FEN[i] == 'r') br++;
+        if(FEN[i] == 'Q') wq++;
+        if(FEN[i] == 'q') bq++;
+    }
+    if(WhitePawns[wp].size() > 10000)delete_from_related_maps(*WhitePawns[wp].begin());
+    if(BlackPawns[bp].size() > 10000)delete_from_related_maps(*BlackPawns[bp].begin());
+    if(WhiteKnights[wn].size() > 10000)delete_from_related_maps(*WhiteKnights[wn].begin());
+    if(BlackKnights[bn].size() > 10000)delete_from_related_maps(*BlackKnights[bn].begin());
+    if(WhiteBishops[wb].size() > 10000)delete_from_related_maps(*WhiteBishops[wb].begin());
+    if(BlackBishops[bb].size() > 10000)delete_from_related_maps(*BlackBishops[bb].begin());
+    if(WhiteRooks[wr].size() > 10000)delete_from_related_maps(*WhiteRooks[wr].begin());
+    if(BlackRooks[br].size() > 10000)delete_from_related_maps(*BlackRooks[br].begin());
+    if(WhiteQueens[wq].size() > 10000)delete_from_related_maps(*WhiteQueens[wq].begin());
+    if(BlackQueens[bq].size() > 10000)delete_from_related_maps(*BlackQueens[bq].begin());
+    WhitePawns[wp].insert(FEN);
+    BlackPawns[bp].insert(FEN);
+    WhiteKnights[wn].insert(FEN);
+    BlackKnights[bn].insert(FEN);
+    WhiteBishops[wb].insert(FEN);
+    BlackBishops[bb].insert(FEN);
+    WhiteRooks[wr].insert(FEN);
+    BlackRooks[br].insert(FEN);
+    WhiteQueens[wq].insert(FEN);
+    BlackQueens[bq].insert(FEN);
+
+   //Insertion done in all relevant maps
+}
+
+
+
+void delete_irrelevant_entries(string FEN){
+     int wp = 0, bp = 0, wn = 0, bn = 0, wb = 0, bb = 0, wr = 0, br = 0, wq = 0, bq = 0;
+    for(int i=0; i<FEN.length(); i++){
+        if(FEN[i] == 'P') wp++;
+        if(FEN[i] == 'p') bp++;
+        if(FEN[i] == 'N') wn++;
+        if(FEN[i] == 'n') bn++;
+        if(FEN[i] == 'B') wb++;
+        if(FEN[i] == 'b') bb++;
+        if(FEN[i] == 'R') wr++;
+        if(FEN[i] == 'r') br++;
+        if(FEN[i] == 'Q') wq++;
+        if(FEN[i] == 'q') bq++;
+    }
+    for(string it : WhitePawns[wp+1])delete_from_related_maps(it);
+    for(string it : BlackPawns[bp+1])delete_from_related_maps(it);
+    for(string it : WhiteKnights[wn+1])delete_from_related_maps(it);
+    for(string it : BlackKnights[bn+1])delete_from_related_maps(it);
+    for(string it : WhiteBishops[wb+1])delete_from_related_maps(it);
+    for(string it : BlackBishops[bb+1])delete_from_related_maps(it);
+    for(string it : WhiteRooks[wr+1])delete_from_related_maps(it);
+    for(string it : BlackRooks[br+1])delete_from_related_maps(it);
+    for(string it : WhiteQueens[wq+1])delete_from_related_maps(it);
+    for(string it : BlackQueens[bq+1])delete_from_related_maps(it);
+
+    return;
+}
+
 string EvalBar::playOneMove(string &move, vector<vector<char>> brd, bool t, bool wck, bool wcq, bool bck, bool bcq, bool isEnp, string epS, int hfc, int fms)
 {
     string curr_position = move.substr(1, 2);
@@ -391,6 +534,14 @@ pair<string, AllEvalScores> EvalBar :: TrainingTree(string BoardFen, int depth, 
          return {"___", tapli};
     }
 
+    delete_irrelevant_entries(BoardFen);
+
+    if(MasterMap.find(BoardFen) != MasterMap.end()){
+        if(MasterMap[BoardFen].getDepth() >= depth){
+            return {MasterMap[BoardFen].getMove(), MasterMap[BoardFen].getScore()};
+        }
+    }
+
     Board_FEN CurrentFENString(BoardFen);
     Moves CurrMoves(CurrentFENString.board,CurrentFENString.return_turn(),CurrentFENString.return_ep(),CurrentFENString.return_eps(),CurrentFENString.castle_options());
     vector<string> MyMoves = CurrMoves.valid_Moves();
@@ -398,17 +549,26 @@ pair<string, AllEvalScores> EvalBar :: TrainingTree(string BoardFen, int depth, 
     if(CheckForEnd== inf || CheckForEnd ==-inf){
         AllEvalScores tapli;
         tapli.TotalScore = CheckForEnd;
+        
+        MasterMap[BoardFen] = score_entry(depth,tapli, "#");
+        insert_into__relevant_map(BoardFen);
         return {"#", tapli};
     }
     if ((CheckForEnd==0.0 && MyMoves.size()==0))
     {   
         AllEvalScores tapli;
+        
+        MasterMap[BoardFen] = score_entry(depth,tapli, "-");
+        insert_into__relevant_map(BoardFen);
         return {"-", tapli};
     }
 
     if(depth == 0){
             EvalParams AllEvalParams(CurrMoves, CurrentFENString, BoardFen);
             AllEvalScores CurrentScore = complete_TrainingEval(AllEvalParams);
+            
+            MasterMap[BoardFen] = score_entry(depth,CurrentScore, "_");
+            insert_into__relevant_map(BoardFen);
             return {"_", CurrentScore};
     }
 
@@ -431,6 +591,9 @@ pair<string, AllEvalScores> EvalBar :: TrainingTree(string BoardFen, int depth, 
                 break;
             }
         }
+        
+        MasterMap[BoardFen] = score_entry(depth,MaxScore, MoveToBePlayed);
+        insert_into__relevant_map(BoardFen);
         return {MoveToBePlayed, MaxScore};
     }
     else{
@@ -452,6 +615,9 @@ pair<string, AllEvalScores> EvalBar :: TrainingTree(string BoardFen, int depth, 
                 break;
             }
         }
+        
+        MasterMap[BoardFen] = score_entry(depth,Minscore, MoveToBePlayed);
+        insert_into__relevant_map(BoardFen);
         return {MoveToBePlayed, Minscore};
     }
 }    
