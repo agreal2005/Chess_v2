@@ -25,4 +25,4 @@ vector<vector<char>> reverseBoard(const vector<vector<char>> &board);
 
 int get_material(const vector<vector<char>> &board);
 
-string stdToV2(string fen, string std_move, int turn);
+string stdToV2(string fen, string std_move);

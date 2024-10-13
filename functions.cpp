@@ -342,7 +342,7 @@ string stdToV2(string fen, string std_move)
                     initial_position += col_of_sq1;
                     initial_position += next_position[1];
                     v2_move = "";
-                    v2_move += piece;
+                    v2_move += "P";
                     v2_move += initial_position;
                     v2_move += "x";
                     v2_move += next_position;
@@ -359,20 +359,20 @@ string stdToV2(string fen, string std_move)
                 }
                 else
                 {
-                    if(board[next_pos_ij.first-1][next_pos_ij.second]=='P')     // single move
+                    if(board[next_pos_ij.first+1][next_pos_ij.second]=='P')     // single move
                     {
-                        initial_position = ijs(next_pos_ij.first-1, next_pos_ij.second);
+                        initial_position = ijs(next_pos_ij.first+1, next_pos_ij.second);
                         v2_move = "";
-                        v2_move += piece;
+                        v2_move += "P";
                         v2_move += initial_position;
                         v2_move += next_position;
                         return v2_move;
                     }
-                    else if(board[next_pos_ij.first-2][next_pos_ij.second]=='P')
+                    else if(board[next_pos_ij.first+2][next_pos_ij.second]=='P')
                     {
-                        initial_position = ijs(next_pos_ij.first-2, next_pos_ij.second);
+                        initial_position = ijs(next_pos_ij.first+2, next_pos_ij.second);
                         v2_move = "";
-                        v2_move += piece;
+                        v2_move += "P";
                         v2_move += initial_position;
                         v2_move += "Z";
                         v2_move += next_position;
@@ -385,6 +385,7 @@ string stdToV2(string fen, string std_move)
     else
     {
         char piece = std_move[0];
+        piece = piece - 'A' + 'a';
         string initial_position;
         string next_position;
         if(piece == 'q' || piece=='b'
@@ -555,7 +556,7 @@ string stdToV2(string fen, string std_move)
                     initial_position += col_of_sq1;
                     initial_position += next_position[1];
                     v2_move = "";
-                    v2_move += piece;
+                    v2_move += "p";
                     v2_move += initial_position;
                     v2_move += "x";
                     v2_move += next_position;
@@ -576,7 +577,7 @@ string stdToV2(string fen, string std_move)
                     {
                         initial_position = ijs(next_pos_ij.first-1, next_pos_ij.second);
                         v2_move = "";
-                        v2_move += piece;
+                        v2_move += "p";
                         v2_move += initial_position;
                         v2_move += next_position;
                         return v2_move;
@@ -585,7 +586,7 @@ string stdToV2(string fen, string std_move)
                     {
                         initial_position = ijs(next_pos_ij.first-2, next_pos_ij.second);
                         v2_move = "";
-                        v2_move += piece;
+                        v2_move += "p";
                         v2_move += initial_position;
                         v2_move += "z";
                         v2_move += next_position;
