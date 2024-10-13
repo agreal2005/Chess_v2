@@ -1,7 +1,7 @@
 #include "eval.h"
 #include <fstream>
 #pragma once
-#define DEPTH 3
+#define DEPTH 5
 
 class AllEvalScores{
     public :
