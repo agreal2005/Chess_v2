@@ -9,6 +9,9 @@ using namespace std::chrono;
 
 int gamePhase;
 psTables pst;
+extern map<int, map<string, pair<string, double>*>> MasterMap;
+extern map<int, vector<pair<string, double>*>> matMap;
+int material = 78;
 
 void gameTesting(string fen)
 {
@@ -28,6 +31,13 @@ void gameTesting(string fen)
         system("clear");
         #endif
         v.input_FEN(lesgo.playOneMove(str, v.return_board(),v.return_turn(),((cas_opt&8)!=0),((cas_opt&4)!=0),((cas_opt&2)!=0),((cas_opt&1)!=0),v.return_ep(),v.return_eps(),v.return_halfmoveclk(),v.return_fullmoves()));
+        int n_mat = get_material(v.return_board());
+        if (n_mat < material && !matMap[material].empty())
+        {
+            for (auto it : matMap[material]) delete(it);
+            matMap.erase(material);
+        }
+        material = n_mat;
         string changed_str = v.get_FEN();
         cout << changed_str << endl;
         auto start = high_resolution_clock::now();
@@ -50,6 +60,13 @@ void gameTesting(string fen)
         cout << "Eval: " << p.second << endl;
         cas_opt = v.castle_options();
         v.input_FEN(lesgo.playOneMove(p.first, v.return_board(),v.return_turn(),((cas_opt&8)!=0),((cas_opt&4)!=0),((cas_opt&2)!=0),((cas_opt&1)!=0),v.return_ep(),v.return_eps(),v.return_halfmoveclk(),v.return_fullmoves()));
+        n_mat = get_material(v.return_board());
+        if (n_mat < material && !matMap[material].empty())
+        {
+            for (auto it : matMap[material]) delete(it);
+            matMap.erase(material);
+        }
+        material = n_mat;
         auto duration = duration_cast<seconds>(stop - start);
         cout << "Executed in " << duration.count() << " seconds." << endl;
         pair <string,double> breakmate = lesgo.evalTree(v.get_FEN(), 1);
@@ -112,8 +129,8 @@ int main()
     // getline(cin, fen);
     // Board_FEN v(fen);
     // v.display_board_FEN();
-    // gameTesting(fen);
-    gameTesting("2k5/5P2/3K4/8/8/8/8/8 w - - 0 1");
+    gameTesting(fen);
+    // gameTesting("2k5/5P2/3K4/8/8/8/8/8 w - - 0 1");
     // positionTesting(fen);
     // positionTesting("2k5/5P2/3K4/8/8/8/8/8 w - - 0 1");
     // positionTesting("rnbqk1nr/p1pp1ppp/1p2p3/8/1b1PP3/2P2N2/PP3PPP/RNBQKB1R b KQkq - 0 1");

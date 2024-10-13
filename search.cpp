@@ -7,7 +7,8 @@ EvalBar::EvalBar(string f)
     m.fetch_Moves(fen.board, fen.turn, fen.isEnPassant, fen.epSquare, fen.castle_options());
 }
 
-// Make functions for complete evaluation and Game Search Tree here
+map<int, map<string, pair<string, double>*>> MasterMap;
+map<int, vector<pair<string, double>*>> matMap;
 
 string EvalBar::playOneMove(string &move, vector<vector<char>> brd, bool t, bool wck, bool wcq, bool bck, bool bcq, bool isEnp, string epS, int hfc, int fms)
 {
@@ -307,30 +308,36 @@ pair<string, double> EvalBar :: NewEvalTree(string BoardFen, int depth, int c, d
     // If the first string is a # it means that checkmate has happened
     // If the first string is a - it means that a stalemate has happened
     // If the first string is a _ it means that a leaf has been reached
-    if (vis.size() == vis.max_size()/2) {
-        while (vis.size()!=vis.max_size()/2 - vis.max_size()/10)
-        {
-            vis.erase(vis.begin());
-        }
-    }
+    
     // check if depth is done
     if(depth < 0){
          cout<<"Invalid depth for evaluation\n";
          return {"___",0.0};
     }
 
-    // initialise all the needed objects containing data about the board here
     Board_FEN CurrentFENString(BoardFen);
+    int mat = get_material(CurrentFENString.board);
+    
+    if (!MasterMap[depth].empty() && MasterMap[depth].find(BoardFen) != MasterMap[depth].end()) {
+        return *MasterMap[depth][BoardFen];
+    }
+
     Moves CurrMoves(CurrentFENString.board,CurrentFENString.return_turn(),CurrentFENString.return_ep(),CurrentFENString.return_eps(),CurrentFENString.castle_options());
     vector<string> MyMoves = CurrMoves.valid_Moves();
 
     // check whether tapli has been received
     double CheckForEnd=evaluate_checkmate(CurrentFENString.return_board(), CurrMoves.return_oppControlSquares() , CurrMoves.valid_Moves(), CurrentFENString.return_turn(), BoardFen);
     if(CheckForEnd== inf || CheckForEnd ==-inf){
+        MasterMap[depth][BoardFen] = new pair<string, double> {"#", CheckForEnd};
+        matMap[mat].push_back(MasterMap[depth][BoardFen]);
+        // insert_into__relevant_map(BoardFen);
         return {"#", CheckForEnd};
     }
     if ((CheckForEnd==0.0 && MyMoves.size()==0))
     {
+        MasterMap[depth][BoardFen] = new pair<string, double> {"-", 0.0};
+        matMap[mat].push_back(MasterMap[depth][BoardFen]);
+        // insert_into__relevant_map(BoardFen);
         return {"-", 0.0};
     }
 
@@ -359,6 +366,10 @@ pair<string, double> EvalBar :: NewEvalTree(string BoardFen, int depth, int c, d
                 break;
             }
         }
+        MasterMap[depth][BoardFen] = new pair<string,double> (MoveToBePlayed, MaxScore);
+        matMap[mat].push_back(MasterMap[depth][BoardFen]);
+        // MasterMap[BoardFen] = score_entry(depth, MaxScore, MoveToBePlayed);
+        // insert_into__relevant_map(BoardFen);
         return {MoveToBePlayed, MaxScore};
     }
 
@@ -380,6 +391,10 @@ pair<string, double> EvalBar :: NewEvalTree(string BoardFen, int depth, int c, d
                 break;
             }
         }
+        MasterMap[depth][BoardFen] = new pair<string,double> (MoveToBePlayed, MinScore);
+        matMap[mat].push_back(MasterMap[depth][BoardFen]);
+        // MasterMap[] = score_entry(depth, MinScore, MoveToBePlayed);
+        // insert_into__relevant_map(BoardFen);
         return {MoveToBePlayed, MinScore};
     }
 }
@@ -454,4 +469,4 @@ pair<string, AllEvalScores> EvalBar :: TrainingTree(string BoardFen, int depth, 
         }
         return {MoveToBePlayed, Minscore};
     }
-}    
+} 
