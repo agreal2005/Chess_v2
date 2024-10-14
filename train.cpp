@@ -54,13 +54,14 @@ void processFENFiles(const std::string &fensDir, const std::string &evalsDir,
         while (std::getline(fenFile, fen) && std::getline(evalFile, evalStr)) {
             Board_FEN brd(fen);
             vector<vector<char>> board = brd.return_board();
-            int material = get_material(brd.return_board());  // Calculate material score
+            int material = get_material(brd.return_board());
 
             // Initialize moves and evaluation parameters
             Moves mvs(board, brd.return_turn(), brd.return_ep(), 
                       brd.return_eps(), brd.castle_options());
             EvalParams params(mvs, brd, fen);  
             AllEvalScores scores = evalBar.complete_TrainingEval(params);  // Extract features
+            if (gamePhase <= 18) scores.KingSafetyScore = 0; // making king_safety worthless in endgame
 
             // Get the correct file stream based on material score
             std::ofstream &file = getFileStream(material, openFile, middleFile, endFile);
@@ -93,7 +94,7 @@ void processFENFiles(const std::string &fensDir, const std::string &evalsDir,
 
 int main() {
     std::string fensDir = "./fens";          // Directory containing FEN files
-    std::string evalsDir = "./evals";        // Directory containing evaluation results
+    std::string evalsDir = "./results";        // Directory containing evaluation results
     std::string openingFile = "opening_data.csv";    // Opening phase data
     std::string middlegameFile = "middlegame_data.csv";  // Middlegame phase data
     std::string endgameFile = "endgame_data.csv";    // Endgame phase data

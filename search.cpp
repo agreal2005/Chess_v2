@@ -7,8 +7,8 @@ EvalBar::EvalBar(string f)
     m.fetch_Moves(fen.board, fen.turn, fen.isEnPassant, fen.epSquare, fen.castle_options());
 }
 
-map<int, map<string, pair<string, double>*>> MasterMap;
-map<int, vector<pair<string, double>*>> matMap;
+unordered_map<int, map<string, pair<string, double>*>> MasterMap;
+unordered_map<int, vector<pair<string, double>*>> matMap;
 
 string EvalBar::playOneMove(string &move, vector<vector<char>> brd, bool t, bool wck, bool wcq, bool bck, bool bcq, bool isEnp, string epS, int hfc, int fms)
 {
@@ -162,27 +162,33 @@ double EvalBar::complete_eval(EvalParams &pr)
 
 AllEvalScores EvalBar::complete_TrainingEval(EvalParams &pr){
     int material = get_material(pr.board);
-    evalWeights wt;
-    wt.changeWeights(material);
-    double eval = wt.matwt*evaluate_material(pr.board);
-    eval += wt.pawnwt*evaluate_pawn_structure(reverseBoard(pr.board), pr.controlSquares, pr.oppControlSquares, pr.turn, pr.f);
-    eval += wt.outpostwt*evaluate_outposts(reverseBoard(pr.board), pr.controlSquares, pr.oppControlSquares, pr.turn);
-    eval += wt.hangingwt*hanging_piece_penalty(pr.board, pr.controlSquares, pr.oppControlSquares, pr.turn);
-    eval += wt.weakerattacwt*weaker_attacked_penalty(pr.board, pr.controlSquares, pr.oppControlSquares, pr.turn);
-    eval += wt.pieceswt*pieces_eval(pr.board, pr.pieces, pr.oppPieces, pr.turn);
-    eval += ((double)pst.eval_sq_tables(pr.board)/625.0)*wt.pstwt;
-    if (pr.turn == 0) eval += wt.trappedwt*trapped_eval(pr.trappedPieces, pr.trappedOppPieces);
-    else eval += wt.trappedwt*trapped_eval(pr.trappedOppPieces, pr.trappedPieces);
-    double king_score = wt.kingwt*eval_kingsafety(pr.board, pr.controlSquares, pr.oppControlSquares, pr.turn);
-    if(gamePhase > 18)
-    {
-        eval += king_score;
-    }
-    eval += wt.mobilitywt*mobility(pr.board, pr.controlSquares, pr.oppControlSquares, pr.validMoves, pr.validOppMoves, pr.turn, pr.isEnPassant, pr.epSquare, pr.castling);
-    AllEvalScores Scores(evaluate_pawn_structure(reverseBoard(pr.board), pr.controlSquares, pr.oppControlSquares, pr.turn, pr.f), (double)material, evaluate_outposts(reverseBoard(pr.board), pr.controlSquares, pr.oppControlSquares, pr.turn),
-                         hanging_piece_penalty(pr.board, pr.controlSquares, pr.oppControlSquares, pr.turn) ,  weaker_attacked_penalty(pr.board, pr.controlSquares, pr.oppControlSquares, pr.turn), 
-                         mobility(pr.board, pr.controlSquares, pr.oppControlSquares, pr.validMoves, pr.validOppMoves, pr.turn, pr.isEnPassant, pr.epSquare, pr.castling),  pieces_eval(pr.board, pr.pieces, pr.oppPieces, pr.turn), 
-                         eval_kingsafety(pr.board, pr.controlSquares, pr.oppControlSquares, pr.turn), trapped_eval(pr.trappedOppPieces, pr.trappedPieces),  (double)pst.eval_sq_tables(pr.board)/625.0);
+    // evalWeights wt;
+    // wt.changeWeights(material);
+    // double eval = wt.matwt*evaluate_material(pr.board);
+    // eval += wt.pawnwt*evaluate_pawn_structure(reverseBoard(pr.board), pr.controlSquares, pr.oppControlSquares, pr.turn, pr.f);
+    // eval += wt.outpostwt*evaluate_outposts(reverseBoard(pr.board), pr.controlSquares, pr.oppControlSquares, pr.turn);
+    // eval += wt.hangingwt*hanging_piece_penalty(pr.board, pr.controlSquares, pr.oppControlSquares, pr.turn);
+    // eval += wt.weakerattacwt*weaker_attacked_penalty(pr.board, pr.controlSquares, pr.oppControlSquares, pr.turn);
+    // eval += wt.pieceswt*pieces_eval(pr.board, pr.pieces, pr.oppPieces, pr.turn);
+    // eval += ((double)pst.eval_sq_tables(pr.board)/625.0)*wt.pstwt;
+    // if (pr.turn == 0) eval += wt.trappedwt*trapped_eval(pr.trappedPieces, pr.trappedOppPieces);
+    // else eval += wt.trappedwt*trapped_eval(pr.trappedOppPieces, pr.trappedPieces);
+    // double king_score = wt.kingwt*eval_kingsafety(pr.board, pr.controlSquares, pr.oppControlSquares, pr.turn);
+    // if(gamePhase > 18)
+    // {
+    //     eval += king_score;
+    // }
+    // eval += wt.mobilitywt*mobility(pr.board, pr.controlSquares, pr.oppControlSquares, pr.validMoves, pr.validOppMoves, pr.turn, pr.isEnPassant, pr.epSquare, pr.castling);
+    AllEvalScores Scores(evaluate_pawn_structure(reverseBoard(pr.board), pr.controlSquares, pr.oppControlSquares, pr.turn, pr.f), 
+                         evaluate_material(pr.board), 
+                         evaluate_outposts(reverseBoard(pr.board), pr.controlSquares, pr.oppControlSquares, pr.turn),
+                         hanging_piece_penalty(pr.board, pr.controlSquares, pr.oppControlSquares, pr.turn) ,  
+                         weaker_attacked_penalty(pr.board, pr.controlSquares, pr.oppControlSquares, pr.turn), 
+                         mobility(pr.board, pr.controlSquares, pr.oppControlSquares, pr.validMoves, pr.validOppMoves, pr.turn, pr.isEnPassant, pr.epSquare, pr.castling),  
+                         pieces_eval(pr.board, pr.pieces, pr.oppPieces, pr.turn), 
+                         eval_kingsafety(pr.board, pr.controlSquares, pr.oppControlSquares, pr.turn), 
+                         ((pr.turn == 0) ? trapped_eval(pr.trappedPieces, pr.trappedOppPieces) : trapped_eval(pr.trappedOppPieces, pr.trappedPieces)),  
+                         (double)pst.eval_sq_tables(pr.board));
 
     return Scores;               
 }

@@ -1,5 +1,6 @@
 #include "eval.h"
 #include <fstream>
+#include <unordered_map>
 #pragma once
 #define DEPTH 5
 
@@ -34,16 +35,16 @@ class AllEvalScores{
 
 struct evalWeights
 {
-    double matwt = 0, 
-    pawnwt = 0, 
+    double pawnwt = 0, 
+    matwt = 0, 
     outpostwt = 0, 
     hangingwt = 0, 
     weakerattacwt = 0, 
+    mobilitywt = 0,
     pieceswt = 0, 
-    pstwt = 0, 
-    trappedwt = 0, 
     kingwt = 0, 
-    mobilitywt = 0;
+    trappedwt = 0,
+    pstwt = 0;
     double ow[10], mw[10], ew[10];
     evalWeights()
     {
@@ -53,42 +54,42 @@ struct evalWeights
     {
         if (material <= 20) // Endgame
         {
-            matwt = ew[0], 
-            pawnwt = ew[1], 
+            pawnwt = ew[0], 
+            matwt = ew[1], 
             outpostwt = ew[2], 
             hangingwt = ew[3], 
             weakerattacwt = ew[4], 
-            pieceswt = ew[5], 
-            pstwt = ew[6], 
-            trappedwt = ew[7], 
-            kingwt = ew[8], 
-            mobilitywt = ew[9];
+            mobilitywt = ew[5],
+            pieceswt = ew[6], 
+            kingwt = ew[7], 
+            trappedwt = ew[8], 
+            pstwt = ew[9]; 
         }
         else if (material > 74) // Opening
         {
-            matwt = ow[0], 
-            pawnwt = ow[1], 
+            pawnwt = ow[0], 
+            matwt = ow[1], 
             outpostwt = ow[2], 
             hangingwt = ow[3], 
             weakerattacwt = ow[4], 
-            pieceswt = ow[5], 
-            pstwt = ow[6], 
-            trappedwt = ow[7], 
-            kingwt = ow[8], 
-            mobilitywt = ow[9];
+            mobilitywt = ow[5],
+            pieceswt = ow[6], 
+            kingwt = ow[7], 
+            trappedwt = ow[8], 
+            pstwt = ow[9]; 
         }
         else // Middle game
         {
-            matwt = mw[0], 
-            pawnwt = mw[1], 
+            pawnwt = mw[0], 
+            matwt = mw[1], 
             outpostwt = mw[2], 
             hangingwt = mw[3], 
             weakerattacwt = mw[4], 
-            pieceswt = mw[5], 
-            pstwt = mw[6], 
-            trappedwt = mw[7], 
-            kingwt = mw[8], 
-            mobilitywt = mw[9];
+            mobilitywt = mw[5],
+            pieceswt = mw[6], 
+            kingwt = mw[7], 
+            trappedwt = mw[8], 
+            pstwt = mw[9]; 
         }
     }
     void updateWeights() // For updating weights from the LR files

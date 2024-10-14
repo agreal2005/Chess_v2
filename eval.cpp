@@ -1,9 +1,9 @@
 #include "eval.h"
-#define pawn_score 0.5
-#define bishop_score 3
-#define knight_score 3
-#define rook_score 5.5
-#define queen_score 11
+#define pawn_score 1.0
+#define bishop_score 3.0
+#define knight_score 3.0
+#define rook_score 5.0
+#define queen_score 9.0
 
 double evaluate_checkmate(const vector<vector<char>> &board, const vector<vector<vector<Piece>>> &oppcontrol_squares,
                           const vector<string> &legal_moves, bool turn, string FEN = "")
@@ -123,12 +123,12 @@ double evaluate_material(const vector<vector<char>> &board)
     return white_score - black_score;
 }
 
- int getStage(int total_material)
- {
-     if (total_material >= 68) return 2; // opening
-     else if (total_material <= 26) return 0; // endgame
-     else return 1; // middlegame
- }
+//  int getStage(int total_material)
+//  {
+//      if (total_material >= 68) return 2; // opening
+//      else if (total_material <= 26) return 0; // endgame
+//      else return 1; // middlegame
+//  }
 
 // This checks whether there is a pawn in the given column after or behind a given row for both white and black depending on dir
 // dir 1 means ahead or equal to the row of whichever side you are playing
@@ -234,10 +234,10 @@ bool CheckDoublePawn(const vector<vector<char>> &board, int row, int col, int tu
 double evaluate_pawn_structure(const vector<vector<char>> &board, const vector<vector<vector<Piece>>> &control_squares, const vector<vector<vector<Piece>>> &oppcontrol_squares, bool turn, string FEN)
 {
     // doubled pawn penalty is made half of what it should be because it will be double counted, tripled pawn will be interpreted as a double doubled pawn
-    double doubled_pawn_penalty = 0.3;  // checked 0.3
-    double isolated_pawn_penalty = 0.3; // checked 0.3
-    double pawn_chain_bonus = 0.2;      // checked 0.2
-    double pawn_passer_bonus = 0.15;    // checked 0.15
+    double doubled_pawn_penalty = 30;  // checked 0.3
+    double isolated_pawn_penalty = 30; // checked 0.3
+    double pawn_chain_bonus = 20;      // checked 0.2
+    double pawn_passer_bonus = 15;    // checked 0.15
 
     double white_score = 0;
     double black_score = 0;
@@ -377,8 +377,8 @@ double evaluate_outposts(const vector<vector<char>> &board, const vector<vector<
     double white_score = 0;
     double black_score = 0;
 
-    double knight_on_outpost = 0.3;
-    double bishop_on_outpost = 0.2;
+    double knight_on_outpost = 3;
+    double bishop_on_outpost = 2;
 
     for (int i = 0; i < 8; i++)
     {
@@ -523,19 +523,19 @@ double hanging_piece_penalty(const vector<vector<char>> &board, const vector<vec
                     switch (board[in_ver][in_hor])
                     {
                     case 'P':
-                        white_penalty.push_back(0.8);
+                        white_penalty.push_back(8);
                         break;
                     case 'B':
-                        white_penalty.push_back(2.4);
+                        white_penalty.push_back(24);
                         break;
                     case 'N':
-                        white_penalty.push_back(2.4);
+                        white_penalty.push_back(24);
                         break;
                     case 'R':
-                        white_penalty.push_back(4.0);
+                        white_penalty.push_back(40);
                         break;
                     case 'Q':
-                        white_penalty.push_back(7.2);
+                        white_penalty.push_back(72);
                         break;
                     default:
                         break;
@@ -549,19 +549,19 @@ double hanging_piece_penalty(const vector<vector<char>> &board, const vector<vec
                     switch (board[in_ver][in_hor])
                     {
                     case 'p':
-                        black_penalty.push_back(0.8);
+                        black_penalty.push_back(8);
                         break;
                     case 'b':
-                        black_penalty.push_back(2.4);
+                        black_penalty.push_back(24);
                         break;
                     case 'n':
-                        black_penalty.push_back(2.4);
+                        black_penalty.push_back(24);
                         break;
                     case 'r':
-                        black_penalty.push_back(4.0);
+                        black_penalty.push_back(40);
                         break;
                     case 'q':
-                        black_penalty.push_back(7.2);
+                        black_penalty.push_back(72);
                         break;
                     default:
                         break;
@@ -712,7 +712,7 @@ double weaker_attacked_penalty(const vector<vector<char>> &board, const vector<v
                         break;
                     }
                 }
-                if(this_piece_val>opp_piece_val)black_penalty.push_back(0.9 * (this_piece_val - opp_piece_val));
+                if(this_piece_val>opp_piece_val)black_penalty.push_back((this_piece_val - opp_piece_val));
             }
         }
     }
@@ -763,7 +763,7 @@ double pieces_eval(const vector<vector<char>> &board, const vector<Piece> pieces
                 }
                 else break;
             }
-            score += 0.0625*sq;
+            score += 6*sq;
         }
     }
     for (auto piece: oppPieces)
@@ -787,7 +787,7 @@ double pieces_eval(const vector<vector<char>> &board, const vector<Piece> pieces
                 }
                 else break;
             }
-            score -= 0.05*sq;
+            score -= 5*sq;
         }
     }
     if (turn) return -score;
@@ -892,7 +892,7 @@ double mobility(vector<vector<char>> &board, const vector<vector<vector<Piece>>>
         }
     }
     total_mobility=white_mobility-black_mobility;
-    total_mobility/=8.0;
+    // total_mobility/=8.0;
     return total_mobility;
 }
 
@@ -904,13 +904,13 @@ double eval_kingsafety(const vector<vector<char>> &board, const vector<vector<ve
     double white_missing_pawn = 0;
     double black_missing_pawn = 0;
 
-    double pawn_attack = 0.4;
-    double bishop_attack = 0.3;
-    double knight_attack = 0.3;
-    double queen_attack = 0.6;
-    double rook_attack = 0.5;
-    double pawn_missing_ahead_penalty = 0.4;
-    double side_pawn_missing_penalty = 0.3;
+    double pawn_attack = 4;
+    double bishop_attack = 3;
+    double knight_attack = 3;
+    double queen_attack = 6;
+    double rook_attack = 5;
+    double pawn_missing_ahead_penalty = 4;
+    double side_pawn_missing_penalty = 3;
 
     vector<pair<int, int>> white_king_area;
     vector<pair<int, int>> black_king_area;
@@ -1031,16 +1031,16 @@ double trapped_eval(const vector<Piece> whitetrapped, const vector<Piece> blackt
         switch (piece.type)
         {
             case 'Q':
-            penaldo += 7.2;
+            penaldo += 72;
             break;
             case 'R':
-            penaldo += 4.0;
+            penaldo += 40;
             break;
             case 'B':
-            penaldo += 2.4;
+            penaldo += 24;
             break;
             case 'N':
-            penaldo += 2.4;
+            penaldo += 30;
             break;
         }
     }
@@ -1049,16 +1049,16 @@ double trapped_eval(const vector<Piece> whitetrapped, const vector<Piece> blackt
         switch (piece.type)
         {
             case 'q':
-            penaldo -= 7.2;
+            penaldo -= 72;
             break;
             case 'r':
-            penaldo -= 4.0;
+            penaldo -= 40;
             break;
             case 'b':
-            penaldo -= 2.4;
+            penaldo -= 24;
             break;
             case 'n':
-            penaldo -= 2.4;
+            penaldo -= 30;
             break;
         }
     }

@@ -9,8 +9,8 @@ using namespace std::chrono;
 
 int gamePhase;
 psTables pst;
-extern map<int, map<string, pair<string, double>*>> MasterMap;
-extern map<int, vector<pair<string, double>*>> matMap;
+extern unordered_map<int, map<string, pair<string, double>*>> MasterMap;
+extern unordered_map<int, vector<pair<string, double>*>> matMap;
 int material = 78;
 
 void gameTesting(string fen)
