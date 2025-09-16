@@ -1,46 +1,63 @@
-## Chess_v2
+# Chess Engine v2
 
-A chess bot capable of playing complete games using the minimax algorithm to evaluate possible move sequences and identify the most advantageous option for the engine. The position evaluation function takes into consideration factors like material balance, pawn structure, mobility, trapped pieces and center control.
+A C++ chess engine implementing minimax algorithm with alpha-beta pruning for intelligent move selection.
 
-This project currently does not have a user interface, but is going to be added soon.
+## Features
 
-**Key Files**
+- **Complete Chess Engine**: Plays full games with legal move generation
+- **Advanced Evaluation**: Multi-factor position assessment including material, pawn structure, mobility, and king safety
+- **Search Algorithm**: Minimax with alpha-beta pruning for optimal move selection
+- **FEN Support**: Standard chess notation for position input/output
+- **Interactive Play**: Human vs computer gameplay mode
 
-**eval.cpp, eval.h**
-contains all relevant evaluation functions to evaluate:
-* material balance
-* pawn structure
-* outposts
-* mobility
-* trapped pieces
-* hanging pieces
-* king safety
+## Core Components
 
-**functions.cpp, functions.h**
-contains auxilliary functions to
-* display the board
-* convert position from pair<int,int> to string and vice versa
-* check if piece belongs to current player
-* reverse the board
-* check validity of piece positions
+### `pieces.h`
+- `Piece` class with position tracking and pin detection
 
-**fen.cpp, fen.h**
-contains class Board_FEN which has the methods to create a board from a given fen notation, to return fen notation of a given board, to set/return boolean variables for enPassant and castling options.
+### `fen.h` 
+- `Board_FEN` class for FEN notation parsing and board state management
 
-**moves.cpp, moves.h**
-contains class Moves which has the methods to generate possible moves. Some of the key functionalities are to
+### `moves.h`
+- `Moves` class for legal move generation and square control analysis
 
-* generate valid moves for current player and for the opponent
-* find the squares controlled by current player and the opponent
-* check pinned squares for player and the opponent
-* check trapped pieces for player and the opponent
+### `eval.h`
+- Position evaluation functions:
+  - Material balance
+  - Pawn structure and outposts
+  - Mobility and king safety
+  - Trapped/hanging piece detection
 
-**sq_tables.cpp, sq_tables.h**
-struct psTables contains the piece square table values for each piece for midgame and endgame separately. eval_sq_tables evaluates the current advantage to black and white based on the board state and the tables.
+### `search.h`
+- `EvalBar` class implementing minimax search with alpha-beta pruning
+- Game phase-specific evaluation weights
 
-**search.cpp, search.h**
-This is in a way the "main" file. It contains the search function complete_eval which utilises play_one_move and the other evaluation_functions to determine what move is the best to play, and plays that move.
+### `sq_tables_eval.h`
+- Piece-square tables for positional scoring
 
-### How to use?
-enter the board in FEN notation in the in.txt file and run the program. The out.txt file will display the board after the next move, the stats and the FEN of the new board state.
-https://lichess.org/editor is useful to get FEN values of the move played by human.
+### `functions.h`
+- Utility functions for board manipulation and coordinate conversion
+
+## Usage
+
+1. **Interactive Game**: Run `test.cpp` for human vs computer play
+2. **Position Analysis**: Use `positionTesting()` for detailed evaluation breakdown
+3. **FEN Input**: Provide positions in standard FEN notation
+
+## Build
+
+```bash
+make
+./test
+```
+
+## Evaluation Factors
+
+- Material balance (piece values)
+- Pawn structure and outposts
+- Piece mobility and control
+- King safety assessment
+- Trapped/hanging piece penalties
+- Position-based piece-square tables
+
+The engine automatically adjusts evaluation weights based on game phase (opening/middlegame/endgame) for optimal performance.

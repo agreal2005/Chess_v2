@@ -20,10 +20,10 @@ Moves::Moves()
 
 Moves::Moves(vector<vector<char>> &board, bool turn, bool isEnPassant, string epSquare, int castling)
 {
-    fetch_Moves(board, turn, isEnPassant, epSquare, castling);
+    setupPinAndControl(board, turn, isEnPassant, epSquare, castling);
 }
 
-void Moves::fetch_Moves(vector<vector<char>> &brd, bool turn, bool isEnPassant, string epSquare, int castling)
+void Moves::setupPinAndControl(vector<vector<char>> &brd, bool turn, bool isEnPassant, string epSquare, int castling)
 {
     for (int i = 0; i < 8; ++i)
     {

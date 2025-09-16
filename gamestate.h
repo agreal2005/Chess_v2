@@ -6,11 +6,10 @@
 #include <algorithm>
 #pragma once
 using namespace std;
-const string BLANC = "                                                                    ";
 /*
     Board Representation: Converting FEN to Board Matrix and vice-versa
 */
-class Board_FEN
+class GameState
 {
     private:
     string fen;
@@ -28,8 +27,8 @@ class Board_FEN
     vector<vector<char>> board; // Board Matrix
 
     public:
-    Board_FEN();
-    Board_FEN(string fen_val);
+    GameState();
+    GameState(string fen_val);
     void input_FEN(string fen_val);
     void default_FEN();
     void display_board_FEN();
@@ -42,7 +41,12 @@ class Board_FEN
     bool return_turn();
     string getPos();
     string get_FEN();
-    string get_FEN(vector<vector<char>> brd, bool t, bool wck, bool wcq, bool bck, bool bcq, bool isEnp, string epS, int hfc, int fms);
+
+    // Assumes string move is always a valid legal move
+    // Does not update any parameter, only returns FEN
+    // if move was played
+    string simulateOneMove(string& move);
+
     /*
         Note: In future, need to make the Game Class
         (and other req classes) to be a friend class,

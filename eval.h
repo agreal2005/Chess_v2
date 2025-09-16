@@ -1,5 +1,5 @@
 #include "moves.h"
-#include "fen.h"
+#include "gamestate.h"
 #include "pieces.h"
 #include "sq_tables_eval.h"
 #define inf 20000

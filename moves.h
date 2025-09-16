@@ -17,10 +17,11 @@ class Moves
     bool turn;
     bool isEnPassant; // If True, then store the EnPassant attack square in controlSquares
     string epSquare;
+    
     public:
     Moves();
     Moves(vector<vector<char>> &board, bool turn, bool isEnPassant = false, string epSquare = "", int castling = 0);
-    void fetch_Moves(vector<vector<char>> &board, bool turn, bool isEnPassant = false, string epSquare = "", int castling = 0); // Fetch the board and the turn of the player
+    void setupPinAndControl(vector<vector<char>> &board, bool turn, bool isEnPassant = false, string epSquare = "", int castling = 0); // Fetch the board and the turn of the player
     vector<string> valid_Moves(bool flag = 0); // It is assumed that illegal positions + wrong player to move are not given
     vector<string> valid_oppMoves();
     vector<vector<vector<Piece>>> return_controlSquares();
